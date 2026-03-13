@@ -2,19 +2,22 @@
     <style>
         .visit-time-header {
             background: #f8f9fa;
-            padding: 10px 15px;
-            border-left: 3px solid #495057;
-            margin: 15px 0;
-            border-radius: 4px;
+            padding: 12px 15px;
+            border-left: 4px solid #086838;
+            margin-bottom: 20px;
+            border-radius: 8px;
             color: #212529;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         .visit-time-badge {
             background: #6c757d;
             color: white;
             padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            margin-left: 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .single-visit-container {
             border: 1px solid #dee2e6;
@@ -134,29 +137,50 @@
             display: block;
             margin-bottom: 2px;
         }
+        .hover-opacity:hover {
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 576px) {
+            .multiple-visits-container {
+                grid-template-columns: 1fr;
+            }
+            .history-grid {
+                grid-template-columns: 1fr;
+            }
+            .visit-time-header {
+                text-align: center;
+            }
+            .visit-time-header h5 {
+                justify-content: center;
+            }
+            .visit-time-header .d-flex {
+                justify-content: center;
+            }
+        }
     </style>
 
     @if(count($followups) === 1)
         <!-- Single Visit View - Show Full Details -->
         @php $followup = $followups->first(); @endphp
-        <div class="visit-time-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 d-flex align-items-center">
-                <i class="bi bi-calendar-check me-2"></i>
-                Visit at {{ \Carbon\Carbon::parse($followup->followups_time)->format('h:i A') }}
+        <div class="visit-time-header d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <h5 class="mb-0 d-flex align-items-center flex-wrap gap-2">
+                <i class="bi bi-calendar-check text-success fs-4"></i>
+                <span class="fw-bold">Visit at {{ \Carbon\Carbon::parse($followup->followups_time)->format('h:i A') }}</span>
                 <span class="visit-time-badge">Full History</span>
             </h5>
             @if($followup->zoom_join_url)
-                <div>
+                <div class="d-flex flex-wrap gap-2">
                     @if(auth()->user()->user_role == 6 || auth()->user()->user_role == 1)
-                        <a href="{{ route('zoom.join', $followup->id) }}" target="_blank" class="btn btn-sm btn-success">
+                        <a href="{{ route('zoom.join', $followup->id) }}" target="_blank" class="btn btn-sm btn-success d-inline-flex align-items-center gap-1 px-3">
                             <i class="bi bi-camera-video"></i> Start Zoom
                         </a>
                     @else
-                        <a href="{{ route('zoom.join', $followup->id) }}" target="_blank" class="btn btn-sm btn-primary">
+                        <a href="{{ route('zoom.join', $followup->id) }}" target="_blank" class="btn btn-sm btn-primary d-inline-flex align-items-center gap-1 px-3">
                             <i class="bi bi-camera-video"></i> Join Zoom
                         </a>
                     @endif
-                    <button type="button" class="btn btn-sm btn-info text-white" title="Copy Patient Link" onclick="copyPatientZoomLink('{{ route('zoom.join', $followup->id) }}')">
+                    <button type="button" class="btn btn-sm btn-info text-white d-inline-flex align-items-center gap-1 px-3" title="Copy Patient Link" onclick="copyPatientZoomLink('{{ route('zoom.join', $followup->id) }}')">
                         <i class="bi bi-clipboard"></i> Copy
                     </button>
                 </div>
@@ -488,21 +512,23 @@
                     <div class="visit-card-header d-flex justify-content-between align-items-center">
                         <div>
                             <strong>Visit #{{ $index + 1 }}</strong><br>
-                            <small>{{ \Carbon\Carbon::parse($followup->followups_time)->format('h:i A') }}</small>
+                            <small class="opacity-75">{{ \Carbon\Carbon::parse($followup->followups_time)->format('h:i A') }}</small>
                         </div>
                         @if($followup->zoom_join_url)
-                            @if(auth()->user()->user_role == 6 || auth()->user()->user_role == 1)
-                                <a href="{{ route('zoom.join', $followup->id) }}" target="_blank" title="Start Zoom" style="color: #2ebd59; font-size: 1.2rem;">
-                                    <i class="bi bi-camera-video-fill"></i>
+                            <div class="d-flex gap-2">
+                                @if(auth()->user()->user_role == 6 || auth()->user()->user_role == 1)
+                                    <a href="{{ route('zoom.join', $followup->id) }}" target="_blank" title="Start Zoom" class="text-white hover-opacity" style="font-size: 1.2rem;">
+                                        <i class="bi bi-camera-video-fill"></i>
+                                    </a>
+                                @else
+                                    <a href="{{ route('zoom.join', $followup->id) }}" target="_blank" title="Join Zoom" class="text-white hover-opacity" style="font-size: 1.2rem;">
+                                        <i class="bi bi-camera-video-fill"></i>
+                                    </a>
+                                @endif
+                                <a href="javascript:void(0)" title="Copy Patient Link" class="text-white hover-opacity" style="font-size: 1.2rem;" onclick="copyPatientZoomLink('{{ route('zoom.join', $followup->id) }}')">
+                                    <i class="bi bi-clipboard"></i>
                                 </a>
-                            @else
-                                <a href="{{ route('zoom.join', $followup->id) }}" target="_blank" title="Join Zoom" style="color: #2d8cff; font-size: 1.2rem;">
-                                    <i class="bi bi-camera-video-fill"></i>
-                                </a>
-                            @endif
-                            <a href="javascript:void(0)" title="Copy Patient Link" style="color: #17a2b8; font-size: 1.2rem; margin-left: 5px;" onclick="copyPatientZoomLink('{{ route('zoom.join', $followup->id) }}')">
-                                <i class="bi bi-clipboard"></i>
-                            </a>
+                            </div>
                         @endif
                     </div>
                     
