@@ -314,6 +314,28 @@
                         <div class="form"></div> {{-- Empty space for balance --}}
                         <div class="form"></div> {{-- Empty space for balance --}}
                     </div>
+
+                    <div class="section-divider">Health Metrics</div>
+                    <div class="pro_filed">
+                        <div class="form">
+                            <label>Diet</label>
+                            <input type="text" name="diet" id="diet" placeholder="Enter Diet">
+                        </div>
+                        <div class="form">
+                            <label>Exercise</label>
+                            <input type="text" name="exercise" id="exercise" placeholder="Enter Exercise">
+                        </div>
+                    </div>
+                    <div class="pro_filed">
+                        <div class="form">
+                            <label>Sleep</label>
+                            <input type="text" name="sleep" id="sleep" placeholder="Enter Sleep (e.g. 7-8 hrs)">
+                        </div>
+                        <div class="form">
+                            <label>Water</label>
+                            <input type="text" name="water" id="water" placeholder="Enter Water Intake">
+                        </div>
+                    </div>
                     </div>
 
                     <div class="mt-5 text-center">
@@ -454,7 +476,11 @@ document.addEventListener('DOMContentLoaded', function() {
             branch_name: branchNameHidden.value,
             assessment_date: document.getElementById('assessmentDate').value,
             status: status,
-            measurements: {}
+            measurements: {},
+            diet: document.getElementById('diet').value,
+            exercise: document.getElementById('exercise').value,
+            sleep: document.getElementById('sleep').value,
+            water: document.getElementById('water').value
         };
 
         const numerics = [

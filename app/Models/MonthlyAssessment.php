@@ -46,6 +46,10 @@ class MonthlyAssessment extends Model
         // Additional
         'notes',
         'assessed_by',
+        'diet',
+        'exercise',
+        'sleep',
+        'water',
 
         // Delete status fields
         'delete_status',

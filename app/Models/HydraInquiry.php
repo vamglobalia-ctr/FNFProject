@@ -33,7 +33,11 @@ class HydraInquiry extends Model
         'cash_payment',
         'google_pay',
         'payment_mode',
-        'status_name'
+        'status_name',
+        'diet',
+        'exercise',
+        'sleep',
+        'water',
     ];
 
     protected $casts = [

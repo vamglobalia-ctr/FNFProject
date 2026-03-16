@@ -508,18 +508,13 @@
                                             if(!is_array($currentAreas)) $currentAreas = [$currentAreas];
                                         @endphp
                                         <select name="area[{{ $i }}][]" multiple required class="form-control select2-area">
-                                            <option value="face" {{ in_array('face', $currentAreas) ? 'selected' : '' }}>Face</option>
-                                            <option value="underarms" {{ in_array('underarms', $currentAreas) ? 'selected' : '' }}>Underarms</option>
-                                            <option value="full_arms" {{ in_array('full_arms', $currentAreas) ? 'selected' : '' }}>Full Arms</option>
-                                            <option value="half_arms" {{ in_array('half_arms', $currentAreas) ? 'selected' : '' }}>Half Arms</option>
-                                            <option value="full_legs" {{ in_array('full_legs', $currentAreas) ? 'selected' : '' }}>Full Legs</option>
-                                            <option value="half_legs" {{ in_array('half_legs', $currentAreas) ? 'selected' : '' }}>Half Legs</option>
-                                            <option value="bikini" {{ in_array('bikini', $currentAreas) ? 'selected' : '' }}>Bikini</option>
-                                            <option value="brazilian" {{ in_array('brazilian', $currentAreas) ? 'selected' : '' }}>Brazilian</option>
-                                            <option value="chest" {{ in_array('chest', $currentAreas) ? 'selected' : '' }}>Chest</option>
-                                            <option value="back" {{ in_array('back', $currentAreas) ? 'selected' : '' }}>Back</option>
-                                            <option value="stomach" {{ in_array('stomach', $currentAreas) ? 'selected' : '' }}>Stomach</option>
-                                            <option value="full_body" {{ in_array('full_body', $currentAreas) ? 'selected' : '' }}>Full Body</option>
+                                            @foreach($programs as $program)
+                                                <option value="{{ $program->program_name }}" 
+                                                        data-short-name="{{ $program->program_short_name }}"
+                                                        {{ in_array($program->program_name, $currentAreas) ? 'selected' : '' }}>
+                                                    {{ $program->program_name }}
+                                                </option>
+                                            @endforeach
                                         </select>
                                     </div>
                                     <div class="form">
@@ -530,7 +525,7 @@
                                     <div class="form">
                                         <label>Area Code</label>
                                         <input type="text" name="area_code[]" placeholder="Enter area code"
-                                            value="{{ $codes[$i] ?? '' }}">
+                                            value="{{ $codes[$i] ?? '' }}" class="area-code-input">
                                     </div>
                                 </div>
 
@@ -873,6 +868,23 @@
             }
 
             initSelect2();
+
+            // Auto-fill Area Code based on Program selection
+            $(document).on('change', '.select2-area', function() {
+                const selectedOptions = $(this).find('option:selected');
+                const row = $(this).closest('.treatment-row');
+                const areaCodeInput = row.find('.area-code-input');
+                
+                let shortNames = [];
+                selectedOptions.each(function() {
+                    const shortName = $(this).data('short-name');
+                    if (shortName) {
+                        shortNames.push(shortName);
+                    }
+                });
+                
+                areaCodeInput.val(shortNames.join(', '));
+            });
 
             $('#add_treatment_row').on('click', function() {
                 const container = $('#treatment_rows_container');
