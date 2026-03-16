@@ -21,7 +21,22 @@ class JoinedInquiryController extends Controller
                   ->orWhere('patient_f_name', 'like', '%' . $search . '%')
                   ->orWhere('phone_no', 'like', '%' . $search . '%')
                   ->orWhere('address', 'like', '%' . $search . '%')
-                  ->orWhere('diagnosis', 'like', '%' . $search . '%');
+                  ->orWhere('diagnosis', 'like', '%' . $search . '%')
+                  ->orWhereIn('patient_id', function($subquery) use ($search) {
+                      $subquery->select('patient_id')
+                               ->from('opts')
+                               ->join('opt_meta', 'opts.id', '=', 'opt_meta.opt_id')
+                               ->where(function($qq) use ($search) {
+                                   $qq->where(function($qqq) use ($search) {
+                                       $qqq->where('meta_key', 'selected_program')
+                                           ->where('meta_value', 'like', '%' . $search . '%');
+                                   })
+                                   ->orWhere(function($qqq) use ($search) {
+                                       $qqq->where('meta_key', 'programs_array')
+                                           ->where('meta_value', 'like', '%' . $search . '%');
+                                   });
+                               });
+                  });
             });
         }
     
@@ -42,7 +57,22 @@ class JoinedInquiryController extends Controller
                   ->orWhere('patient_f_name', 'like', '%' . $search . '%')
                   ->orWhere('phone_no', 'like', '%' . $search . '%')
                   ->orWhere('address', 'like', '%' . $search . '%')
-                  ->orWhere('diagnosis', 'like', '%' . $search . '%');
+                  ->orWhere('diagnosis', 'like', '%' . $search . '%')
+                  ->orWhereIn('patient_id', function($subquery) use ($search) {
+                      $subquery->select('patient_id')
+                               ->from('opts')
+                               ->join('opt_meta', 'opts.id', '=', 'opt_meta.opt_id')
+                               ->where(function($qq) use ($search) {
+                                   $qq->where(function($qqq) use ($search) {
+                                       $qqq->where('meta_key', 'selected_program')
+                                           ->where('meta_value', 'like', '%' . $search . '%');
+                                   })
+                                   ->orWhere(function($qqq) use ($search) {
+                                       $qqq->where('meta_key', 'programs_array')
+                                           ->where('meta_value', 'like', '%' . $search . '%');
+                                   });
+                               });
+                  });
             });
         }
 

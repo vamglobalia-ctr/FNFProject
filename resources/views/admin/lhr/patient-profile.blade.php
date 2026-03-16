@@ -783,6 +783,24 @@
                                                 <h5 class="profile_txt_color mb-3">Treatment Information</h5>
                                             </div>
 
+                                            @php
+                                                $areas_raw = $inquiry->area;
+                                                $sessions_raw = $inquiry->session;
+                                                $codes_raw = $inquiry->area_code;
+                                                $energies_raw = $inquiry->energy;
+                                                $freqs_raw = $inquiry->frequency;
+                                                $shots_raw = $inquiry->shot;
+
+                                                $areas = is_string($areas_raw) && str_starts_with($areas_raw, '[') ? json_decode($areas_raw, true) : ($areas_raw ? [$areas_raw] : []);
+                                                $sessions = is_string($sessions_raw) && str_starts_with($sessions_raw, '[') ? json_decode($sessions_raw, true) : ($sessions_raw ? [$sessions_raw] : []);
+                                                $codes = is_string($codes_raw) && str_starts_with($codes_raw, '[') ? json_decode($codes_raw, true) : ($codes_raw ? [$codes_raw] : []);
+                                                $energies = is_string($energies_raw) && str_starts_with($energies_raw, '[') ? json_decode($energies_raw, true) : ($energies_raw ? [$energies_raw] : []);
+                                                $freqs = is_string($freqs_raw) && str_starts_with($freqs_raw, '[') ? json_decode($freqs_raw, true) : ($freqs_raw ? [$freqs_raw] : []);
+                                                $shots = is_string($shots_raw) && str_starts_with($shots_raw, '[') ? json_decode($shots_raw, true) : ($shots_raw ? [$shots_raw] : []);
+
+                                                $rowCount = max(1, count($areas), count($sessions));
+                                            @endphp
+
                                             <div class="col-md-3 py-3">
                                                 <div class="label-text">Year</div>
                                                 <div class="input-field">
@@ -790,56 +808,39 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-3 py-3">
-                                                <div class="label-text">Area</div>
-                                                <div class="input-field">
-                                                    @php
-                                                        $areas = [];
-                                                        if (!empty($inquiry->area)) {
-                                                            $decoded = json_decode($inquiry->area, true);
-                                                            if (is_array($decoded)) {
-                                                                $areas = array_map(function($a) { return ucwords(str_replace('_', ' ', $a)); }, $decoded);
-                                                            } else {
-                                                                $areas = [ucwords(str_replace('_', ' ', $inquiry->area))];
-                                                            }
-                                                        }
-                                                    @endphp
-                                                    {{ count($areas) > 0 ? implode(', ', $areas) : '--' }}
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-3 py-3">
-                                                <div class="label-text">Session</div>
-                                                <div class="input-field">
-                                                    {{ $inquiry->session ?? '--' }}
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-3 py-3">
-                                                <div class="label-text">Area Code</div>
-                                                <div class="input-field">
-                                                    {{ $inquiry->area_code ?? '--' }}
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-3 py-3">
-                                                <div class="label-text">Energy</div>
-                                                <div class="input-field">
-                                                    {{ $inquiry->energy ?? '--' }}
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-3 py-3">
-                                                <div class="label-text">Frequency</div>
-                                                <div class="input-field">
-                                                    {{ $inquiry->frequency ?? '--' }}
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-3 py-3">
-                                                <div class="label-text">Shot</div>
-                                                <div class="input-field">
-                                                    {{ $inquiry->shot ?? '--' }}
+                                            <div class="col-md-12">
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered table-sm mt-2">
+                                                        <thead class="bg-light">
+                                                            <tr>
+                                                                <th>Program</th>
+                                                                <th>Session</th>
+                                                                <th>Area Code</th>
+                                                                <th>Energy</th>
+                                                                <th>Frequency</th>
+                                                                <th>Shot</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @for($i = 0; $i < $rowCount; $i++)
+                                                            <tr>
+                                                                <td>
+                                                                    @php
+                                                                        $currentAreas = $areas[$i] ?? [];
+                                                                        if(!is_array($currentAreas)) $currentAreas = [$currentAreas];
+                                                                        $formattedAreas = array_map(function($a) { return ucwords(str_replace('_', ' ', $a)); }, $currentAreas);
+                                                                    @endphp
+                                                                    {{ count($formattedAreas) > 0 ? implode(', ', $formattedAreas) : '--' }}
+                                                                </td>
+                                                                <td>{{ $sessions[$i] ?? '--' }}</td>
+                                                                <td>{{ $codes[$i] ?? '--' }}</td>
+                                                                <td>{{ $energies[$i] ?? '--' }}</td>
+                                                                <td>{{ $freqs[$i] ?? '--' }}</td>
+                                                                <td>{{ $shots[$i] ?? '--' }}</td>
+                                                            </tr>
+                                                            @endfor
+                                                        </tbody>
+                                                    </table>
                                                 </div>
                                             </div>
 

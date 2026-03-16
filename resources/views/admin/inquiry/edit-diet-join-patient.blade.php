@@ -324,7 +324,7 @@
 
                                         <div class="col-md-4 mb-3">
                                             <label class="form-label">Session</label>
-                                            <input type="text" class="form-control session-input" name="session[]"
+                                            <input type="number" class="form-control session-input" name="session[]"
                                                 placeholder="Enter session details" value="{{ $latestMeta['session'] ?? '' }}">
                                         </div>
 
@@ -365,7 +365,7 @@
                                                     </div>
                                                     <div class="col-md-4 mb-3">
                                                         <label class="form-label">Session</label>
-                                                        <input type="text" class="form-control session-input" name="session[]" value="{{ $program['session'] ?? '' }}">
+                                                        <input type="number" class="form-control session-input" name="session[]" value="{{ $program['session'] ?? '' }}">
                                                     </div>
                                                     <div class="col-md-4 mb-3">
                                                         <div class="d-flex align-items-end">
@@ -1093,7 +1093,7 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Session</label>
-                        <input type="text" class="form-control session-input" name="session[]" placeholder="Enter session details">
+                        <input type="number" class="form-control session-input" name="session[]" placeholder="Enter session details">
                     </div>
                     <div class="col-md-4 mb-3">
                         <div class="d-flex align-items-end">

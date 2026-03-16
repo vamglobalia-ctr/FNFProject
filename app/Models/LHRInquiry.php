@@ -137,7 +137,22 @@ class LHRInquiry extends Model
                 ->orWhere('area', 'like', "%{$search}%")
                 ->orWhere('branch', 'like', "%{$search}%")
                 ->orWhere('branch_id', 'like', "%{$search}%")
-                ->orWhere('status_name', 'like', "%{$search}%");
+                ->orWhere('status_name', 'like', "%{$search}%")
+                ->orWhereIn('patient_id', function($subquery) use ($search) {
+                    $subquery->select('opts.patient_id')
+                             ->from('opts')
+                             ->join('opt_meta', 'opts.id', '=', 'opt_meta.opt_id')
+                             ->where(function($qq) use ($search) {
+                                 $qq->where(function($qqq) use ($search) {
+                                     $qqq->where('meta_key', 'selected_program')
+                                         ->where('meta_value', 'like', '%' . $search . '%');
+                                 })
+                                 ->orWhere(function($qqq) use ($search) {
+                                     $qqq->where('meta_key', 'programs_array')
+                                         ->where('meta_value', 'like', '%' . $search . '%');
+                                 });
+                             });
+                });
         });
     }
 
