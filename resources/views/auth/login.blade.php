@@ -201,6 +201,31 @@
             box-shadow: 0 4px 12px var(--accent-glow);
         }
 
+        /* Password Toggle */
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 18px;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .password-toggle:hover {
+            color: var(--accent-solid);
+        }
+
+        .form-input {
+            padding-right: 48px; /* Space for the eye icon */
+        }
+
         .register-link {
             text-align: center;
             margin-top: 25px;
@@ -388,7 +413,10 @@
 
                         <div class="form-group">
                             <label class="form-label">Password</label>
-                            <input type="password" name="password" class="form-input" placeholder="Enter your password" required>
+                            <div class="password-wrapper">
+                                <input type="password" name="password" id="password" class="form-input" placeholder="Enter your password" required>
+                                <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+                            </div>
                         </div>
 
                         <div class="checkbox-group">
@@ -459,6 +487,20 @@
 
             // Init
             applyTheme(localStorage.getItem('theme') || 'system');
+
+            // Password Show/Hide logic
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+
+            if (togglePassword && passwordInput) {
+                togglePassword.addEventListener('click', function() {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    
+                    this.classList.toggle('fa-eye');
+                    this.classList.toggle('fa-eye-slash');
+                });
+            }
         });
     </script>
 </body>

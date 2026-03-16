@@ -316,9 +316,9 @@
                 <input type="date" class="form-control" id="next_follow_up_date" name="next_follow_up_date">
             </div>
         </div>
-                 <div class="col-12">
-                        <div class="section-divider">Health Metrics</div>
-                    </div>
+                <div class="col-12">
+                    <div class="section-divider">Health Metrics</div>
+                </div>
 
                 <div class="row g-3 mb-3">
                     <div class="col-md-3">
