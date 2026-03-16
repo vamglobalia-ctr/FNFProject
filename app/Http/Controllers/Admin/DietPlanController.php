@@ -162,11 +162,7 @@ class DietPlanController extends Controller
             'patient_id',
             'branch_id',
             'age',
-            'patient_name',
-            'diet',
-            'exercise',
-            'sleep',
-            'water'
+            'patient_name'
         ])
             ->map(function ($p) {
             $patientName = trim((string)($p->patient_name ?? ''));
@@ -175,11 +171,7 @@ class DietPlanController extends Controller
             'patient_id' => $p->patient_id,
             'branch_id' => $p->branch_id,
             'age' => $p->age,
-            'patient_name' => $patientName !== '' ? $patientName : ($p->patient_id ?? 'Unknown'),
-            'diet' => $p->diet,
-            'exercise' => $p->exercise,
-            'sleep' => $p->sleep,
-            'water' => $p->water
+            'patient_name' => $patientName !== '' ? $patientName : ($p->patient_id ?? 'Unknown')
             ];
         });
 
@@ -192,11 +184,7 @@ class DietPlanController extends Controller
             'patient_id',
             'branch_id',
             'age',
-            'patient_name',
-            'diet',
-            'exercise',
-            'sleep',
-            'water'
+            'patient_name'
         ])
             ->map(function ($p) {
             $patientName = trim((string)($p->patient_name ?? ''));
@@ -205,11 +193,7 @@ class DietPlanController extends Controller
             'patient_id' => $p->patient_id,
             'branch_id' => $p->branch_id,
             'age' => $p->age,
-            'patient_name' => $patientName !== '' ? $patientName : ($p->patient_id ?? 'Unknown'),
-            'diet' => $p->diet,
-            'exercise' => $p->exercise,
-            'sleep' => $p->sleep,
-            'water' => $p->water
+            'patient_name' => $patientName !== '' ? $patientName : ($p->patient_id ?? 'Unknown')
             ];
         });
 
@@ -250,109 +234,107 @@ class DietPlanController extends Controller
     }
 
 public function store(Request $request)
-{
-    // dd($request->all());
-    try {   
-        // Validate the request
-        $validated = $request->validate([
-            'branch_id' => 'required|string|max:255',
-            'patient_id' => 'required',
-            'date' => 'required|date',
-            'diet_name' => 'required|string|max:255',
-            'general_notes' => 'nullable|string',
-            'next_follow_up_date' => 'nullable|date',
-        ]);
+    {
+        // dd($request->all());
+        try {   
+            // Validate the request
+            $validated = $request->validate([
+                'branch_id' => 'required|string|max:255',
+                'patient_id' => 'required',
+                'date' => 'required|date',
+                'diet_name' => 'required|string|max:255',
+                'general_notes' => 'nullable|string',
+                'next_follow_up_date' => 'nullable|date',
+            ]);
  
-        Log::info('Storing diet plan with data:', $request->all());
+            Log::info('Storing diet plan with data:', $request->all());
         
-    
-        $patientName = null;
-      $pId = $validated['patient_id'];
+            $patientName = null;
+            $pId = $validated['patient_id'];
       
-      // Attempt to find patient name across multiple tables
-      $patient = DB::table('patient_inquiry')->where('patient_id', $pId)->first()
-                ?? DB::table('patient_inquiry')->where('id', $pId)->first()
-                ?? DB::table('acc_inquirys')->where('patient_id', $pId)->first()
-                ?? DB::table('acc_inquirys')->where('id', $pId)->first()
-                ?? DB::table('lhr_inquiries')->where('patient_id', $pId)->first()
-                ?? DB::table('hydra_inquiries')->where('patient_id', $pId)->first();
+            // Attempt to find patient name across multiple tables
+            $patient = DB::table('patient_inquiry')->where('patient_id', $pId)->first()
+                    ?? DB::table('patient_inquiry')->where('id', $pId)->first()
+                    ?? DB::table('acc_inquirys')->where('patient_id', $pId)->first()
+                    ?? DB::table('acc_inquirys')->where('id', $pId)->first()
+                    ?? DB::table('lhr_inquiries')->where('patient_id', $pId)->first()
+                    ?? DB::table('hydra_inquiries')->where('patient_id', $pId)->first();
       
-      if ($patient) {
-          $patientName = $patient->patient_name ?? ($patient->patient_f_name ?? null);
-      }
+            if ($patient) {
+                $patientName = $patient->patient_name ?? ($patient->patient_f_name ?? null);
+            }
  
- 
-        $timeSearchMenusArray = [];
-        if ($request->has('time_search_menus')) {
-            foreach ($request->time_search_menus as $index => $menu) {
-                // Check if there's any data in this row
-                $hasTime = !empty($menu['time']);
-                $hasSearchMenu = !empty($menu['selected_recipes']) || !empty($menu['search_menu']);
-                $hasNotes = !empty($menu['notes']);
-                $hasQuantity = !empty($menu['quantity']);
+            $timeSearchMenusArray = [];
+            if ($request->has('time_search_menus')) {
+                foreach ($request->time_search_menus as $index => $menu) {
+                    // Check if there's any data in this row
+                    $hasTime = !empty($menu['time']);
+                    $hasSearchMenu = !empty($menu['selected_recipes']) || !empty($menu['search_menu']);
+                    $hasNotes = !empty($menu['notes']);
+                    $hasQuantity = !empty($menu['quantity']);
                 
-                if ($hasTime || $hasSearchMenu || $hasNotes || $hasQuantity) {
-                    // Use selected_recipes if available, otherwise use search_menu
-                    $selectedRecipesRaw = !empty($menu['selected_recipes']) ? $menu['selected_recipes'] : ($menu['search_menu'] ?? '');
+                    if ($hasTime || $hasSearchMenu || $hasNotes || $hasQuantity) {
+                        // Use selected_recipes if available, otherwise use search_menu
+                        $selectedRecipesRaw = !empty($menu['selected_recipes']) ? $menu['selected_recipes'] : ($menu['search_menu'] ?? '');
                     
-                    // Attempt to decode JSON if it's structured data
-                    $decodedRecipes = json_decode($selectedRecipesRaw, true);
-                    if (json_last_error() === JSON_ERROR_NONE && is_array($decodedRecipes)) {
-                        // Structured JSON format from new UI
-                        $recipeNames = array_column($decodedRecipes, 'name');
-                        $searchMenuValue = implode(', ', $recipeNames);
-                        $recipesList = $decodedRecipes;
-                    } else {
-                        // Old comma-separated format or raw string
-                        $searchMenuValue = $selectedRecipesRaw;
-                        $recipesList = null;
+                        // Attempt to decode JSON if it's structured data
+                        $decodedRecipes = json_decode($selectedRecipesRaw, true);
+                        if (json_last_error() === JSON_ERROR_NONE && is_array($decodedRecipes)) {
+                            // Structured JSON format from new UI
+                            $recipeNames = array_column($decodedRecipes, 'name');
+                            $searchMenuValue = implode(', ', $recipeNames);
+                            $recipesList = $decodedRecipes;
+                        } else {
+                            // Old comma-separated format or raw string
+                            $searchMenuValue = $selectedRecipesRaw;
+                            $recipesList = null;
+                        }
+                    
+                        $timeSearchMenusArray[] = [
+                            'time' => $menu['time'] ?? '',
+                            'search_menu' => $searchMenuValue,
+                            'recipes' => $recipesList,
+                            'quantity' => isset($menu['quantity']) && is_numeric($menu['quantity']) ? $menu['quantity'] + 0 : ($menu['quantity'] ?? ''),
+                            'notes' => $menu['notes'] ?? ''
+                        ];
                     }
-                    
-                    $timeSearchMenusArray[] = [
-                        'time' => $menu['time'] ?? '',
-                        'search_menu' => $searchMenuValue,
-                        'recipes' => $recipesList,
-                        'quantity' => isset($menu['quantity']) && is_numeric($menu['quantity']) ? $menu['quantity'] + 0 : ($menu['quantity'] ?? ''),
-                        'notes' => $menu['notes'] ?? ''
-                    ];
                 }
             }
-        }
  
-        Log::info('Processed time_search_menus array:', $timeSearchMenusArray);
+            Log::info('Processed time_search_menus array:', $timeSearchMenusArray);
  
-        // Create diet plan
-        $dietPlan = DietPlan::create([
-            'branch_id' => $validated['branch_id'],
-            'patient_id' => $validated['patient_id'],
-            'patient_name' => $patientName,
-            'date' => $validated['date'],
-            'diet_name' => $validated['diet_name'],
-            'time_search_menus' => !empty($timeSearchMenusArray) ? json_encode($timeSearchMenusArray) : null,
-            'general_notes' => $validated['general_notes'] ?? null,
-            'next_follow_up_date' => $validated['next_follow_up_date'] ?? null,
-            'created_by' => Auth::id(),
-        ]);
+            // Create diet plan
+            $dietPlan = DietPlan::create([
+                'branch_id' => $validated['branch_id'],
+                'patient_id' => $validated['patient_id'],
+                'patient_name' => $patientName,
+                'date' => $validated['date'],
+                'diet_name' => $validated['diet_name'],
+                'time_search_menus' => !empty($timeSearchMenusArray) ? json_encode($timeSearchMenusArray) : null,
+                'general_notes' => $validated['general_notes'] ?? null,
+                'next_follow_up_date' => $validated['next_follow_up_date'] ?? null,
+                'created_by' => Auth::id(),
+            ]);
  
-        Log::info('Diet plan created successfully for branch: ' . $validated['branch_id']);
-        Log::info('Diet Plan ID: ' . $dietPlan->id);
+            Log::info('Diet plan created successfully for branch: ' . $validated['branch_id']);
+            Log::info('Diet Plan ID: ' . $dietPlan->id);
  
-        return response()->json([
-            'success' => true,
-            'message' => 'Diet plan created successfully!',
-            'redirect' => route('diet.plan')
-        ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Diet plan created successfully!',
+                'redirect' => route('diet.plan')
+            ]);
  
-    } catch (\Exception $e) {
-        Log::error('Error storing diet plan: ' . $e->getMessage());
-        Log::error('Error trace: ' . $e->getTraceAsString());
+        } catch (\Exception $e) {
+            Log::error('Error storing diet plan: ' . $e->getMessage());
+            Log::error('Error trace: ' . $e->getTraceAsString());
         
-        return response()->json([
-            'success' => false,
-            'message' => 'Error creating diet plan: ' . $e->getMessage()
-        ], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'Error creating diet plan: ' . $e->getMessage()
+            ], 500);
+        }
     }
-}
     /**
      * Test function to check branch-patient mapping
      */
