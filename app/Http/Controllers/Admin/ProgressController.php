@@ -112,16 +112,19 @@ class ProgressController extends Controller
                 'patient_name' => $request->patient_name,
                 'date' => $request->date,
                 'time' => $request->time,
-                'body_part' => $request->body_part ?? null,
+                'body_part' => is_array($request->body_part) ? implode(', ', array_filter($request->body_part)) : ($request->body_part ?? null),
                 'bp_p' => $request->bp_p ?? null,
                 'detox' => $request->detox ?? null,
-                'face_program' => $request->program_name ?? null,
+                'face_program' => is_array($request->program_name) ? implode(', ', array_filter($request->program_name)) : ($request->program_name ?? null),
                 'lypolysis_treatment' => $request->lypolysis_treatment ?? null,
                 'weight' => $request->weight ?? null,
                 'height' => $request->height ?? null,
                 'bmi' => $request->bmi ?? null,
                 'councilor_doctor' => $request->councilor_doctor ?? null,
                 'exercise' => $request->exercise ?? null,
+                'diet' => $request->diet ?? null,
+                'sleep' => $request->sleep ?? null,
+                'water' => $request->water ?? null,
                 'delete_status' => '0',
                 'delete_by' => Auth::id() ?? null,
             ]);
@@ -236,41 +239,41 @@ class ProgressController extends Controller
         // so this dropdown should only return AccInquiry patients to avoid mismatched IDs.
         $patients = AccInquiry::where('branch_id', $branchId)
             ->where(function ($q) {
-                $q->where('delete_status', '0')
-                    ->orWhere('delete_status', '');
-            })
+            $q->where('delete_status', '0')
+                ->orWhere('delete_status', '');
+        })
             ->get([
-                'id',
-                'patient_id',
-                'branch_id',
-                'age',
-                'patient_f_name',
-                'patient_m_name',
-                'patient_l_name',
-            ])
+            'id',
+            'patient_id',
+            'branch_id',
+            'age',
+            'patient_f_name',
+            'patient_m_name',
+            'patient_l_name',
+        ])
             ->map(function ($p) {
-                $patientName = trim(
-                    trim((string)($p->patient_f_name ?? '')) . ' ' .
-                    trim((string)($p->patient_m_name ?? '')) . ' ' .
-                    trim((string)($p->patient_l_name ?? ''))
-                );
+            $patientName = trim(
+                trim((string)($p->patient_f_name ?? '')) . ' ' .
+                trim((string)($p->patient_m_name ?? '')) . ' ' .
+                trim((string)($p->patient_l_name ?? ''))
+            );
 
-                return [
-                    'id' => $p->id,
-                    'patient_id' => $p->patient_id,
-                    'branch_id' => $p->branch_id,
-                    'age' => $p->age,
-                    'patient_name' => $patientName !== '' ? $patientName : ($p->patient_id ?? 'Unknown'),
-                ];
-            });
+            return [
+            'id' => $p->id,
+            'patient_id' => $p->patient_id,
+            'branch_id' => $p->branch_id,
+            'age' => $p->age,
+            'patient_name' => $patientName !== '' ? $patientName : ($p->patient_id ?? 'Unknown'),
+            ];
+        });
 
         return response()->json([
             'success' => true,
             'patients' => $patients
-                ->sortBy(function ($p) {
-                    return is_array($p) ? ($p['patient_name'] ?? '') : ($p->patient_name ?? '');
-                })
-                ->values()
+            ->sortBy(function ($p) {
+            return is_array($p) ? ($p['patient_name'] ?? '') : ($p->patient_name ?? '');
+        })
+            ->values()
         ]);
     }
 
@@ -303,14 +306,14 @@ class ProgressController extends Controller
                     $key = $programMeta->meta_key;
                     if (strpos($key, 'selected_program_') === 0) {
                         $index = substr($key, strlen('selected_program_'));
-                        
+
                         if (is_numeric($index)) {
                             $sessionMeta = \App\Models\OptMeta::where('opt_id', $opt->id)
                                 ->where('meta_key', 'session_' . $index)
                                 ->first();
-                            
+
                             $session = $sessionMeta ? $sessionMeta->meta_value : '';
-                            
+
                             $selectedPrograms[] = [
                                 'program_name' => $programMeta->meta_value,
                                 'session' => $session,
@@ -324,12 +327,12 @@ class ProgressController extends Controller
                     $singleProgram = \App\Models\OptMeta::where('opt_id', $opt->id)
                         ->where('meta_key', 'selected_program')
                         ->first();
-                    
+
                     if ($singleProgram) {
                         $session = \App\Models\OptMeta::where('opt_id', $opt->id)
                             ->where('meta_key', 'session')
                             ->value('meta_value');
-                        
+
                         $selectedPrograms[] = [
                             'program_name' => $singleProgram->meta_value,
                             'session' => $session ?? '',
@@ -347,7 +350,8 @@ class ProgressController extends Controller
                     'selected_programs' => $selectedPrograms,
                 ],
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Error fetching patient data: ' . $e->getMessage(),

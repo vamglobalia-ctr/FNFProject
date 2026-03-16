@@ -97,6 +97,7 @@
                                                         ->value('meta_value');
                                                 }
                                             }
+                                            $opt = \App\Models\Opt::where('patient_id', $inquiry->patient_id)->first();
                                         @endphp
                                         @php
                                             // Initial is used as a fallback if image missing/broken

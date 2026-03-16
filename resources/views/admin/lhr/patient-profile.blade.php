@@ -68,7 +68,12 @@
     }
 
     .dataTables_wrapper table thead th {
+        background: #006637 !important;
         color: #fff !important;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 12px;
+        border: none;
     }
 
     .dataTables_wrapper .dataTables_info {
@@ -452,6 +457,35 @@
             margin-bottom: 10px;
         }
     }
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 10px;
+    }
+
+    .info-card {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 12px 15px;
+        border-left: 4px solid #4cb034;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .info-label {
+        font-size: 11px;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+        font-weight: 600;
+    }
+
+    .info-value {
+        font-size: 15px;
+        font-weight: 500;
+        color: #333;
+    }
 </style>
 
 <div class="main_content">
@@ -601,28 +635,18 @@
                                                 <tr class="odd">
                                                     <td>1</td>
                                                     <td>
-                                                        @if($inquiry->cash_payment > 0)
-                                                        Cash: ₹{{ number_format($inquiry->cash_payment, 2) }}<br>
-                                                        @endif
-                                                        @if($inquiry->google_pay > 0)
-                                                        Google Pay: ₹{{ number_format($inquiry->google_pay, 2) }}<br>
-                                                        @endif
-                                                        @if($inquiry->cheque_payment > 0)
-                                                        Cheque: ₹{{ number_format($inquiry->cheque_payment, 2) }}
-                                                        @endif
-                                                        @if($inquiry->cash_payment == 0 && $inquiry->google_pay == 0 && $inquiry->cheque_payment == 0)
-                                                        <span class="text-muted">No payment method specified</span>
-                                                        @endif
+                                                        <b>Cash:</b> ₹{{ number_format(($inquiry->cash_payment ?? 0) > 0 ? $inquiry->cash_payment : (($inquiry->payment_method ?? '') == 'cash_payment' ? $inquiry->given_payment : 0), 2) }}<br>
+                                                        <b>Google Pay:</b> ₹{{ number_format(($inquiry->google_pay ?? 0) > 0 ? $inquiry->google_pay : (($inquiry->payment_method ?? '') == 'google_pay' ? $inquiry->given_payment : 0), 2) }}<br>
+                                                        <b>Cheque:</b> ₹{{ number_format(($inquiry->cheque_payment ?? 0) > 0 ? $inquiry->cheque_payment : (($inquiry->payment_method ?? '') == 'cheque_payment' ? $inquiry->given_payment : 0), 2) }}
                                                     </td>
-                                                    <td>₹{{ number_format($inquiry->total_payment, 2) }}</td>
-                                                    <td>₹{{ number_format($inquiry->discount_payment, 2) }}</td>
-                                                    <td>₹{{ number_format($inquiry->given_payment, 2) }}</td>
+                                                    <td>₹{{ number_format($inquiry->total_payment ?? 0, 2) }}</td>
+                                                    <td>₹{{ number_format($inquiry->discount_payment ?? 0, 2) }}</td>
+                                                    <td>₹{{ number_format($inquiry->given_payment ?? 0, 2) }}</td>
                                                     <td>
-                                                        <span class="{{ $inquiry->due_payment > 0 ? 'text-danger fw-bold' : 'text-success' }}">
-                                                            ₹{{ number_format($inquiry->due_payment, 2) }}
+                                                        <span class="{{ ($inquiry->due_payment ?? 0) > 0 ? 'text-danger fw-bold' : 'text-success' }}">
+                                                            ₹{{ number_format($inquiry->due_payment ?? 0, 2) }}
                                                         </span>
                                                     </td>
-
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -783,6 +807,24 @@
                                                 <h5 class="profile_txt_color mb-3">Treatment Information</h5>
                                             </div>
 
+                                            @php
+                                                $areas_raw = $inquiry->area;
+                                                $sessions_raw = $inquiry->session;
+                                                $codes_raw = $inquiry->area_code;
+                                                $energies_raw = $inquiry->energy;
+                                                $freqs_raw = $inquiry->frequency;
+                                                $shots_raw = $inquiry->shot;
+
+                                                $areas = is_string($areas_raw) && str_starts_with($areas_raw, '[') ? json_decode($areas_raw, true) : ($areas_raw ? [$areas_raw] : []);
+                                                $sessions = is_string($sessions_raw) && str_starts_with($sessions_raw, '[') ? json_decode($sessions_raw, true) : ($sessions_raw ? [$sessions_raw] : []);
+                                                $codes = is_string($codes_raw) && str_starts_with($codes_raw, '[') ? json_decode($codes_raw, true) : ($codes_raw ? [$codes_raw] : []);
+                                                $energies = is_string($energies_raw) && str_starts_with($energies_raw, '[') ? json_decode($energies_raw, true) : ($energies_raw ? [$energies_raw] : []);
+                                                $freqs = is_string($freqs_raw) && str_starts_with($freqs_raw, '[') ? json_decode($freqs_raw, true) : ($freqs_raw ? [$freqs_raw] : []);
+                                                $shots = is_string($shots_raw) && str_starts_with($shots_raw, '[') ? json_decode($shots_raw, true) : ($shots_raw ? [$shots_raw] : []);
+
+                                                $rowCount = max(1, count($areas), count($sessions));
+                                            @endphp
+
                                             <div class="col-md-3 py-3">
                                                 <div class="label-text">Year</div>
                                                 <div class="input-field">
@@ -790,56 +832,39 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-3 py-3">
-                                                <div class="label-text">Area</div>
-                                                <div class="input-field">
-                                                    @php
-                                                        $areas = [];
-                                                        if (!empty($inquiry->area)) {
-                                                            $decoded = json_decode($inquiry->area, true);
-                                                            if (is_array($decoded)) {
-                                                                $areas = array_map(function($a) { return ucwords(str_replace('_', ' ', $a)); }, $decoded);
-                                                            } else {
-                                                                $areas = [ucwords(str_replace('_', ' ', $inquiry->area))];
-                                                            }
-                                                        }
-                                                    @endphp
-                                                    {{ count($areas) > 0 ? implode(', ', $areas) : '--' }}
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-3 py-3">
-                                                <div class="label-text">Session</div>
-                                                <div class="input-field">
-                                                    {{ $inquiry->session ?? '--' }}
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-3 py-3">
-                                                <div class="label-text">Area Code</div>
-                                                <div class="input-field">
-                                                    {{ $inquiry->area_code ?? '--' }}
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-3 py-3">
-                                                <div class="label-text">Energy</div>
-                                                <div class="input-field">
-                                                    {{ $inquiry->energy ?? '--' }}
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-3 py-3">
-                                                <div class="label-text">Frequency</div>
-                                                <div class="input-field">
-                                                    {{ $inquiry->frequency ?? '--' }}
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-3 py-3">
-                                                <div class="label-text">Shot</div>
-                                                <div class="input-field">
-                                                    {{ $inquiry->shot ?? '--' }}
+                                            <div class="col-md-12">
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered table-sm mt-2">
+                                                        <thead class="bg-light">
+                                                            <tr>
+                                                                <th>Program</th>
+                                                                <th>Session</th>
+                                                                <th>Area Code</th>
+                                                                <th>Energy</th>
+                                                                <th>Frequency</th>
+                                                                <th>Shot</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @for($i = 0; $i < $rowCount; $i++)
+                                                            <tr>
+                                                                <td>
+                                                                    @php
+                                                                        $currentAreas = $areas[$i] ?? [];
+                                                                        if(!is_array($currentAreas)) $currentAreas = [$currentAreas];
+                                                                        $formattedAreas = array_map(function($a) { return ucwords(str_replace('_', ' ', $a)); }, $currentAreas);
+                                                                    @endphp
+                                                                    {{ count($formattedAreas) > 0 ? implode(', ', $formattedAreas) : '--' }}
+                                                                </td>
+                                                                <td>{{ $sessions[$i] ?? '--' }}</td>
+                                                                <td>{{ $codes[$i] ?? '--' }}</td>
+                                                                <td>{{ $energies[$i] ?? '--' }}</td>
+                                                                <td>{{ $freqs[$i] ?? '--' }}</td>
+                                                                <td>{{ $shots[$i] ?? '--' }}</td>
+                                                            </tr>
+                                                            @endfor
+                                                        </tbody>
+                                                    </table>
                                                 </div>
                                             </div>
 
@@ -913,22 +938,32 @@
                                                 <!-- First Row: Original Inquiry as initial follow up -->
                                                 <tr class="odd">
                                                     <td>1</td>
-                                                    <td>{{ $inquiry->area_code ?? '--' }}</td>
-                                                    <td>{{ $inquiry->area ?? '--' }}</td>
-                                                    <td>{{ $inquiry->energy ?? '--' }}</td>
-                                                    <td>{{ $inquiry->frequency ?? '--' }}</td>
-                                                    <td>{{ $inquiry->shot ?? '--' }}</td>
+                                                    <td>
+                                                        @php
+                                                            $area_code = str_replace(['[', ']', '"'], '', $inquiry->area_code ?? '--');
+                                                        @endphp
+                                                        {{ $area_code }}
+                                                    </td>
+                                                    <td>
+                                                        @php
+                                                            $area = str_replace(['[', ']', '"'], '', $inquiry->area ?? '--');
+                                                        @endphp
+                                                        {{ $area }}
+                                                    </td>
+                                                    <td>{{ str_replace(['[', ']', '"'], '', $inquiry->energy ?? '--') }}</td>
+                                                    <td>{{ str_replace(['[', ']', '"'], '', $inquiry->frequency ?? '--') }}</td>
+                                                    <td>{{ str_replace(['[', ']', '"'], '', $inquiry->shot ?? '--') }}</td>
                                                 </tr>
                                                 
                                                 <!-- Additional Follow Up Records -->
                                                 @forelse($followUps as $index => $followUp)
                                                 <tr class="odd">
                                                     <td>{{ $index + 2 }}</td>
-                                                    <td>{{ $followUp->afra_code ?? $followUp->area_code ?? '--' }}</td>
-                                                    <td>{{ $followUp->area ?? '--' }}</td>
-                                                    <td>{{ $followUp->energy ?? '--' }}</td>
-                                                    <td>{{ $followUp->frequency ?? '--' }}</td>
-                                                    <td>{{ $followUp->shot ?? '--' }}</td>
+                                                    <td>{{ str_replace(['[', ']', '"'], '', ($followUp->afra_code ?? $followUp->area_code ?? '--')) }}</td>
+                                                    <td>{{ str_replace(['[', ']', '"'], '', ($followUp->area ?? '--')) }}</td>
+                                                    <td>{{ str_replace(['[', ']', '"'], '', ($followUp->energy ?? '--')) }}</td>
+                                                    <td>{{ str_replace(['[', ']', '"'], '', ($followUp->frequency ?? '--')) }}</td>
+                                                    <td>{{ str_replace(['[', ']', '"'], '', ($followUp->shot ?? '--')) }}</td>
                                                 </tr>
                                                 @empty
                                                 @endforelse
@@ -981,11 +1016,21 @@
                                                             --
                                                         @endif
                                                     </td>
-                                                    <td>{{ $inquiry->area ?? '--' }}</td>
-                                                    <td>{{ $inquiry->session ?? '--' }}</td>
-                                                    <td>{{ $inquiry->energy ?? '--' }}</td>
-                                                    <td>{{ $inquiry->frequency ?? '--' }}</td>
-                                                    <td>{{ $inquiry->shot ?? '--' }}</td>
+                                                    <td>
+                                                        @php
+                                                            $area = str_replace(['[', ']', '"'], '', $inquiry->area ?? '--');
+                                                        @endphp
+                                                        {{ $area }}
+                                                    </td>
+                                                    <td>
+                                                        @php
+                                                            $session = str_replace(['[', ']', '"'], '', $inquiry->session ?? '--');
+                                                        @endphp
+                                                        {{ $session }}
+                                                    </td>
+                                                    <td>{{ str_replace(['[', ']', '"'], '', $inquiry->energy ?? '--') }}</td>
+                                                    <td>{{ str_replace(['[', ']', '"'], '', $inquiry->frequency ?? '--') }}</td>
+                                                    <td>{{ str_replace(['[', ']', '"'], '', $inquiry->shot ?? '--') }}</td>
                                                     <td>{{ $inquiry->staff_name ?? '--' }}</td>
                                                 </tr>
                                                 
@@ -994,16 +1039,14 @@
                                                 <tr class="odd">
                                                     <td>{{ $index + 2 }}</td>
                                                     <td>{{ \Carbon\Carbon::parse($program->program_date)->format('d/m/Y') }}</td>
-                                                    <td>{{ $program->area ?? '--' }}</td>
-                                                    <td>{{ $program->session ?? '--' }}</td>
-                                                    <td>{{ $inquiry->energy ?? '--'
- }}</td>
-                                                    <td>{{ $inquiry->frequency ?? '--' }}</td>
-                                                    <td>{{ $inquiry->shot ?? '--' }}</td>
-                                                    <td>{{ $inquiry->staff_name ?? '--' }}</td>
+                                                    <td>{{ str_replace(['[', ']', '"'], '', ($program->area ?? '--')) }}</td>
+                                                    <td>{{ str_replace(['[', ']', '"'], '', ($program->session ?? '--')) }}</td>
+                                                    <td>{{ str_replace(['[', ']', '"'], '', ($program->energy ?? '--')) }}</td>
+                                                    <td>{{ str_replace(['[', ']', '"'], '', ($program->frequency ?? '--')) }}</td>
+                                                    <td>{{ str_replace(['[', ']', '"'], '', ($program->shot ?? '--')) }}</td>
+                                                    <td>{{ $program->staff_name ?? '--' }}</td>
                                                 </tr>
                                                 @empty
-                                                <!-- No additional programs message will not show since we have the first row -->
                                                 @endforelse
                                             </tbody>
                                         </table>
@@ -1012,6 +1055,37 @@
                                         </div>
                                     </div>
                                     </div>{{-- end table-responsive --}}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Health Metrics Section -->
+                        <div class="patient_data_box mb-4">
+                            <div class="row">
+                                <div class="col-lg-12 p-0">
+                                    <div class="card-header mb-2">
+                                        <div class="heading-action responsive-block d-flex justify-content-between align-items-center">
+                                            <h3 class="bold font-up fnf-title">Health Metrics</h3>
+                                        </div>
+                                    </div>
+                                    <div class="info-grid px-3">
+                                        <div class="info-card">
+                                            <div class="info-label">Diet</div>
+                                            <div class="info-value">{{ $inquiry->diet ?? '--' }}</div>
+                                        </div>
+                                        <div class="info-card">
+                                            <div class="info-label">Exercise</div>
+                                            <div class="info-value">{{ $inquiry->exercise ?? '--' }}</div>
+                                        </div>
+                                        <div class="info-card">
+                                            <div class="info-label">Sleep</div>
+                                            <div class="info-value">{{ $inquiry->sleep ?? '--' }}</div>
+                                        </div>
+                                        <div class="info-card">
+                                            <div class="info-label">Water</div>
+                                            <div class="info-value">{{ $inquiry->water ?? '--' }}</div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

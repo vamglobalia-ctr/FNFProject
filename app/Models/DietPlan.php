@@ -18,7 +18,11 @@ class DietPlan extends Model
         'time_search_menus',
         'general_notes',
         'next_follow_up_date',
-        'created_by'
+        'created_by',
+        'diet',
+        'exercise',
+        'sleep',
+        'water'
     ];
 
     protected $casts = [

@@ -306,7 +306,7 @@
                 </div>
         </div>
 
-        <div class="row g-3 mb-3">
+        <div class="row g-3 mb-3 pt-3">
             <!-- General Notes -->
             <div class="col-md-6">
                 <label class="form-label">Notes</label>
@@ -320,6 +320,28 @@
                 <input type="date" class="form-control" id="next_follow_up_date" name="next_follow_up_date">
             </div>
         </div>
+                 <div class="col-12">
+                        <div class="section-divider">Health Metrics</div>
+                    </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Diet</label>
+                        <input type="text" class="form-control" id="diet" name="diet" placeholder="Diet">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Exercise</label>
+                        <input type="text" class="form-control" id="exercise" name="exercise" placeholder="Exercise">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Sleep</label>
+                        <input type="text" class="form-control" id="sleep" name="sleep" placeholder="Sleep">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Water</label>
+                        <input type="text" class="form-control" id="water" name="water" placeholder="Water">
+                    </div>
+                </div>
 
         <div class="border-bottom mb-3"></div>
         <div class="text-end">
@@ -638,6 +660,10 @@
                                             .text(displayText)
                                             .attr('title', rawName !== '' ? rawName : (rawId !== '' ? rawId : 'Patient'))
                                             .data('patient-name', rawName !== '' ? rawName : displayText)
+                                            .data('diet', patient.diet || '')
+                                            .data('exercise', patient.exercise || '')
+                                            .data('sleep', patient.sleep || '')
+                                            .data('water', patient.water || '')
                                     );
                                 });
 
@@ -674,6 +700,20 @@
                 loadingDiv.hide();
                 infoDiv.hide();
             }
+        });
+
+        // Patient selection change event to fill health metrics
+        $('#patient_id').change(function () {
+            const selectedOption = $(this).find('option:selected');
+            const diet = selectedOption.data('diet') || '';
+            const exercise = selectedOption.data('exercise') || '';
+            const sleep = selectedOption.data('sleep') || '';
+            const water = selectedOption.data('water') || '';
+
+            $('#diet').val(diet);
+            $('#exercise').val(exercise);
+            $('#sleep').val(sleep);
+            $('#water').val(water);
         });
 
         // Submit form functionality
@@ -727,6 +767,10 @@
                 diet_name: dietName,
                 general_notes: $('#general_notes').val(),
                 next_follow_up_date: $('#next_follow_up_date').val(),
+                diet: $('#diet').val(),
+                exercise: $('#exercise').val(),
+                sleep: $('#sleep').val(),
+                water: $('#water').val(),
                 time_search_menus: []
             };
 

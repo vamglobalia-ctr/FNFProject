@@ -75,6 +75,24 @@
                 .select2-results__options {
                     max-height: 250px;
                 }
+
+                .section-divider {
+                    display: flex;
+                    align-items: center;
+                    width: 100%;
+                    margin: 20px 0 15px;
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: #197040;
+                }
+
+                .section-divider:after {
+                    content: "";
+                    flex-grow: 1;
+                    height: 1px;
+                    background: #dcdcdc;
+                    margin-left: 15px;
+                }
             </style>
 
             <form action="{{ route('progress_report.store') }}" method="POST" id="progressForm">
@@ -173,12 +191,28 @@
                             placeholder="Councilor/Doctor Note">
                     </div>
 
-                    <div class="form-group col-md-6">
+                    <!-- Health Metrics Section -->
+                    <div class="col-12">
+                        <div class="section-divider">Health Metrics</div>
+                    </div>
+
+                    <div class="form-group col-md-3">
                         <label for="exercise">Exercise</label>
                         <input type="text" class="form-control" name="exercise" id="exercise" placeholder="Exercise">
                     </div>
+                    <div class="form-group col-md-3">
+                        <label for="diet">Diet</label>
+                        <input type="text" class="form-control" name="diet" id="diet" placeholder="Diet">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="sleep">Sleep</label>
+                        <input type="text" class="form-control" name="sleep" id="sleep" placeholder="Sleep">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="water">Water</label>
+                        <input type="text" class="form-control" name="water" id="water" placeholder="Water">
+                    </div>
                 </div>
-
                 <div class="border-bottom mb-3"></div>
                 <div class="text-end">
                     <button type="submit" class="btn btn-success px-4">
@@ -283,11 +317,11 @@
                         if (payload.data.weight !== null && payload.data.weight !== undefined && payload.data.weight !== '') {
                             weightInput.value = payload.data.weight;
                         }
-                        
+
                         // Populate program dropdown with selected programs from diet H/O
                         const programSelect = document.getElementById('program_name');
                         programSelect.innerHTML = '<option value="">Select Program Name</option>';
-                        
+
                         if (payload.data.selected_programs && payload.data.selected_programs.length > 0) {
                             payload.data.selected_programs.forEach(function(program) {
                                 const option = document.createElement('option');
@@ -299,7 +333,7 @@
                                 programSelect.appendChild(option);
                             });
                         }
-                        
+
                         // Reinitialize select2 if it exists
                         if (typeof $ !== 'undefined' && $.fn.select2) {
                             $(programSelect).select2('destroy');
@@ -311,7 +345,7 @@
                                 dropdownCssClass: 'force-dropdown-below'
                             });
                         }
-                        
+
                         calculateBMI();
                     })
                     .catch(() => {

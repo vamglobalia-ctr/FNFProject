@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use App\Models\FollowUp; // Add this line
 use App\Models\LhrFollowup;
-use App\Models\Program;
+use App\Models\ManageProgram;
 use App\Models\User;
 use App\Models\Invoice;
 use App\Models\PatientTransaction;
@@ -98,11 +98,15 @@ class LHRController extends Controller
         $branches = Branch::all();                                 // all branches
         $branchName = optional($accUser->branch)->branch_name;       // logged-in branch name
         $branchId = auth()->user()->user_branch;                   // logged-in branch id
+        $programs = ManageProgram::where('delete_status', 0)
+            ->whereIn('branch', ['LHR', 'ALL'])
+            ->get();
 
         return view('admin.lhr.add-inquiry', compact(
             'branches',
             'branchName',
-            'branchId'
+            'branchId',
+            'programs'
         ))->with('title', 'Add New Inquiry');
     }
 
@@ -120,13 +124,18 @@ class LHRController extends Controller
             'gender' => 'required|in:male,female,other',
             'age' => 'required|integer|min:1|max:120',
             'year' => 'nullable|string',
-            'area' => 'required|array',
-            'area.*' => 'string',
-            'session' => 'nullable|string',
-            'area_code' => 'nullable|string',
-            'energy' => 'nullable|string',
-            'frequency' => 'nullable|string',
-            'shot' => 'nullable|string',
+            'area' => 'required_if:status_name,joined|array',
+            'area.*' => 'nullable|array',
+            'session' => 'required_if:status_name,joined|array',
+            'session.*' => 'nullable|numeric',
+            'area_code' => 'nullable|array',
+            'area_code.*' => 'nullable|string',
+            'energy' => 'nullable|array',
+            'energy.*' => 'nullable|string',
+            'frequency' => 'nullable|array',
+            'frequency.*' => 'nullable|string',
+            'shot' => 'nullable|array',
+            'shot.*' => 'nullable|string',
             'staff_name' => 'nullable|string',
             'status_name' => 'required|in:pending,joined',
 
@@ -172,6 +181,10 @@ class LHRController extends Controller
             // Account + Time
             'account' => 'nullable|string|max:100',
             'time' => 'nullable|date_format:H:i',
+            'diet' => 'nullable|string|max:255',
+            'exercise' => 'nullable|string|max:255',
+            'sleep' => 'nullable|string|max:255',
+            'water' => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -256,11 +269,11 @@ class LHRController extends Controller
                 'age' => $request->age,
                 'year' => $request->year,
                 'area' => json_encode($request->area),
-                'session' => $request->session,
-                'area_code' => $request->area_code,
-                'energy' => $request->energy,
-                'frequency' => $request->frequency,
-                'shot' => $request->shot,
+                'session' => json_encode($request->session),
+                'area_code' => json_encode($request->area_code),
+                'energy' => json_encode($request->energy),
+                'frequency' => json_encode($request->frequency),
+                'shot' => json_encode($request->shot),
                 'staff_name' => $request->staff_name,
                 'status_name' => $status,
 
@@ -305,6 +318,10 @@ class LHRController extends Controller
                 // Account
                 'account' => $request->account,
                 'time' => $request->time ?? '13:00',
+                'diet' => $request->diet,
+                'exercise' => $request->exercise,
+                'sleep' => $request->sleep,
+                'water' => $request->water,
             ]);
 
             DB::commit();
@@ -386,9 +403,14 @@ class LHRController extends Controller
             'after_picture' => $inquiry->after_picture_1,
         ]);
 
+        $programs = ManageProgram::where('delete_status', 0)
+            ->whereIn('branch', ['LHR', 'ALL'])
+            ->get();
+
         return view('admin.lhr.edit-inquiry', [
             'title' => 'Edit Inquiry',
-            'inquiry' => $inquiry
+            'inquiry' => $inquiry,
+            'programs' => $programs
         ]);
     }
 
@@ -413,13 +435,18 @@ class LHRController extends Controller
             'gender' => 'required|in:male,female,other',
             'age' => 'required|integer|min:1|max:120',
             'year' => 'nullable|string',
-            'area' => 'required|array',
-            'area.*' => 'string',
-            'session' => 'nullable|string',
-            'area_code' => 'nullable|string',
-            'energy' => 'nullable|string',
-            'frequency' => 'nullable|string',
-            'shot' => 'nullable|string',
+            'area' => 'required_if:status_name,joined|array',
+            'area.*' => 'nullable|array',
+            'session' => 'required_if:status_name,joined|array',
+            'session.*' => 'nullable|numeric',
+            'area_code' => 'nullable|array',
+            'area_code.*' => 'nullable|string',
+            'energy' => 'nullable|array',
+            'energy.*' => 'nullable|string',
+            'frequency' => 'nullable|array',
+            'frequency.*' => 'nullable|string',
+            'shot' => 'nullable|array',
+            'shot.*' => 'nullable|string',
             'staff_name' => 'nullable|string',
             'status_name' => 'required|in:pending,joined',
 
@@ -465,6 +492,10 @@ class LHRController extends Controller
             // Account and Time
             'account' => 'nullable|string|max:100',
             'time' => 'nullable|date_format:H:i',
+            'diet' => 'nullable|string|max:255',
+            'exercise' => 'nullable|string|max:255',
+            'sleep' => 'nullable|string|max:255',
+            'water' => 'nullable|string|max:255',
         ];
 
         // Validate request
@@ -539,9 +570,11 @@ class LHRController extends Controller
                 $validated['procedure'] = $inquiry->procedure;
             }
 
-            // Handle area array
-            if ($request->has('area') && is_array($request->area)) {
-                $validated['area'] = json_encode($request->area);
+            // Handle treatment arrays
+            foreach(['area', 'session', 'area_code', 'energy', 'frequency', 'shot'] as $field) {
+                if ($request->has($field)) {
+                    $validated[$field] = is_array($request->$field) ? json_encode($request->$field) : $request->$field;
+                }
             }
 
             // Handle FOC
@@ -837,12 +870,15 @@ class LHRController extends Controller
         $branches = Branch::all();   // <-- missing
 
         $branchName = optional($accUser->branch)->branch_name;
+        $programs = ManageProgram::where('delete_status', 0)
+            ->whereIn('branch', ['LHR', 'ALL'])
+            ->get();
 
         $branchId = auth()->user()->user_branch;
         $inquiry = LHRInquiry::findOrFail($id);
         // dd($branchName);
 
-        return view('admin.lhr.followup', compact('inquiry', 'branchId', 'branchName', 'branches'));
+        return view('admin.lhr.followup', compact('inquiry', 'branchId', 'branchName', 'branches', 'programs'));
     }
 
     /**
@@ -870,6 +906,22 @@ class LHRController extends Controller
             // Get Inquiry Data
             $inquiry = LHRInquiry::findOrFail($id);
 
+            // Handle multiple treatment rows
+            $areas = $request->area ?? [];
+            $sessions = $request->session ?? [];
+            $area_codes = $request->area_code ?? [];
+            $energies = $request->energy ?? [];
+            $frequencies = $request->frequency ?? [];
+            $shots = $request->shot ?? [];
+
+            // If we have arrays, json_encode them
+            $area_json = is_array($areas) ? json_encode($areas) : $areas;
+            $session_json = is_array($sessions) ? json_encode($sessions) : $sessions;
+            $area_code_json = is_array($area_codes) ? json_encode($area_codes) : $area_codes;
+            $energy_json = is_array($energies) ? json_encode($energies) : $energies;
+            $frequency_json = is_array($frequencies) ? json_encode($frequencies) : $frequencies;
+            $shot_json = is_array($shots) ? json_encode($shots) : $shots;
+
             // Create LHR Followup record
             $followup = LhrFollowup::create([
                 'patient_id' => 'LHR-' . str_pad($id, 7, '0', STR_PAD_LEFT),
@@ -882,10 +934,12 @@ class LHRController extends Controller
                 'inquiry_time' => $request->inquiry_time,
                 'gender' => $request->gender,
                 'age' => $request->age ?? $inquiry->age,
-                'afra_code' => $request->afra_code ?? '',
-                'energy' => $request->energy ?? '',
-                'frequency' => $request->frequency ?? '',
-                'shot' => $request->shot ?? '',
+                'area' => $area_json,
+                'session' => $session_json,
+                'afra_code' => $area_code_json,
+                'energy' => $energy_json,
+                'frequency' => $frequency_json,
+                'shot' => $shot_json,
                 'staff_name' => auth()->user()->name ?? 'Admin',
                 'month_year' => now()->format('m-Y'),
                 'refranceby' => $request->refranceby ?? '', // Default to empty string instead of null
