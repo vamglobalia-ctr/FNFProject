@@ -55,6 +55,7 @@
                             <th>Patient Name</th>
                             <th>Phone no.</th>
                             <th>Address</th>
+                            <th>Program</th>
                             <th>Diagnosis</th>
                             <th>Diet HVO</th>
                             {{-- <th>Status</th> --}}
@@ -137,6 +138,31 @@
                             <td class="py-2.5 px-3">{{ $inquiry->patient_name ?? 'N/A' }}</td>
                             <td class="py-2.5 px-3">{{ $inquiry->phone_no ?? 'N/A' }}</td>
                             <td class="py-2.5 px-3">{{ Str::limit($inquiry->address ?? 'N/A', 30) }}</td>
+                            <td class="py-2.5 px-3">
+                                @php
+                                    $programs = [];
+                                    if (isset($opt)) {
+                                        $pArray = $opt->getMetaValue('programs_array');
+                                        if ($pArray) {
+                                            $decodedProgs = json_decode($pArray, true) ?: [];
+                                            $programs = collect($decodedProgs)->pluck('program')->filter()->toArray();
+                                        } else {
+                                            $single = $opt->getMetaValue('selected_program');
+                                            if($single) $programs = [$single];
+                                        }
+                                    }
+                                    
+                                    $colorClasses = ['badge-pg-1', 'badge-pg-2', 'badge-pg-3', 'badge-pg-4', 'badge-pg-5', 'badge-pg-6', 'badge-pg-7', 'badge-pg-8'];
+                                @endphp
+                                
+                                @forelse($programs as $prog)
+                                    <span class="status-badge {{ $colorClasses[array_rand($colorClasses)] }}" title="{{ $prog }}">
+                                        {{ Str::limit($prog, 20) }}
+                                    </span>
+                                @empty
+                                    <span class="text-muted">-</span>
+                                @endforelse
+                            </td>
                             <td class="py-2.5 px-3">
                                 @if($inquiry->diagnosis)
                                 <span class="status-badge badge-diagnosis" title="{{ $inquiry->diagnosis }}">
@@ -316,6 +342,32 @@
         color: #086838;
         border: 1px solid #c8e6c9;
     }
+
+    .dark .badge-diagnosis { background-color: rgba(52, 211, 153, 0.15) !important; color: #34d399 !important; }
+
+    /* Program Badge Styles */
+    .status-badge {
+        display: block;
+        width: fit-content;
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 700;
+        border: 1px solid;
+        white-space: nowrap;
+        margin-bottom: 6px;
+        line-height: 1.2;
+    }
+
+    /* Program Badge Colors */
+    .badge-pg-1 { background-color: #e3f2fd; color: #1e88e5; border-color: #bbdefb; }
+    .badge-pg-2 { background-color: #f3e5f5; color: #8e24aa; border-color: #e1bee7; }
+    .badge-pg-3 { background-color: #fff3e0; color: #fb8c00; border-color: #ffe0b2; }
+    .badge-pg-4 { background-color: #fce4ec; color: #d81b60; border-color: #f8bbd0; }
+    .badge-pg-5 { background-color: #e0f2f1; color: #00897b; border-color: #b2dfdb; }
+    .badge-pg-6 { background-color: #e8f5e9; color: #43a047; border-color: #c8e6c9; }
+    .badge-pg-7 { background-color: #e8eaf6; color: #3949ab; border-color: #c5cae9; }
+    .badge-pg-8 { background-color: #fbe9e7; color: #f4511e; border-color: #ffccbc; }
 
     /* Dark Mode Specific Badge Overrides */
     .dark .badge-pending { background-color: rgba(245, 158, 11, 0.15) !important; color: #fbbf24 !important; }

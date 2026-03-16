@@ -101,6 +101,7 @@ Route::middleware(['auth' ])->group(function () {
     Route::post('/svc-profile/{id}/update-image', [SVCController::class, 'updateProfileImage'])->name('svc.profile.update-image');
     Route::post('/svc-profile/{id}/indoor-treatment', [SVCController::class, 'saveProfileIndoorTreatment'])->name('svc.profile.indoor-treatment');
     Route::get('/export-svc-patients', [SVCController::class, 'exportSvcPatients'])->name('export.svc.patients');
+    Route::post('/svc-profile/{id}/update-charges', [SVCController::class, 'updateCharges'])->name('svc.profile.update-charges');
     
     // Monthly Assessment - Accessible to all branch users
     Route::get('/monthly-assessment', [AssessmentController::class, 'monthlyAssessment'])->name('monthly.assessment');

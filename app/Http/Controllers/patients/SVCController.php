@@ -1998,98 +1998,65 @@ class SVCController extends Controller
 
         return $meta->meta_value ?: $default;
     }
+
+    public function updateCharges(Request $request, $id)
+    {
+        try {
+            $patient = PatientInquiry::findOrFail($id);
+            
+            // Validate input
+            $validated = $request->validate([
+                'total_payment' => 'nullable|numeric|min:0',
+                'given_payment' => 'nullable|numeric|min:0',
+                'discount_payment' => 'nullable|numeric|min:0',
+                'payment_method' => 'nullable|string|in:Cash,GPay,Cheque',
+                'due_payment' => 'nullable|numeric|min:0',
+            ]);
+ 
+            // Clear existing payment method metas
+            $patient->metas()->whereIn('meta_key', ['cash_payment', 'gp_payment', 'cheque_payment'])->delete();
+ 
+            // Update or create meta values
+            $metaUpdates = [
+                'total_payment' => $validated['total_payment'] ?? null,
+                'given_payment' => $validated['given_payment'] ?? null,
+                'discount_payment' => $validated['discount_payment'] ?? null,
+                'due_payment' => $validated['due_payment'] ?? null,
+            ];
+ 
+            // Set payment method based on selection
+            if (!empty($validated['payment_method'])) {
+                switch ($validated['payment_method']) {
+                    case 'Cash':
+                        $metaUpdates['cash_payment'] = $validated['given_payment'] ?? 0;
+                        break;
+                    case 'GPay':
+                        $metaUpdates['gp_payment'] = $validated['given_payment'] ?? 0;
+                        break;
+                    case 'Cheque':
+                        $metaUpdates['cheque_payment'] = $validated['given_payment'] ?? 0;
+                        break;
+                }
+            }
+ 
+            foreach ($metaUpdates as $key => $value) {
+                if ($value !== null && $value !== '') {
+                    $patient->metas()->updateOrCreate(
+                        ['meta_key' => $key],
+                        ['meta_value' => $value]
+                    );
+                }
+            }
+ 
+            return redirect()->route('ipd.profile', $id)->with('success', 'Charges updated successfully!');
+            
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('indoor.patients')->with('error', 'Patient not found.');
+        } catch (ValidationException $e) {
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        } catch (Exception $e) {
+            Log::error('Error updating charges: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Error updating charges. Please try again.');
+        }
+    }
 }
-// public function getFollowupHistory(Request $request, $patient_id)
-// {
-//     $selectedDate = $request->query('date');
-
-//     if (!$selectedDate) {
-//         return response()->json([
-//             'success' => false,
-//             'message' => 'No date selected'
-//         ]);
-//     }
-
-//     $patient = PatientInquiry::with(['followups.metas', 'treatments'])
-//         ->where('patient_id', $patient_id)
-//         ->firstOrFail();
-
-//     $followup = $patient->followups()
-//         ->whereDate('followup_date', $selectedDate)
-//         ->latest('created_at')
-//         ->first();
-
-//     if (!$followup) {
-//         return response()->json([
-//             'success' => false,
-//             'message' => 'No followup found for this date'
-//         ]);
-//     }
-
-//     $allFollowupMetas = $followup->metas()->get();
-
-//     $metaKeys = [
-//         'pt_status','temperature','weight','spo2','blood_pressure','pulse','rbs',
-//         'diagnosis','hb','tc','pc','mp','hb1ac','fbs','pp2bs','s_widal','usg',
-//         'x_ray','sgpt','s_creatinine','ns1ag','dengue_igm','s_cholesterol',
-//         's_triglyceride','hdl','ldl','vldl','s_b12','s_d3','urine','s_t3','crp',
-//         's_t4','s_tsh','esr'
-//     ];
-
-//     $followupMetaValues = [];
-//     foreach ($metaKeys as $key) {
-//         $values = $allFollowupMetas
-//             ->filter(function($meta) use ($key) {
-//                 return $meta->meta_key === $key ||
-//                        Str::startsWith($meta->meta_key, $key . '_');
-//             })
-//             ->sortBy(function($meta) {
-//                 if (preg_match('/_(\d+)$/', $meta->meta_key, $matches)) {
-//                     return (int)$matches[1];
-//                 }
-//                 return 0;
-//             })
-//             ->pluck('meta_value')
-//             ->filter(function($value) {
-//                 return $value !== null && $value !== 'null' && $value !== '';
-//             })
-//             ->values()
-//             ->toArray();
-
-//         $followupMetaValues[$key] = $values;
-//     }
-
-//     $treatments = [
-//         'inside' => [],
-//         'homeo' => [],
-//         'prescription' => [],
-//         'indoor' => [],
-//         'other' => []
-//     ];
-
-//     $followupTreatments = PatientTreatment::where('followup_id', $followup->id)->get();
-//     foreach ($followupTreatments as $treatment) {
-//         $type = $treatment->type;
-//         if (array_key_exists($type, $treatments)) {
-//             $treatments[$type][] = [
-//                 'medicine' => $treatment->medicine,
-//                 'dose' => $treatment->dose,
-//                 'timing' => $treatment->timing,
-//                 'note' => $treatment->note
-//             ];
-//         }
-//     }
-
-//     $historyContent = view('branches.profile.followup_history', compact(
-//         'patient',
-//         'followup',
-//         'followupMetaValues',
-//         'treatments',
-//         'selectedDate'
-//     ))->render();
-
-//     return response()->json([
-//         'success' => true,
-//         'html' => $historyContent
-//     ]);
-// }

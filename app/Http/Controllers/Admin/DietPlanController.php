@@ -230,7 +230,7 @@ class DietPlanController extends Controller
     }
 
 public function store(Request $request)
-{
+{      
     // dd($request->all());
     try {   
         // Validate the request
@@ -282,6 +282,24 @@ public function store(Request $request)
                         $recipeNames = array_column($decodedRecipes, 'name');
                         $searchMenuValue = implode(', ', $recipeNames);
                         $recipesList = $decodedRecipes;
+
+                        // ✅ Auto-save custom items to recipes table so they appear in dropdown next time
+                        foreach ($decodedRecipes as $recipeItem) {
+                            $itemName = trim($recipeItem['name'] ?? '');
+                            $isCustom = !empty($recipeItem['custom']) && $recipeItem['custom'] === true;
+                            if ($itemName !== '' && $isCustom) {
+                                // Double check if it exists (case-insensitive)
+                                $exists = Recipe::whereRaw('LOWER(name) = ?', [strtolower($itemName)])->exists();
+                                if (!$exists) {
+                                    Recipe::create([
+                                        'name'        => $itemName,
+                                        'description' => 'Added from diet plan',
+                                    ]);
+                                    Log::info("New item saved to recipes table: {$itemName}");
+                                }
+                            }
+                        }
+
                     } else {
                         // Old comma-separated format or raw string
                         $searchMenuValue = $selectedRecipesRaw;

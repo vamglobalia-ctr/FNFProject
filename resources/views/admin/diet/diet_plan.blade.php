@@ -274,8 +274,12 @@
 
                                     <div class="col-md-2">
                                         <label class="form-label">Quantity</label>
-                                        <input type="text" class="form-control quantity-input"
-                                            name="time_search_menus[0][quantity]" placeholder="e.g. 1 cup">
+                                        <div class="quantity-dropdown-container">
+                                            <input type="text" class="form-control quantity-input"
+                                                name="time_search_menus[0][quantity]" placeholder="e.g. 1 cup"
+                                                id="quantity-input-0" autocomplete="off">
+                                            <div class="quantity-dropdown" id="quantity-dropdown-0"></div>
+                                        </div>
                                     </div>
 
                                     <div class="col-md-2">
@@ -536,6 +540,45 @@
         color: #495057;
         margin-bottom: 6px;
     }
+
+    /* Quantity History Dropdown Styling */
+    .quantity-dropdown-container {
+        position: relative;
+    }
+
+    .quantity-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        max-height: 180px;
+        overflow-y: auto;
+        background: #ffffff;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        z-index: 10000;
+        display: none;
+        margin-top: 4px;
+    }
+
+    .quantity-dropdown-item {
+        padding: 10px 15px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 13px;
+        color: #333333;
+    }
+
+    .quantity-dropdown-item:last-child {
+        border-bottom: none;
+    }
+
+    .quantity-dropdown-item:hover {
+        background: #f8f9fa;
+        color: #197040;
+    }
 </style>
 
 <script>
@@ -752,6 +795,10 @@
         });
 
         updateRemoveButtons();
+        
+        // Initialize dropdowns for first row
+        initializeRecipeDropdown(0);
+        initializeQuantityDropdown(0);
     });
 
     let rowCount = 1;
@@ -828,7 +875,11 @@
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Quantity</label>
-                    <input type="text" class="form-control quantity-input" name="time_search_menus[${rowCount - 1}][quantity]" placeholder="e.g. 1 cup">
+                    <div class="quantity-dropdown-container">
+                        <input type="text" class="form-control quantity-input" name="time_search_menus[${rowCount - 1}][quantity]" 
+                            placeholder="e.g. 1 cup" id="quantity-input-${rowCount - 1}" autocomplete="off">
+                        <div class="quantity-dropdown" id="quantity-dropdown-${rowCount - 1}"></div>
+                    </div>
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Notes</label>
@@ -848,6 +899,7 @@
         container.appendChild(newRow);
         updateRemoveButtons();
         initializeRecipeDropdown(rowCount - 1);
+        initializeQuantityDropdown(rowCount - 1);
     }
 
     function removeTimeSearchRow(button) {
@@ -880,6 +932,62 @@
                 if (removeButton) {
                     removeButton.style.display = 'flex';
                 }
+            }
+        });
+    }
+
+    // --- Quantity History Logic ---
+    let quantityHistory = JSON.parse(localStorage.getItem('diet_quantity_history')) || ['1 bowl', '1 plate', '1 glass', '100g', '200g', '1 cup'];
+
+    function initializeQuantityDropdown(rowIndex) {
+        const input = $(`#quantity-input-${rowIndex}`);
+        const dropdown = $(`#quantity-dropdown-${rowIndex}`);
+
+        function showSuggestions() {
+            const val = input.val().trim().toLowerCase();
+            dropdown.empty();
+
+            // Filter history based on what user is typing
+            let matches = quantityHistory.filter(item => 
+                item.toLowerCase().includes(val)
+            );
+
+            if (matches.length > 0) {
+                matches.forEach(match => {
+                    const item = $('<div class="quantity-dropdown-item"></div>')
+                        .text(match)
+                        .on('mousedown', function(e) { // Use mousedown to trigger before blur
+                            e.preventDefault();
+                            input.val(match);
+                            dropdown.hide();
+                        });
+                    dropdown.append(item);
+                });
+                dropdown.show();
+            } else {
+                dropdown.hide();
+            }
+        }
+
+        input.on('focus input', showSuggestions);
+
+        input.on('blur', function() {
+            const val = $(this).val().trim();
+            // Save to history if it's a new non-empty value
+            if (val && !quantityHistory.some(h => h.toLowerCase() === val.toLowerCase())) {
+                quantityHistory.unshift(val);
+                // Keep history manageable (last 20 items)
+                if (quantityHistory.length > 20) quantityHistory.pop();
+                localStorage.setItem('diet_quantity_history', JSON.stringify(quantityHistory));
+            }
+            dropdown.hide();
+        });
+
+        // Close dropdown when clicking outside
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest(`#quantity-input-${rowIndex}`).length && 
+                !$(e.target).closest(`#quantity-dropdown-${rowIndex}`).length) {
+                dropdown.hide();
             }
         });
     }
@@ -942,16 +1050,19 @@
             updateDropdownDisplay();
         }
 
-        function addRecipeToSelected(recipeName) {
-            if (!selectedRecipes.some(r => r.name === recipeName)) {
-                selectedRecipes.push({ name: recipeName, qty: 1, unit: '' });
+        function addRecipeToSelected(recipeName, isCustom) {
+            // Add if not already there
+            if (!selectedRecipes.some(r => r.name.toLowerCase() === recipeName.toLowerCase())) {
+                selectedRecipes.push({ name: recipeName, qty: '', unit: '', custom: isCustom ? true : false });
                 updateSelectedRecipesDisplay();
-                searchInput.val('');
-                const allSelected = allRecipes.length === selectedRecipes.length;
-                if (allSelected) {
-                    dropdown.hide();
-                }
             }
+
+            // ✅ Sync Input Box: Sabhi selected items ko space ke saath dikhao
+            const currentItemsText = selectedRecipes.map(r => r.name).join(' ') + ' ';
+            searchInput.val(currentItemsText);
+            searchInput.focus();
+            
+            dropdown.hide();
         }
 
         function removeRecipeFromSelected(index) {
@@ -1040,15 +1151,34 @@
         });
 
         searchInput.on('input', function () {
-            const searchTerm = $(this).val().toLowerCase();
-            if (allRecipes.length > 0 && searchTerm) {
-                const items = dropdown.find('.recipe-dropdown-item');
-                let foundAny = false;
-                items.each(function () {
-                    const itemText = $(this).text().toLowerCase();
-                    const isSelected = selectedRecipes.some(r => r.name === $(this).data('value'));
+            const fullVal = $(this).val();
+            // ✅ Search logic: Sirf aakhri space ke baad wala word search karo
+            const parts = fullVal.split(' ');
+            const searchTerm = parts[parts.length - 1].trim();
+            const termLower  = searchTerm.toLowerCase();
 
-                    if (itemText.includes(searchTerm) && !isSelected) {
+            // Clear previous add-option
+            dropdown.find('.recipe-custom-add').remove();
+
+            // Agar aakhri word khali hai (matlab space press hua hai)
+            if (!searchTerm) {
+                if (allRecipes.length > 0) {
+                    updateDropdownDisplay();
+                    dropdown.show();
+                }
+                return;
+            }
+
+            if (allRecipes.length > 0) {
+                const items  = dropdown.find('.recipe-dropdown-item:not(.recipe-custom-add)');
+                let foundAny = false;
+
+                items.each(function () {
+                    const itemText  = $(this).text().toLowerCase();
+                    // Dropdown mein wo item na dikhao jo already select ho chuka hai
+                    const isAlready = selectedRecipes.some(r => r.name.toLowerCase() === $(this).data('value').toLowerCase());
+
+                    if (itemText.includes(termLower) && !isAlready) {
                         $(this).show();
                         foundAny = true;
                     } else {
@@ -1056,24 +1186,59 @@
                     }
                 });
 
-                if (foundAny) {
-                    dropdown.show();
-                } else {
-                    dropdown.hide();
+                // Agar dropdown mein nahi hai, toh "Add new" option dikhao
+                const existsInDB = allRecipes.some(r => r.toLowerCase() === termLower);
+                if (!existsInDB) {
+                    const btn = $(`<div class="recipe-dropdown-item recipe-custom-add" 
+                        style="color:#197040;font-weight:600;border-top:1px solid #dee2e6;background:#f0fff4;">
+                        <i class="fas fa-plus-circle me-2"></i>Add "${searchTerm}" as new item
+                    </div>`);
+                    btn.on('click', function () {
+                        addRecipeToSelected(searchTerm, true);
+                    });
+                    dropdown.append(btn);
                 }
-            } else if (allRecipes.length > 0) {
-                updateDropdownDisplay();
+
                 dropdown.show();
+            } else {
+                // Loader check or fallback
+                const btn = $(`<div class="recipe-dropdown-item recipe-custom-add" style="color:#197040;font-weight:600;background:#f0fff4;">
+                    <i class="fas fa-plus-circle me-2"></i>Add "${searchTerm}" as new item
+                </div>`);
+                btn.on('click', function () {
+                    addRecipeToSelected(searchTerm, true);
+                });
+                dropdown.empty().append(btn).show();
             }
         });
 
         searchInput.on('keydown', function (e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                const value = $(this).val().trim();
-                if (value) {
-                    addRecipeToSelected(value);
-                    dropdown.hide();
+                const fullVal = $(this).val();
+                const parts = fullVal.split(' ');
+                const value = parts[parts.length - 1].trim();
+                
+                if (!value) return;
+
+                // Existing recipe?
+                const exactMatch = allRecipes.find(r => r.toLowerCase() === value.toLowerCase());
+                if (exactMatch) {
+                    addRecipeToSelected(exactMatch, false);
+                } else {
+                    addRecipeToSelected(value, true);
+                }
+            }
+
+            // ✅ Space press logic
+            if (e.key === ' ') {
+                // Agar input empty ya sirf space hai, dropdown kholo
+                if (!$(this).val().trim()) {
+                    e.preventDefault();
+                    if (allRecipes.length > 0) {
+                        updateDropdownDisplay();
+                        dropdown.show();
+                    }
                 }
             }
         });

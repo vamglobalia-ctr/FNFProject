@@ -281,6 +281,7 @@
                             <input type="number" step="0.1" name="bca_legs" id="bca_legs" placeholder="0.0">
                         </div>
                     </div>
+                    <div class="section-divider">Skeletal Muscle Mass</div>
 
                     <div class="pro_filed">
                         <div class="form">
@@ -300,7 +301,7 @@
                             <input type="number" step="0.1" name="muscle_legs" id="muscle_legs" placeholder="0.0">
                         </div>
                     </div>
-                    <div class="section-divider">Skeletal Muscle Mass</div>
+                    <div class="section-divider">Fat Mass</div>
 
                     <div class="pro_filed">
                         <div class="form">
