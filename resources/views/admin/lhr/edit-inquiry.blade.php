@@ -436,80 +436,94 @@
                                 </div>
                             </div>
 
-                            <div id="area_session_section" style="display: none;">
-                                <div class="pro_filed">
-                                    <div class="form">
-                                        <label for="area" class="required">Select Area</label>
-                                        @php
-                                            $rawArea = $inquiry->area;
-                                            $savedAreas = [];
-                                            if (is_string($rawArea) && str_starts_with($rawArea, '[')) {
-                                                $savedAreas = json_decode($rawArea, true) ?: [];
-                                            } elseif (is_string($rawArea) && !empty($rawArea)) {
-                                                $savedAreas = [$rawArea];
-                                            }
+                            @php
+                                $areas_raw = $inquiry->area;
+                                $sessions_raw = $inquiry->session;
+                                $codes_raw = $inquiry->area_code;
+                                $energies_raw = $inquiry->energy;
+                                $freqs_raw = $inquiry->frequency;
+                                $shots_raw = $inquiry->shot;
 
-                                            $oldAreas = old('area', $savedAreas);
-                                            if (!is_array($oldAreas)) {
-                                                $oldAreas = [$oldAreas];
-                                            }
-                                        @endphp
-                                        <select id="area" name="area[]" multiple required class="form-control">
-                                            <option value="upper_lips" {{ in_array('upper_lips', $oldAreas) ? 'selected' : '' }}>Upper Lips</option>
-                                            <option value="beard" {{ in_array('beard', $oldAreas) ? 'selected' : '' }}>Beard
-                                            </option>
-                                            <option value="full_face" {{ in_array('full_face', $oldAreas) ? 'selected' : '' }}>
-                                                Full Face</option>
-                                            <option value="half_face" {{ in_array('half_face', $oldAreas) ? 'selected' : '' }}>
-                                                Half Face</option>
-                                            <option value="under_arms" {{ in_array('under_arms', $oldAreas) ? 'selected' : '' }}>Under Arms</option>
-                                            <option value="half_hands" {{ in_array('half_hands', $oldAreas) ? 'selected' : '' }}>Half Hands</option>
-                                            <option value="full_hands" {{ in_array('full_hands', $oldAreas) ? 'selected' : '' }}>Full Hands</option>
-                                            <option value="half_legs" {{ in_array('half_legs', $oldAreas) ? 'selected' : '' }}>
-                                                Half Legs</option>
-                                            <option value="full_legs" {{ in_array('full_legs', $oldAreas) ? 'selected' : '' }}>
-                                                Full Legs</option>
-                                            <option value="back" {{ in_array('back', $oldAreas) ? 'selected' : '' }}>Back
-                                            </option>
-                                            <option value="bikini" {{ in_array('bikini', $oldAreas) ? 'selected' : '' }}>Bikini
-                                            </option>
-                                            <option value="abdomen" {{ in_array('abdomen', $oldAreas) ? 'selected' : '' }}>
-                                                Abdomen</option>
-                                            <option value="chest" {{ in_array('chest', $oldAreas) ? 'selected' : '' }}>Chest
-                                            </option>
-                                        </select>
+                                $areas = is_string($areas_raw) && str_starts_with($areas_raw, '[') ? json_decode($areas_raw, true) : ($areas_raw ? [$areas_raw] : []);
+                                $sessions = is_string($sessions_raw) && str_starts_with($sessions_raw, '[') ? json_decode($sessions_raw, true) : ($sessions_raw ? [$sessions_raw] : []);
+                                $codes = is_string($codes_raw) && str_starts_with($codes_raw, '[') ? json_decode($codes_raw, true) : ($codes_raw ? [$codes_raw] : []);
+                                $energies = is_string($energies_raw) && str_starts_with($energies_raw, '[') ? json_decode($energies_raw, true) : ($energies_raw ? [$energies_raw] : []);
+                                $freqs = is_string($freqs_raw) && str_starts_with($freqs_raw, '[') ? json_decode($freqs_raw, true) : ($freqs_raw ? [$freqs_raw] : []);
+                                $shots = is_string($shots_raw) && str_starts_with($shots_raw, '[') ? json_decode($shots_raw, true) : ($shots_raw ? [$shots_raw] : []);
+
+                                $rowCount = max(1, count($areas), count($sessions), count($codes));
+                            @endphp
+
+                            <div id="area_session_section" style="display: {{ $inquiry->status_name == 'joined' ? 'block' : 'none' }};">
+                                <div id="treatment_rows_container">
+                                    @for($i = 0; $i < $rowCount; $i++)
+                                    <div class="treatment-row border-bottom pb-4 mb-4 position-relative">
+                                        <div class="pro_filed">
+                                            <div class="form">
+                                                <label for="area" class="required">Select Program</label>
+                                                @php
+                                                    $currentAreas = $areas[$i] ?? [];
+                                                    if(!is_array($currentAreas)) $currentAreas = [$currentAreas];
+                                                @endphp
+                                                <select name="area[{{ $i }}][]" multiple required class="form-control select2-area">
+                                                    <option value="upper_lips" {{ in_array('upper_lips', $currentAreas) ? 'selected' : '' }}>Upper Lips</option>
+                                                    <option value="beard" {{ in_array('beard', $currentAreas) ? 'selected' : '' }}>Beard</option>
+                                                    <option value="full_face" {{ in_array('full_face', $currentAreas) ? 'selected' : '' }}>Full Face</option>
+                                                    <option value="half_face" {{ in_array('half_face', $currentAreas) ? 'selected' : '' }}>Half Face</option>
+                                                    <option value="under_arms" {{ in_array('under_arms', $currentAreas) ? 'selected' : '' }}>Under Arms</option>
+                                                    <option value="half_hands" {{ in_array('half_hands', $currentAreas) ? 'selected' : '' }}>Half Hands</option>
+                                                    <option value="full_hands" {{ in_array('full_hands', $currentAreas) ? 'selected' : '' }}>Full Hands</option>
+                                                    <option value="half_legs" {{ in_array('half_legs', $currentAreas) ? 'selected' : '' }}>Half Legs</option>
+                                                    <option value="full_legs" {{ in_array('full_legs', $currentAreas) ? 'selected' : '' }}>Full Legs</option>
+                                                    <option value="back" {{ in_array('back', $currentAreas) ? 'selected' : '' }}>Back</option>
+                                                    <option value="bikini" {{ in_array('bikini', $currentAreas) ? 'selected' : '' }}>Bikini</option>
+                                                    <option value="abdomen" {{ in_array('abdomen', $currentAreas) ? 'selected' : '' }}>Abdomen</option>
+                                                    <option value="chest" {{ in_array('chest', $currentAreas) ? 'selected' : '' }}>Chest</option>
+                                                </select>
+                                            </div>
+                                            <div class="form">
+                                                <label for="session" class="required">Session</label>
+                                                <input type="number" name="session[]" placeholder="Enter session details"
+                                                    value="{{ $sessions[$i] ?? '' }}" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="pro_filed">
+                                            <div class="form">
+                                                <label for="area_code">Area Code</label>
+                                                <input type="text" name="area_code[]" placeholder="Area Code"
+                                                    value="{{ $codes[$i] ?? '' }}">
+                                            </div>
+                                            <div class="form">
+                                                <label for="energy">Energy</label>
+                                                <input type="text" name="energy[]" placeholder="Energy"
+                                                    value="{{ $energies[$i] ?? '' }}">
+                                            </div>
+                                        </div>
+
+                                        <div class="pro_filed">
+                                            <div class="form">
+                                                <label for="frequency">Frequency</label>
+                                                <input type="number" name="frequency[]" placeholder="Frequency"
+                                                    value="{{ $freqs[$i] ?? '' }}">
+                                            </div>
+                                            <div class="form">
+                                                <label for="shot">Shot</label>
+                                                <input type="text" name="shot[]" placeholder="Shot"
+                                                    value="{{ $shots[$i] ?? '' }}">
+                                            </div>
+                                        </div>
+                                        
+                                        <button type="button" class="btn btn-danger btn-sm remove-row-btn position-absolute" style="top: -10px; right: 0; {{ $i == 0 ? 'display: none;' : '' }} border-radius: 50%; width: 30px; height: 30px;">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
                                     </div>
-                                    <div class="form">
-                                        <label for="session">Session</label>
-                                        <input type="text" id="session" name="session" placeholder="Session"
-                                            value="{{ old('session', $inquiry->session) }}">
-                                    </div>
+                                    @endfor
                                 </div>
-
-                                <div class="pro_filed">
-                                    <div class="form">
-                                        <label for="area_code">Area Code</label>
-                                        <input type="text" id="area_code" name="area_code" placeholder="Area Code"
-                                            value="{{ old('area_code', $inquiry->area_code) }}">
-                                    </div>
-                                    <div class="form">
-                                        <label for="energy">Energy</label>
-                                        <input type="text" id="energy" name="energy" placeholder="Energy"
-                                            value="{{ old('energy', $inquiry->energy) }}">
-                                    </div>
-                                </div>
-
-                                <div class="pro_filed">
-                                    <div class="form">
-                                        <label for="frequency">Frequency</label>
-                                        <input type="number" id="frequency" name="frequency" placeholder="Frequency"
-                                            value="{{ old('frequency', $inquiry->frequency) }}">
-                                    </div>
-                                    <div class="form">
-                                        <label for="shot">Shot</label>
-                                        <input type="text" id="shot" name="shot" placeholder="Shot"
-                                            value="{{ old('shot', $inquiry->shot) }}">
-                                    </div>
+                                <div class="text-end mb-4">
+                                    <button type="button" id="add_treatment_row" class="btn btn-success btn-sm">
+                                        <i class="fas fa-plus me-1"></i> Add More Treatment
+                                    </button>
                                 </div>
                             </div>
 
@@ -1189,13 +1203,62 @@
             }, 5000);
 
             // Initialize Select2 for multiple selection
-            if (typeof jQuery !== 'undefined' && typeof jQuery.fn.select2 !== 'undefined') {
-                $('#area').select2({
-                    placeholder: "Select Area",
+            function initSelect2(element) {
+                $(element).select2({
+                    placeholder: "Select Program",
                     allowClear: true,
                     width: '100%'
                 });
             }
+
+            $('.select2-area').each(function() {
+                initSelect2(this);
+            });
+
+            // Add Treatment Row
+            let rowCount = {{ $rowCount }};
+            const container = document.getElementById('treatment_rows_container');
+            const addBtn = document.getElementById('add_treatment_row');
+
+            addBtn.addEventListener('click', function() {
+                const firstRow = container.querySelector('.treatment-row');
+                
+                // If Select2 is initialized, we should destroy it before cloning to avoid cloning Select2 markup
+                const existingSelect = $(firstRow).find('.select2-area');
+                if (existingSelect.data('select2')) {
+                    existingSelect.select2('destroy');
+                }
+
+                const newRow = firstRow.cloneNode(true);
+                
+                // Re-initialize Select2 on the first row
+                initSelect2(existingSelect);
+                
+                // Reset inputs and update names
+                newRow.querySelectorAll('input').forEach(input => {
+                    input.value = '';
+                    input.setAttribute('id', ''); 
+                });
+                
+                const selectElement = newRow.querySelector('select');
+                $(selectElement).attr('name', `area[${rowCount}][]`);
+                $(selectElement).val(null).trigger('change');
+                
+                // Show remove button
+                newRow.querySelector('.remove-row-btn').style.display = 'block';
+                
+                container.appendChild(newRow);
+                initSelect2(selectElement);
+                rowCount++;
+            });
+
+            // Remove Treatment Row
+            container.addEventListener('click', function(e) {
+                if (e.target.closest('.remove-row-btn')) {
+                    e.target.closest('.treatment-row').remove();
+                }
+            });
+
             // Toggle Area & Session based on Status
             const statusSelect = document.getElementById('status_name');
             const areaSessionSection = document.getElementById('area_session_section');

@@ -827,6 +827,158 @@
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(0,102,55,0.3);
     }
+
+    /* ===== MOBILE RESPONSIVENESS ===== */
+    @media (max-width: 991px) {
+        .profile-container {
+            padding: 15px !important;
+        }
+
+        .profile-header {
+            flex-direction: column !important;
+            align-items: center !important;
+            text-align: center;
+            gap: 20px;
+            padding-bottom: 20px;
+        }
+
+        .header-left {
+            width: 100%;
+            text-align: center;
+        }
+
+        .header-right {
+            width: 100%;
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: wrap !important;
+            justify-content: center !important;
+            gap: 10px !important;
+        }
+
+        .header-right .follow-up-btn {
+            margin-right: 0 !important;
+            flex: 1 1 auto;
+            min-width: 140px;
+            justify-content: center;
+            font-size: 14px;
+            padding: 10px;
+        }
+
+        .edit-profile-align-btn {
+            justify-content: center !important;
+        }
+
+        .card-body {
+            padding: 15px !important;
+        }
+
+        .profile-content {
+            flex-direction: column !important;
+            gap: 0 !important;
+            padding: 0 !important;
+        }
+
+        .profile-sidebar, .profile-main {
+            width: 100% !important;
+            max-height: none !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+            background: transparent !important;
+        }
+
+        .row {
+            margin: 0 !important;
+        }
+
+        .col-lg-4, .col-lg-8, .col-lg-12 {
+            padding: 0 !important;
+        }
+
+        .data-table {
+            display: block !important;
+            width: 100% !important;
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+        }
+
+        /* Modal Responsiveness */
+        #indoorTreatmentModal .modal-dialog {
+            margin: 10px !important;
+            max-width: calc(100% - 20px) !important;
+        }
+
+        .indoor-patient-info {
+            grid-template-columns: 1fr !important;
+            gap: 5px !important;
+        }
+
+        .date-slot-header {
+            padding: 10px !important;
+            gap: 8px !important;
+        }
+
+        .date-slot-header input {
+            max-width: 100% !important;
+            flex: 1;
+        }
+
+        .medicine-row {
+            grid-template-columns: 1fr !important;
+            gap: 5px !important;
+        }
+
+        .medicine-row input {
+            width: 100% !important;
+        }
+
+        .delete-medicine-btn {
+            width: 100% !important;
+            margin-top: 5px;
+        }
+
+        .fnf-title {
+            font-size: 18px !important;
+        }
+
+        /* Modal specific button fixes */
+        .add-slot-btn {
+            width: 100% !important;
+            justify-content: center !important;
+            padding: 12px !important;
+            font-size: 14px !important;
+        }
+
+        .remove-slot-btn {
+            width: 100% !important;
+            justify-content: center !important;
+            padding: 8px !important;
+            margin-top: 5px !important;
+        }
+
+        .date-slot-header {
+            padding: 15px !important;
+        }
+
+        .modal-footer {
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            padding: 15px !important;
+            gap: 10px !important;
+        }
+
+        .modal-footer .btn-cancel-indoor,
+        .modal-footer .btn-save-indoor {
+            flex: 1 !important;
+            margin: 0 !important;
+            font-size: 14px !important;
+            padding: 12px 5px !important;
+            text-align: center !important;
+            justify-content: center !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+    }
 </style>
 
 @php
@@ -2054,9 +2206,25 @@ function removeIndoorSlot(btn) {
     const slots = container.querySelectorAll('.date-slot-card');
 
     if (slots.length > 1) {
-        if (confirm('Remove this date slot and all its medicines?')) {
-            card.remove();
-        }
+        Swal.fire({
+            ...getSwalConfig('question'),
+            title: 'Remove Slot?',
+            text: 'Are you sure you want to remove this date slot and all its medicines?',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, remove it',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                card.remove();
+                Swal.fire({
+                    ...getSwalConfig('success'),
+                    title: 'Removed!',
+                    text: 'The date slot has been removed.',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            }
+        });
     } else {
         // Last slot: clear all inputs
         card.querySelectorAll('input').forEach(i => i.value = '');

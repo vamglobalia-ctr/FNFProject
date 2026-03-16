@@ -305,7 +305,55 @@
                 text-align: left;
             }
         }
+
+        /* Dynamic row styling */
+        .treatment-row {
+            background: var(--bg-hover);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-subtle);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .remove-row-btn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+
+        .select2-container--default .select2-selection--multiple {
+            background-color: var(--bg-main);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            min-height: 42px;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: var(--accent-solid);
+            border: none;
+            color: white;
+            border-radius: 4px;
+            padding: 2px 8px;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+            color: white;
+            margin-right: 5px;
+        }
     </style>
+
+    <!-- Include Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <div class="container-fluid">
         <!-- Page Header -->
@@ -429,54 +477,99 @@
                             </div>
                         </div>
 
-                        <div class="pro_filed">
-                            <div class="form">
-                                <label>Area Code</label>
-                                <input type="text" name="afra_code" placeholder="Enter afra code"
-                                    value="{{ old('afra_code') }}">
+                        <div class="section-divider">Treatment Information</div>
+
+                        <div id="treatment_rows_container">
+                            @php
+                                $areas_raw = $inquiry->area;
+                                $sessions_raw = $inquiry->session;
+                                $codes_raw = $inquiry->area_code;
+                                $energies_raw = $inquiry->energy;
+                                $freqs_raw = $inquiry->frequency;
+                                $shots_raw = $inquiry->shot;
+
+                                $areas = is_string($areas_raw) && str_starts_with($areas_raw, '[') ? json_decode($areas_raw, true) : ($areas_raw ? [$areas_raw] : []);
+                                $sessions = is_string($sessions_raw) && str_starts_with($sessions_raw, '[') ? json_decode($sessions_raw, true) : ($sessions_raw ? [$sessions_raw] : []);
+                                $codes = is_string($codes_raw) && str_starts_with($codes_raw, '[') ? json_decode($codes_raw, true) : ($codes_raw ? [$codes_raw] : []);
+                                $energies = is_string($energies_raw) && str_starts_with($energies_raw, '[') ? json_decode($energies_raw, true) : ($energies_raw ? [$energies_raw] : []);
+                                $freqs = is_string($freqs_raw) && str_starts_with($freqs_raw, '[') ? json_decode($freqs_raw, true) : ($freqs_raw ? [$freqs_raw] : []);
+                                $shots = is_string($shots_raw) && str_starts_with($shots_raw, '[') ? json_decode($shots_raw, true) : ($shots_raw ? [$shots_raw] : []);
+
+                                $rowCount = max(1, count($areas), count($sessions), count($codes));
+                            @endphp
+
+                            @for($i = 0; $i < $rowCount; $i++)
+                            <div class="treatment-row">
+                                <div class="pro_filed">
+                                    <div class="form">
+                                        <label class="required">Select Program</label>
+                                        @php
+                                            $currentAreas = $areas[$i] ?? [];
+                                            if(!is_array($currentAreas)) $currentAreas = [$currentAreas];
+                                        @endphp
+                                        <select name="area[{{ $i }}][]" multiple required class="form-control select2-area">
+                                            <option value="face" {{ in_array('face', $currentAreas) ? 'selected' : '' }}>Face</option>
+                                            <option value="underarms" {{ in_array('underarms', $currentAreas) ? 'selected' : '' }}>Underarms</option>
+                                            <option value="full_arms" {{ in_array('full_arms', $currentAreas) ? 'selected' : '' }}>Full Arms</option>
+                                            <option value="half_arms" {{ in_array('half_arms', $currentAreas) ? 'selected' : '' }}>Half Arms</option>
+                                            <option value="full_legs" {{ in_array('full_legs', $currentAreas) ? 'selected' : '' }}>Full Legs</option>
+                                            <option value="half_legs" {{ in_array('half_legs', $currentAreas) ? 'selected' : '' }}>Half Legs</option>
+                                            <option value="bikini" {{ in_array('bikini', $currentAreas) ? 'selected' : '' }}>Bikini</option>
+                                            <option value="brazilian" {{ in_array('brazilian', $currentAreas) ? 'selected' : '' }}>Brazilian</option>
+                                            <option value="chest" {{ in_array('chest', $currentAreas) ? 'selected' : '' }}>Chest</option>
+                                            <option value="back" {{ in_array('back', $currentAreas) ? 'selected' : '' }}>Back</option>
+                                            <option value="stomach" {{ in_array('stomach', $currentAreas) ? 'selected' : '' }}>Stomach</option>
+                                            <option value="full_body" {{ in_array('full_body', $currentAreas) ? 'selected' : '' }}>Full Body</option>
+                                        </select>
+                                    </div>
+                                    <div class="form">
+                                        <label class="required">Session</label>
+                                        <input type="number" name="session[]" placeholder="Enter session details"
+                                            value="{{ $sessions[$i] ?? '' }}" required>
+                                    </div>
+                                    <div class="form">
+                                        <label>Area Code</label>
+                                        <input type="text" name="area_code[]" placeholder="Enter area code"
+                                            value="{{ $codes[$i] ?? '' }}">
+                                    </div>
+                                </div>
+
+                                <div class="pro_filed">
+                                    <div class="form">
+                                        <label>Frequency</label>
+                                        <select name="frequency[]">
+                                            <option value="">Select Frequency</option>
+                                            <option value="weekly" {{ ($freqs[$i] ?? '') == 'weekly' ? 'selected' : '' }}>Weekly</option>
+                                            <option value="biweekly" {{ ($freqs[$i] ?? '') == 'biweekly' ? 'selected' : '' }}>Bi-weekly</option>
+                                            <option value="monthly" {{ ($freqs[$i] ?? '') == 'monthly' ? 'selected' : '' }}>Monthly</option>
+                                            <option value="quarterly" {{ ($freqs[$i] ?? '') == 'quarterly' ? 'selected' : '' }}>Quarterly</option>
+                                            <option value="custom" {{ ($freqs[$i] ?? '') == 'custom' ? 'selected' : '' }}>Custom</option>
+                                        </select>
+                                    </div>
+                                    <div class="form">
+                                        <label>Energy</label>
+                                        <input type="text" name="energy[]" placeholder="Energy" value="{{ $energies[$i] ?? '' }}">
+                                    </div>
+                                    <div class="form">
+                                        <label>Shot</label>
+                                        <input type="text" name="shot[]" placeholder="Enter shot details"
+                                            value="{{ $shots[$i] ?? '' }}">
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-danger btn-sm remove-row-btn" style="{{ $i == 0 ? 'display: none;' : '' }}">
+                                    <i class="fas fa-minus"></i>
+                                </button>
                             </div>
-                            <div class="form">
-                                <label>Treatment Area</label>
-                                <select name="area">
-                                    <option value="">Select Area</option>
-                                    <option value="face" {{ old('area', $inquiry->area) == 'face' ? 'selected' : '' }}>Face
-                                    </option>
-                                    <option value="underarms" {{ old('area', $inquiry->area) == 'underarms' ? 'selected' : '' }}>Underarms</option>
-                                    <option value="full_arms" {{ old('area', $inquiry->area) == 'full_arms' ? 'selected' : '' }}>Full Arms</option>
-                                    <option value="half_arms" {{ old('area', $inquiry->area) == 'half_arms' ? 'selected' : '' }}>Half Arms</option>
-                                    <option value="full_legs" {{ old('area', $inquiry->area) == 'full_legs' ? 'selected' : '' }}>Full Legs</option>
-                                    <option value="half_legs" {{ old('area', $inquiry->area) == 'half_legs' ? 'selected' : '' }}>Half Legs</option>
-                                    <option value="bikini" {{ old('area', $inquiry->area) == 'bikini' ? 'selected' : '' }}>
-                                        Bikini</option>
-                                    <option value="brazilian" {{ old('area', $inquiry->area) == 'brazilian' ? 'selected' : '' }}>Brazilian</option>
-                                    <option value="chest" {{ old('area', $inquiry->area) == 'chest' ? 'selected' : '' }}>Chest
-                                    </option>
-                                    <option value="back" {{ old('area', $inquiry->area) == 'back' ? 'selected' : '' }}>Back
-                                    </option>
-                                    <option value="stomach" {{ old('area', $inquiry->area) == 'stomach' ? 'selected' : '' }}>
-                                        Stomach</option>
-                                    <option value="full_body" {{ old('area', $inquiry->area) == 'full_body' ? 'selected' : '' }}>Full Body</option>
-                                </select>
-                            </div>
+                            @endfor
+                        </div>
+
+                        <div class="text-end mb-4">
+                            <button type="button" id="add_treatment_row" class="btn btn-success btn-sm">
+                                <i class="fas fa-plus me-1"></i> Add More Treatment
+                            </button>
                         </div>
 
                         <div class="pro_filed">
-                            <div class="form">
-                                <label>Frequency</label>
-                                <select name="frequency">
-                                    <option value="">Select Frequency</option>
-                                    <option value="weekly" {{ old('frequency', $inquiry->frequency) == 'weekly' ? 'selected' : '' }}>Weekly</option>
-                                    <option value="biweekly" {{ old('frequency', $inquiry->frequency) == 'biweekly' ? 'selected' : '' }}>Bi-weekly</option>
-                                    <option value="monthly" {{ old('frequency', $inquiry->frequency) == 'monthly' ? 'selected' : '' }}>Monthly</option>
-                                    <option value="quarterly" {{ old('frequency', $inquiry->frequency) == 'quarterly' ? 'selected' : '' }}>Quarterly</option>
-                                    <option value="custom" {{ old('frequency', $inquiry->frequency) == 'custom' ? 'selected' : '' }}>Custom</option>
-                                </select>
-                            </div>
-                            <div class="form">
-                                <label>Shot</label>
-                                <input type="text" name="shot" placeholder="Enter shot details"
-                                    value="{{ old('shot', $inquiry->shot ?? '') }}">
-                            </div>
                             <div class="form">
                                 <label>Reference By</label>
                                 <input type="text" name="reference_by" placeholder="Enter reference name"
@@ -765,7 +858,66 @@
                     }
                 });
             }, 5000);
+
+            // Dynamic Row Management
+            function initSelect2() {
+                $('.select2-area').each(function() {
+                    if (!$(this).data('select2')) {
+                        $(this).select2({
+                            placeholder: 'Select Program',
+                            allowClear: true,
+                            width: '100%'
+                        });
+                    }
+                });
+            }
+
+            initSelect2();
+
+            $('#add_treatment_row').on('click', function() {
+                const container = $('#treatment_rows_container');
+                const rowCount = container.find('.treatment-row').length;
+                
+                // For proper cloning without Select2 baggage, destroy it on first row temporarily
+                const firstRow = container.find('.treatment-row').first();
+                const firstSelect = firstRow.find('select.select2-area');
+                if (firstSelect.data('select2')) {
+                    firstSelect.select2('destroy');
+                }
+
+                const newRow = firstRow.clone();
+                
+                // Re-init first row
+                initSelect2();
+
+                // Clear inputs in new row
+                newRow.find('input').val('');
+                newRow.find('select').val('').trigger('change');
+                
+                // Reset select2 for the new row
+                newRow.find('.select2-container').remove();
+                newRow.find('select').attr('name', `area[${rowCount}][]`).removeClass('select2-hidden-accessible');
+
+                // Show remove button
+                newRow.find('.remove-row-btn').show();
+
+                container.append(newRow);
+                initSelect2();
+            });
+
+            $(document).on('click', '.remove-row-btn', function() {
+                if ($('.treatment-row').length > 1) {
+                    $(this).closest('.treatment-row').remove();
+                    // Re-index names to maintain sequential arrays
+                    $('.treatment-row').each(function(index) {
+                        $(this).find('select.select2-area').attr('name', `area[${index}][]`);
+                    });
+                }
+            });
         });
     </script>
+    
+    <!-- Include Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 @endsection

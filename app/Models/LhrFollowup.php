@@ -36,6 +36,8 @@ class LhrFollowup extends Model
         'inquiry_time',
         'gender',
         'age',
+        'area',
+        'session',
         'afra_code',
         'energy',
         'frequency',
