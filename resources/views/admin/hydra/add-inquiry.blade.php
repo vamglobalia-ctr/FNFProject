@@ -446,6 +446,34 @@
                         </div>
                     </div>
 
+                    <div class="section-divider active" onclick="toggleSection(this)">Health Metrics</div>
+                    <div class="accordion-content">
+                        <div class="pro_filed">
+                            <div class="form">
+                                <label for="diet">Diet</label>
+                                <input type="text" id="diet" name="diet" placeholder="Diet"
+                                    value="{{ old('diet') }}">
+                            </div>
+                            <div class="form">
+                                <label for="exercise">Exercise</label>
+                                <input type="text" id="exercise" name="exercise" placeholder="Exercise"
+                                    value="{{ old('exercise') }}">
+                            </div>
+                        </div>
+                        <div class="pro_filed">
+                            <div class="form">
+                                <label for="sleep">Sleep</label>
+                                <input type="text" id="sleep" name="sleep" placeholder="Sleep"
+                                    value="{{ old('sleep') }}">
+                            </div>
+                            <div class="form">
+                                <label for="water">Water</label>
+                                <input type="text" id="water" name="water" placeholder="Water"
+                                    value="{{ old('water') }}">
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="section-divider active" onclick="toggleSection(this)">Payment Information</div>
                     <div class="accordion-content">
                         <div class="mb-3">
@@ -605,10 +633,12 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         // Show loading state
-                        const submitBtn = this.querySelector('button[type="submit"]');
-                        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Submitting...';
-                        submitBtn.disabled = true;
-                        this.submit();
+                        const submitBtn = addInquiryForm.querySelector('button[type="submit"]');
+                        if (submitBtn) {
+                            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Submitting...';
+                            submitBtn.disabled = true;
+                        }
+                        addInquiryForm.submit();
                     }
                 });
             });

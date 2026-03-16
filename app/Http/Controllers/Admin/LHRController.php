@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use App\Models\FollowUp; // Add this line
 use App\Models\LhrFollowup;
-use App\Models\Program;
+use App\Models\ManageProgram;
 use App\Models\User;
 use App\Models\Invoice;
 use App\Models\PatientTransaction;
@@ -98,11 +98,15 @@ class LHRController extends Controller
         $branches = Branch::all();                                 // all branches
         $branchName = optional($accUser->branch)->branch_name;       // logged-in branch name
         $branchId = auth()->user()->user_branch;                   // logged-in branch id
+        $programs = ManageProgram::where('delete_status', 0)
+            ->whereIn('branch', ['LHR', 'ALL'])
+            ->get();
 
         return view('admin.lhr.add-inquiry', compact(
             'branches',
             'branchName',
-            'branchId'
+            'branchId',
+            'programs'
         ))->with('title', 'Add New Inquiry');
     }
 
@@ -120,9 +124,9 @@ class LHRController extends Controller
             'gender' => 'required|in:male,female,other',
             'age' => 'required|integer|min:1|max:120',
             'year' => 'nullable|string',
-            'area' => 'required|array',
-            'area.*' => 'array',
-            'session' => 'nullable|array',
+            'area' => 'required_if:status_name,joined|array',
+            'area.*' => 'nullable|array',
+            'session' => 'required_if:status_name,joined|array',
             'session.*' => 'nullable|numeric',
             'area_code' => 'nullable|array',
             'area_code.*' => 'nullable|string',
@@ -177,6 +181,10 @@ class LHRController extends Controller
             // Account + Time
             'account' => 'nullable|string|max:100',
             'time' => 'nullable|date_format:H:i',
+            'diet' => 'nullable|string|max:255',
+            'exercise' => 'nullable|string|max:255',
+            'sleep' => 'nullable|string|max:255',
+            'water' => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -310,6 +318,10 @@ class LHRController extends Controller
                 // Account
                 'account' => $request->account,
                 'time' => $request->time ?? '13:00',
+                'diet' => $request->diet,
+                'exercise' => $request->exercise,
+                'sleep' => $request->sleep,
+                'water' => $request->water,
             ]);
 
             DB::commit();
@@ -391,9 +403,14 @@ class LHRController extends Controller
             'after_picture' => $inquiry->after_picture_1,
         ]);
 
+        $programs = ManageProgram::where('delete_status', 0)
+            ->whereIn('branch', ['LHR', 'ALL'])
+            ->get();
+
         return view('admin.lhr.edit-inquiry', [
             'title' => 'Edit Inquiry',
-            'inquiry' => $inquiry
+            'inquiry' => $inquiry,
+            'programs' => $programs
         ]);
     }
 
@@ -418,9 +435,9 @@ class LHRController extends Controller
             'gender' => 'required|in:male,female,other',
             'age' => 'required|integer|min:1|max:120',
             'year' => 'nullable|string',
-            'area' => 'required|array',
-            'area.*' => 'array',
-            'session' => 'nullable|array',
+            'area' => 'required_if:status_name,joined|array',
+            'area.*' => 'nullable|array',
+            'session' => 'required_if:status_name,joined|array',
             'session.*' => 'nullable|numeric',
             'area_code' => 'nullable|array',
             'area_code.*' => 'nullable|string',
@@ -475,6 +492,10 @@ class LHRController extends Controller
             // Account and Time
             'account' => 'nullable|string|max:100',
             'time' => 'nullable|date_format:H:i',
+            'diet' => 'nullable|string|max:255',
+            'exercise' => 'nullable|string|max:255',
+            'sleep' => 'nullable|string|max:255',
+            'water' => 'nullable|string|max:255',
         ];
 
         // Validate request
@@ -849,12 +870,15 @@ class LHRController extends Controller
         $branches = Branch::all();   // <-- missing
 
         $branchName = optional($accUser->branch)->branch_name;
+        $programs = ManageProgram::where('delete_status', 0)
+            ->whereIn('branch', ['LHR', 'ALL'])
+            ->get();
 
         $branchId = auth()->user()->user_branch;
         $inquiry = LHRInquiry::findOrFail($id);
         // dd($branchName);
 
-        return view('admin.lhr.followup', compact('inquiry', 'branchId', 'branchName', 'branches'));
+        return view('admin.lhr.followup', compact('inquiry', 'branchId', 'branchName', 'branches', 'programs'));
     }
 
     /**

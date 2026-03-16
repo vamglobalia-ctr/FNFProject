@@ -59,17 +59,12 @@
     }
 
     .dataTables_wrapper table thead {
-        background: #006637;
-    }
-
-    .dataTables_wrapper table tr th,
-    .dataTables_wrapper table tr td {
-        padding: 10px 15px !important;
-        font-size: 13px;
+        background: #006637 !important;
     }
 
     .dataTables_wrapper table thead th {
         color: #fff !important;
+        background-color: #006637 !important;
     }
 
     .dataTables_wrapper .dataTables_info {
@@ -660,10 +655,24 @@
                                                     <td>
                                                         @if($inquiry->foc)
                                                             <span class="badge bg-info">FOC</span>
-                                                        @elseif($inquiry->payment_mode)
-                                                            <span class="badge bg-success">{{ $inquiry->payment_mode }}</span>
                                                         @else
-                                                            <span class="text-muted">N/A</span>
+                                                            @php
+                                                                $totalPaid = $inquiry->given_payment ?? 0;
+                                                                $cash = $inquiry->cash_payment ?? 0;
+                                                                $online = $inquiry->google_pay ?? 0;
+                                                                
+                                                                if($totalPaid > 0 && $cash == 0 && $online == 0) {
+                                                                    if($inquiry->payment_mode == 'Cash') $cash = $totalPaid;
+                                                                    else $online = $totalPaid;
+                                                                }
+                                                            @endphp
+                                                            <div class="small">
+                                                                <strong>Cash:</strong> ₹{{ number_format($cash, 2) }}<br>
+                                                                <strong>Online:</strong> ₹{{ number_format($online, 2) }}
+                                                            </div>
+                                                            @if($inquiry->payment_mode && $cash == 0 && $online == 0)
+                                                                <span class="badge bg-success mt-1">{{ $inquiry->payment_mode }}</span>
+                                                            @endif
                                                         @endif
                                                     </td>
                                                     <td>
@@ -724,6 +733,36 @@
                                         </table>
                                         <div class="dataTables_info" id="followup_table_info" role="status" aria-live="polite">
                                             Showing 1 to 1 of 1 entries
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Health Metrics Section -->
+                        <div class="patient_data_box mb-4">
+                            <div class="row">
+                                <div class="col-lg-12 p-0">
+                                    <div class="card-header mb-2">
+                                        <div class="heading-action responsive-block d-flex justify-content-between align-items-center">
+                                            <h3 class="bold font-up fnf-title">Health Metrics</h3>
+                                        </div>
+                                    </div>
+                                    <div class="info-grid px-3">
+                                        <div class="info-card">
+                                            <div class="info-label">Diet</div>
+                                            <div class="info-value">{{ $inquiry->diet ?? '--' }}</div>
+                                        </div>
+                                        <div class="info-card">
+                                            <div class="info-label">Exercise</div>
+                                            <div class="info-value">{{ $inquiry->exercise ?? '--' }}</div>
+                                        </div>
+                                        <div class="info-card">
+                                            <div class="info-label">Sleep</div>
+                                            <div class="info-value">{{ $inquiry->sleep ?? '--' }}</div>
+                                        </div>
+                                        <div class="info-card">
+                                            <div class="info-label">Water</div>
+                                            <div class="info-value">{{ $inquiry->water ?? '--' }}</div>
                                         </div>
                                     </div>
                                 </div>

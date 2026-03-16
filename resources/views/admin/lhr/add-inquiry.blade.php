@@ -484,26 +484,16 @@
                                         <div class="pro_filed">
                                             <div class="form">
                                                 <label for="area" class="required">Select Program</label>
-                                                <select name="area[0][]" multiple required class="form-control select2-area">
-                                                    <option value="upper_lips">Upper Lips</option>
-                                                    <option value="beard">Beard</option>
-                                                    <option value="full_face">Full Face</option>
-                                                    <option value="half_face">Half Face</option>
-                                                    <option value="under_arms">Under Arms</option>
-                                                    <option value="half_hands">Half Hands</option>
-                                                    <option value="full_hands">Full Hands</option>
-                                                    <option value="half_legs">Half Legs</option>
-                                                    <option value="full_legs">Full Legs</option>
-                                                    <option value="back">Back</option>
-                                                    <option value="bikini">Bikini</option>
-                                                    <option value="abdomen">Abdomen</option>
-                                                    <option value="chest">Chest</option>
+                                                <select name="area[0][]" multiple class="form-control select2-area">
+                                                    @foreach($programs as $program)
+                                                        <option value="{{ $program->program_name }}" data-short-name="{{ $program->program_short_name }}">{{ $program->program_name }}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                             <div class="form">
-                                                <label for="session" class="required">Session</label>
+                                                <label for="session">Session</label>
                                                 <input type="number" name="session[]" placeholder="Enter session details"
-                                                    value="{{ old('session.0') }}" required>
+                                                    value="{{ old('session.0') }}">
                                             </div>
                                         </div>
 
@@ -511,7 +501,7 @@
                                             <div class="form">
                                                 <label for="area_code">Area Code</label>
                                                 <input type="text" name="area_code[]" placeholder="Area Code"
-                                                    value="{{ old('area_code.0') }}">
+                                                    value="{{ old('area_code.0') }}" class="area-code-input">
                                             </div>
                                             <div class="form">
                                                 <label for="energy">Energy</label>
@@ -683,6 +673,35 @@
                                     </label>
                                 </div>
                             </div>
+                            </div>
+                        </div>
+
+                        <div class="section-divider active" onclick="toggleSection(this)">Health Metrics</div>
+                        <div class="accordion-content">
+                            <div class="pro_filed">
+                                <div class="form">
+                                    <label for="diet">Diet</label>
+                                    <input type="text" id="diet" name="diet" placeholder="Diet"
+                                        value="{{ old('diet') }}">
+                                </div>
+                                <div class="form">
+                                    <label for="exercise">Exercise</label>
+                                    <input type="text" id="exercise" name="exercise" placeholder="Exercise"
+                                        value="{{ old('exercise') }}">
+                                </div>
+                            </div>
+                            <div class="pro_filed">
+                                <div class="form">
+                                    <label for="sleep">Sleep</label>
+                                    <input type="text" id="sleep" name="sleep" placeholder="Sleep"
+                                        value="{{ old('sleep') }}">
+                                </div>
+                                <div class="form">
+                                    <label for="water">Water</label>
+                                    <input type="text" id="water" name="water" placeholder="Water"
+                                        value="{{ old('water') }}">
+                                </div>
+                            </div>
                         </div>
 
                         <div class="section-divider collapsed" onclick="toggleSection(this)">Follow Up & Notes</div>
@@ -767,13 +786,14 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             // Show loading
-                            const submitBtn = this.querySelector('button[type="submit"]');
-                            const originalText = submitBtn.innerHTML;
-                            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Submitting...';
-                            submitBtn.disabled = true;
+                            const submitBtn = inquiryForm.querySelector('button[type="submit"]');
+                            if (submitBtn) {
+                                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Submitting...';
+                                submitBtn.disabled = true;
+                            }
 
                             // Submit form
-                            this.submit();
+                            inquiryForm.submit();
                         }
                     });
                 });
@@ -801,6 +821,23 @@
 
             $('.select2-area').each(function() {
                 initSelect2(this);
+            });
+
+            // Auto-fill Area Code based on Program selection
+            $(document).on('change', '.select2-area', function() {
+                const selectedOptions = $(this).find('option:selected');
+                const row = $(this).closest('.treatment-row');
+                const areaCodeInput = row.find('.area-code-input');
+                
+                let shortNames = [];
+                selectedOptions.each(function() {
+                    const shortName = $(this).data('short-name');
+                    if (shortName) {
+                        shortNames.push(shortName);
+                    }
+                });
+                
+                areaCodeInput.val(shortNames.join(', '));
             });
 
             // Add Treatment Row
@@ -852,11 +889,28 @@
             const areaSessionSection = document.getElementById('area_session_section');
             if (statusSelect && areaSessionSection) {
                 const toggleAreaSession = () => {
-                    if (statusSelect.value === 'joined') {
+                    const isJoined = statusSelect.value === 'joined';
+                    if (isJoined) {
                         areaSessionSection.style.display = 'block';
                     } else {
                         areaSessionSection.style.display = 'none';
                     }
+
+                    // Dynamically set/remove required attribute and labels
+                    const areaSelects = areaSessionSection.querySelectorAll('.select2-area');
+                    const sessionInputs = areaSessionSection.querySelectorAll('input[name="session[]"]');
+                    const sessionLabels = areaSessionSection.querySelectorAll('label[for="session"]');
+
+                    areaSelects.forEach(sel => {
+                        sel.required = isJoined;
+                    });
+                    sessionInputs.forEach(input => {
+                        input.required = isJoined;
+                    });
+                    sessionLabels.forEach(label => {
+                        if (isJoined) label.classList.add('required');
+                        else label.classList.remove('required');
+                    });
                 };
                 statusSelect.addEventListener('change', toggleAreaSession);
                 toggleAreaSession(); // Initial check

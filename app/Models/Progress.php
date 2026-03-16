@@ -28,6 +28,9 @@ class Progress extends Model
         'bmi',
         'councilor_doctor',
         'exercise',
+        'diet',
+        'sleep',
+        'water',
         'delete_status',
         'delete_by',
     ];

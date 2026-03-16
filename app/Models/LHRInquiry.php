@@ -75,6 +75,10 @@ class LHRInquiry extends Model
         // Account and Time
         'account',
         'time',
+        'diet',
+        'exercise',
+        'sleep',
+        'water',
     ];
 
     protected $casts = [

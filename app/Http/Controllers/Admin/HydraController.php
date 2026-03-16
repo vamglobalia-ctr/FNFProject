@@ -138,7 +138,11 @@ public function storeInquiry(Request $request)
         'due_payment' => 'nullable|numeric|min:0',
         'payment_method' => 'nullable|in:Cash,Online,Cheque',
         'status_name' => 'required|in:pending,joined',
-        'branch_id' => 'required|string'
+        'branch_id' => 'required|string',
+        'diet' => 'nullable|string|max:255',
+        'exercise' => 'nullable|string|max:255',
+        'sleep' => 'nullable|string|max:255',
+        'water' => 'nullable|string|max:255',
     ]);
 
     if ($validator->fails()) {
@@ -232,7 +236,11 @@ public function storeInquiry(Request $request)
             'payment_mode' => $foc ? 'FOC' : ($request->payment_method ?: null),
             
             // Status
-            'status_name' => $request->status_name
+            'status_name' => $request->status_name,
+            'diet' => $request->diet,
+            'exercise' => $request->exercise,
+            'sleep' => $request->sleep,
+            'water' => $request->water,
         ]);
 
         // Create/Update Invoice and Transactions if payment is set
@@ -305,7 +313,11 @@ public function storeInquiry(Request $request)
             'given_payment' => 'nullable|numeric|min:0',
             'due_payment' => 'nullable|numeric|min:0',
             'payment_method' => 'nullable|in:Cash,Online,Cheque',
-            'status_name' => 'required|in:pending,joined'
+            'status_name' => 'required|in:pending,joined',
+            'diet' => 'nullable|string|max:255',
+            'exercise' => 'nullable|string|max:255',
+            'sleep' => 'nullable|string|max:255',
+            'water' => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -346,7 +358,11 @@ public function storeInquiry(Request $request)
                 'given_payment' => $request->given_payment ?? 0,
                 'due_payment' => $duePayment ?? 0,
                 'payment_mode' => $request->has('foc') ? 'FOC' : ($request->payment_method ?: null),
-                'status_name' => $request->status_name
+                'status_name' => $request->status_name,
+                'diet' => $request->diet,
+                'exercise' => $request->exercise,
+                'sleep' => $request->sleep,
+                'water' => $request->water,
             ]);
 
             // Create/Update Invoice and Transactions if payment is set
