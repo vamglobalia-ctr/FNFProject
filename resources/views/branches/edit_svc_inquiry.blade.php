@@ -1274,8 +1274,8 @@
                                                 <thead>
                                                     <tr class="text-muted small">
                                                         <th style="width: 30%">Medicine</th>
-                                                        <!-- <th style="width: 20%">Dose</th>
-                                                        <th style="width: 15%">Days</th> -->
+                                                        <th style="width: 20%">Dose</th>
+                                                        <th style="width: 15%">Days</th>
                                                         <th style="width: 20%">Timing</th>
                                                         <th style="width: 15%"></th>
                                                     </tr>
@@ -1288,13 +1288,13 @@
                                                         @foreach($homeoRows as $index => $row)
                                                             <tr>
                                                                 <td><input type="text" name="homeo_medicine[]" class="form-control form-control-sm" value="{{ $row['medicine'] ?? '' }}" placeholder="Medicine name"></td>
-                                                                <!-- <td>
+                                                                <td>
                                                                     <div class="autocomplete-container">
                                                                         <input type="text" name="homeo_dose[]" class="form-control form-control-sm dose-input" value="{{ $row['dose'] ?? '' }}" placeholder="Select or type dose" autocomplete="off">
                                                                         <div class="autocomplete-dropdown"></div>
                                                                     </div>
-                                                                </td> -->
-                                                                <!-- <td><input type="text" name="homeo_days[]" class="form-control form-control-sm" value="{{ $row['days'] ?? '' }}" placeholder="Days"></td> -->
+                                                                </td>
+                                                                <td><input type="text" name="homeo_days[]" class="form-control form-control-sm" value="{{ $row['days'] ?? '' }}" placeholder="Days"></td>
                                                                 <td>
                                                                     <select name="homeo_timing[]" class="form-select form-select-sm">
                                                                         <option value="">Select</option>
@@ -1363,8 +1363,8 @@
                                                 <thead>
                                                     <tr class="text-muted small">
                                                         <th style="width: 18%">Medicine</th>
-                                                        <!-- <th style="width: 15%">Dose</th>
-                                                        <th style="width: 10%">Days</th> -->
+                                                        {{-- <th style="width: 15%">Dose</th>
+                                                        <th style="width: 10%">Days</th> --}}
                                                         <th style="width: 12%">Date</th>
                                                         <th style="width: 10%">Time</th>
                                                         <th style="width: 20%">Note</th>
@@ -1379,13 +1379,13 @@
                                                         @foreach($indoorRows as $index => $row)
                                                             <tr>
                                                                 <td><input type="text" name="indoor_medicine[]" class="form-control form-control-sm" value="{{ $row['medicine'] ?? '' }}" placeholder="Medicine name"></td>
-                                                                <!-- <td>
+                                                                {{-- <td>
                                                                     <div class="autocomplete-container">
                                                                         <input type="text" name="indoor_dose[]" class="form-control form-control-sm dose-input" value="{{ $row['dose'] ?? '' }}" placeholder="Select or type dose" autocomplete="off">
                                                                         <div class="autocomplete-dropdown"></div>
                                                                     </div>
-                                                                </td> -->
-                                                                <!-- <td><input type="text" name="indoor_days[]" class="form-control form-control-sm" value="{{ $row['days'] ?? '' }}" placeholder="Days"></td> -->
+                                                                </td>
+                                                                <td><input type="text" name="indoor_days[]" class="form-control form-control-sm" value="{{ $row['days'] ?? '' }}" placeholder="Days"></td> --}}
                                                                 <td><input type="date" name="indoor_date[]" class="form-control form-control-sm" value="{{ $row['date'] ?? '' }}"></td>
                                                                 <td><input type="time" name="indoor_time[]" class="form-control form-control-sm" value="{{ $row['time'] ?? '' }}"></td>
                                                                 <td><input type="text" name="indoor_note[]" class="form-control form-control-sm" value="{{ $row['note'] ?? '' }}" placeholder="Note"></td>
@@ -1523,49 +1523,54 @@
                                     </div>
 
                                     <!-- FOC Checkbox -->
-                                    <div class="d-flex align-items-center bg-light p-3 mb-3">
-                                        <input type="checkbox" name="foc" id="foc" class="form-check-input me-3"
-                                            {{ $patient->getMeta('foc') ? 'checked' : '' }}>
-
-                                        <label for="foc" class="mb-0 fw-semibold">
-                                            FOC (Free of Charge Inquiry)
-                                        </label>
-                                    </div>
 
                                     <div class="section-divider mt-4">
                                         <div class="title">Payment Information</div>
                                         <div class="line"></div>
                                     </div>
-                                    <div id="payment_section" class="pt-4">
-                                        <div class="pro_filed d-sm-block d-md-flex">
+
+                                    <div class="d-flex align-items-center bg-light pt-3">
+                                        <input type="checkbox" name="inquiry_foc" value="Yes" id="focCheck" class="form-check-input me-3"
+                                            {{ $patient->getMeta('inquiry_foc') == 'Yes' ? 'checked' : '' }}>
+
+                                        <label for="focCheck" class="mb-0 fw-semibold">
+                                            FOC (Free of Charge Inquiry)
+                                        </label>
+                                    </div>
+                                    <div class="pt-4">
+                                        <!-- Payment Row - Hidden when FOC is checked -->
+                                        <div id="paymentRow" class="pro_filed d-sm-block d-md-flex" style="{{ $patient->getMeta('inquiry_foc') == 'Yes' ? 'display: none;' : '' }}">
                                             <div class="form">
                                                 <div class="form-col">
-                                                    <label for="charge_id">Registration Charges</label>
-                                                    <select id="charge_id" name="charge_id" class="form-control">
+                                                    <label for="total_payment">Registration Charges (₹)</label>
+                                                    <select class="form-select" name="total_payment" id="total_payment">
                                                         <option value="">Select Charge</option>
-                                                        @foreach($charges as $charge)
-                                                            <option value="{{ $charge->id }}" 
-                                                                    data-price="{{ $charge->charges_price }}"
-                                                                    {{ ($patient->getMeta('charge_id') == $charge->id) ? 'selected' : '' }}>
-                                                                {{ $charge->charges_name }} - ₹{{ $charge->charges_price }}
-                                                            </option>
-                                                        @endforeach
+                                                        @if(isset($charges))
+                                                            @foreach($charges as $charge)
+                                                                <option value="{{ $charge->charges_price }}" 
+                                                                    {{ ($patient->getMeta('total_payment') == $charge->charges_price) ? 'selected' : '' }}>
+                                                                    {{ $charge->charges_name }} - ₹{{ number_format($charge->charges_price, 2) }}
+                                                                </option>
+                                                            @endforeach
+                                                        @endif
+                                                        <option value="200" {{ ($patient->getMeta('total_payment') == '200' || !$patient->getMeta('total_payment')) ? 'selected' : '' }}>
+                                                            Default - ₹200.00
+                                                        </option>
                                                     </select>
-                                                    <input type="hidden" id="total_payment" name="total_payment" value="{{ $patient->getMeta('total_payment') ?? '200' }}">
                                                 </div>
                                             </div>
                                             <div class="form">
                                                 <div class="form-col">
-                                                    <label for="given_payment">Paid Amount</label>
-                                                    <input type="number" id="given_payment" name="given_payment" placeholder="Enter amount paid" step="0.01" value="{{ $patient->getMeta('given_payment') }}">
+                                                    <label for="given_payment">Paid Amount (₹)</label>
+                                                    <input type="number" id="given_payment" name="given_payment" placeholder="0.00" step="0.01" value="{{ $patient->getMeta('given_payment') }}">
                                                 </div>
                                             </div>
                                             <div class="form">
                                                 <div class="form-col">
                                                     <label for="payment_method">Payment Method</label>
                                                     @php $method = $patient->getMeta('payment_method'); @endphp
-                                                    <select id="payment_method" name="payment_method">
-                                                        <option value="Cash" {{ ($method == 'Cash') ? 'selected' : '' }}>Cash</option>
+                                                    <select class="form-select" id="payment_method" name="payment_method">
+                                                        <option value="Cash" {{ ($method == 'Cash' || !$method) ? 'selected' : '' }}>Cash</option>
                                                         <option value="Online" {{ ($method == 'Online') ? 'selected' : '' }}>Online</option>
                                                         <option value="Cheque" {{ ($method == 'Cheque') ? 'selected' : '' }}>Cheque</option>
                                                     </select>
@@ -1573,8 +1578,8 @@
                                             </div>
                                             <div class="form">
                                                 <div class="form-col">
-                                                    <label for="due_payment">Due Amount</label>
-                                                    <input type="number" id="due_payment" name="due_payment" value="{{ $patient->getMeta('due_payment') ?? '200' }}" readonly>
+                                                    <label for="due_payment">Due Balance (₹)</label>
+                                                    <input type="number" class="form-control" id="due_payment" name="due_payment" readonly style="background-color: #f8f9fa;" value="{{ $patient->getMeta('due_payment') ?? '0.00' }}">
                                                 </div>
                                             </div>
                                         </div>
@@ -1597,92 +1602,13 @@
 
 <script>
 
-
-document.addEventListener('DOMContentLoaded', function() {
-    const focCheckbox = document.getElementById('foc');
-    const paymentSection = document.getElementById('payment_section');
-    const chargeSelect = document.getElementById('charge_id');
-    const totalPaymentInput = document.getElementById('total_payment');
-    const givenPaymentInput = document.getElementById('given_payment');
-    const duePaymentInput = document.getElementById('due_payment');
-    const paymentMethod = document.getElementById('payment_method');
-
-    // Function to toggle payment section
-    function togglePaymentSection() {
-        if (focCheckbox.checked) {
-            paymentSection.style.display = 'none';
-
-            // Clear payment fields when FOC is checked
-            if (totalPaymentInput) totalPaymentInput.value = '';
-            if (givenPaymentInput) givenPaymentInput.value = '';
-            if (duePaymentInput) duePaymentInput.value = '';
-            if (paymentMethod) paymentMethod.value = '';
-            if (chargeSelect) chargeSelect.value = '';
-        } else {
-            paymentSection.style.display = 'block';
-        }
-    }
-
-    // Charge selection functionality
-    function handleChargeSelection() {
-        if (chargeSelect) {
-            chargeSelect.addEventListener('change', function() {
-                const selectedOption = this.options[this.selectedIndex];
-                const price = selectedOption.getAttribute('data-price');
-                
-                if (price) {
-                    totalPaymentInput.value = price;
-                    givenPaymentInput.value = price;
-                    duePaymentInput.value = '0.00';
-                    givenPaymentInput.readOnly = false;
-                } else {
-                    totalPaymentInput.value = '';
-                    givenPaymentInput.value = '';
-                    duePaymentInput.value = '';
-                    givenPaymentInput.readOnly = false;
-                }
-            });
-        }
-    }
-
-    // Only run toggle if FOC checkbox exists
-    if (focCheckbox && paymentSection) {
-        // Initial state
-        togglePaymentSection();
-
-        // Add event listener
-        focCheckbox.addEventListener('change', togglePaymentSection);
-    }
-
-    // Initialize charge selection
-    handleChargeSelection();
-
-    // Auto-calculate due payment
-    const totalPayment = document.getElementById('total_payment');
-    const discountPayment = document.getElementById('discount_payment');
-    const givenPayment = document.getElementById('given_payment');
-    const duePayment = document.getElementById('due_payment');
-
-    function calculateDuePayment() {
-        const total = parseFloat(totalPayment.value) || 0;
-        const discount = parseFloat(discountPayment.value) || 0;
-        const given = parseFloat(givenPayment.value) || 0;
-
-        const due = total - discount - given;
-        duePayment.value = due > 0 ? due.toFixed(2) : '0.00';
-    }
-
-    // Add event listeners for auto-calculation
-    totalPayment.addEventListener('input', calculateDuePayment);
-    discountPayment.addEventListener('input', calculateDuePayment);
-    givenPayment.addEventListener('input', calculateDuePayment);
-});
 function addMedicineRow(containerId) {
+    const firstRow = document.querySelector(`#${containerId} .medicine-row`);
+    if (!firstRow) return;
+    
     const container = document.getElementById(containerId);
-    const firstRow = container.querySelector('.medicine-row');
     const clone = firstRow.cloneNode(true);
 
-    // Clear all input values
     clone.querySelectorAll('input[type="text"]').forEach(input => {
         input.value = '';
     });
@@ -1778,6 +1704,72 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// Payment Calculation JavaScript for Edit Form
+document.addEventListener('DOMContentLoaded', function() {
+    const givenPaymentInput = document.getElementById('given_payment');
+    const totalPaymentInput = document.getElementById('total_payment');
+    const duePaymentInput = document.getElementById('due_payment');
+    const focCheck = document.getElementById('focCheck');
+
+    // Return if essential elements are not found
+    if (!givenPaymentInput || !totalPaymentInput || !duePaymentInput) {
+        console.log('Payment calculation elements not found');
+        return;
+    }
+
+    function calculateDue() {
+        const total = parseFloat(totalPaymentInput.value) || 0;
+        const given = parseFloat(givenPaymentInput.value) || 0;
+        const due = total - given;
+        duePaymentInput.value = due > 0 ? due.toFixed(2) : '0.00';
+    }
+
+    function setFullPayment() {
+        const total = parseFloat(totalPaymentInput.value) || 0;
+        if (total > 0) {
+            givenPaymentInput.value = total.toFixed(2);
+            calculateDue();
+        }
+    }
+
+    if (givenPaymentInput) {
+        givenPaymentInput.addEventListener('input', calculateDue);
+    }
+
+    if (totalPaymentInput) {
+        totalPaymentInput.addEventListener('change', setFullPayment);
+    }
+
+    // FOC Checkbox functionality
+    if (focCheck) {
+        // Find the payment section that contains the paymentRow
+        const paymentRow = document.getElementById('paymentRow');
+        const paymentSection = paymentRow ? paymentRow.closest('.pt-4') : null;
+        
+        focCheck.addEventListener('change', function() {
+            if (this.checked) {
+                if (paymentSection) paymentSection.style.display = 'none';
+                totalPaymentInput.value = '';
+                givenPaymentInput.value = '0';
+                duePaymentInput.value = '0.00';
+            } else {
+                if (paymentSection) paymentSection.style.display = 'block';
+                // Wait a moment for section to be visible before setting values
+                setTimeout(() => {
+                    if (totalPaymentInput) {
+                        totalPaymentInput.value = '200';
+                        setFullPayment(); // Set full payment when unchecking FOC
+                    }
+                }, 50);
+            }
+        });
+    }
+
+    // Initialize calculation on page load
+    setTimeout(setFullPayment, 100);
+});
+
 // Treatment Rows JavaScript
 function addInsideRow() {
     let tbody = document.getElementById("inside-treatment-body");
@@ -1844,6 +1836,13 @@ function addHomeoRow() {
     let newRow = document.createElement("tr");
     newRow.innerHTML = `
         <td><input type="text" name="homeo_medicine[]" class="form-control form-control-sm" placeholder="Medicine name" autocomplete="off"></td>
+        <td>
+            <div class="autocomplete-container">
+                <input type="text" name="homeo_dose[]" class="form-control form-control-sm dose-input" placeholder="Select or type dose" autocomplete="off">
+                <div class="autocomplete-dropdown"></div>
+            </div>
+        </td>
+        <td><input type="text" name="homeo_days[]" class="form-control form-control-sm" placeholder="Days"></td>
         <td>
             <select name="homeo_timing[]" class="form-select form-select-sm">
                 <option value="">Select</option>

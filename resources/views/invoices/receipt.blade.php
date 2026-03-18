@@ -281,104 +281,132 @@
                 <tbody>
                     @php $counter = 1; @endphp
 
-                    <!-- PROGRAMS ROWS -->
+                    <!-- IPD SPECIFIC ROWS -->
                     @php
-                        $programsData = $invoice->programs_data;
-                        if (is_string($programsData)) {
-                            $programsData = json_decode($programsData, true);
-                        }
+                        $isIPDInvoice = str_starts_with($invoice->invoice_no, 'IPD-');
                     @endphp
-
-                    @if(!empty($programsData) && is_array($programsData))
-                        @foreach($programsData as $program)
-                            <tr>
-                                <td>{{ $counter++ }}</td>
-                                <td>{{ $program['program_name'] ?? 'Service' }} (Program)</td>
-                                <td>₹{{ number_format($program['price'], 2) }}</td>
-                            </tr>
-                        @endforeach
-                    @elseif($invoice->program)
+                    
+                    @if($isIPDInvoice)
                         <tr>
                             <td>{{ $counter++ }}</td>
-                            <td>{{ $invoice->program->program_name }} (Program)</td>
-                            <td>₹{{ number_format($invoice->program->program_price, 2) }}</td>
+                            <td>IPD Patient Charges</td>
+                            <td>₹{{ number_format($invoice->total_payment, 2) }}</td>
                         </tr>
-                    @endif
-
-                    <!-- CHARGES ROWS -->
-                    @php
-                        $chargesData = $invoice->charges_data;
-                         if (is_string($chargesData)) {
-                            $chargesData = json_decode($chargesData, true);
-                        }
-                    @endphp
-
-                    @if(!empty($chargesData) && is_array($chargesData))
+                        
+                        @if ($invoice->discount > 0)
+                            <tr>
+                                <td>{{ $counter++ }}</td>
+                                <td>IPD Discount</td>
+                                <td>- ₹{{ number_format($invoice->discount, 2) }}</td>
+                            </tr>
+                        @endif
+                        
+                    @else
+                        <!-- REGULAR INVOICE PROGRAMS/CHARGES -->
+                        <!-- PROGRAMS ROWS -->
                         @php
-                            $consolidatedCharges = [];
-                            foreach($chargesData as $charge) {
-                                $chargeModel = !empty($charge['charge_id']) ? \App\Models\Charges::find($charge['charge_id']) : null;
-                                $displayChargeName = $charge['charge_name'] ?? ($chargeModel ? $chargeModel->charges_name : 'Charge');
-                                
-                                // Branch-specific naming override
-                                if (in_array($displayChargeName, ['Registration Charges', 'Registration', 'SVC-Charge', 'Followup Charges', 'Follow up charges', 'Consulting charges', 'Registration & Consultation Charges'])) {
-                                    if ($invoice->branch_id === 'LB-0007') {
-                                        $displayChargeName = 'LHR Service';
-                                    } elseif ($invoice->branch_id === 'BH-00023') {
-                                        $displayChargeName = 'Hydra Service';
-                                    } elseif ($invoice->branch_id === 'SVC-0005') {
-                                        $displayChargeName = 'SVC Service';
-                                    } else {
-                                        $displayChargeName = 'FNF Service';
-                                    }
-                                }
-                                
-                                if (isset($consolidatedCharges[$displayChargeName])) {
-                                    $consolidatedCharges[$displayChargeName] += (float)$charge['price'];
-                                } else {
-                                    $consolidatedCharges[$displayChargeName] = (float)$charge['price'];
-                                }
+                            $programsData = $invoice->programs_data;
+                            
+                            if (is_string($programsData)) {
+                                $programsData = json_decode($programsData, true);
                             }
                         @endphp
 
-                        @foreach($consolidatedCharges as $name => $price)
+                        @if(!empty($programsData) && is_array($programsData))
+                            @foreach($programsData as $program)
+                            
+                                <tr>
+                                    <td>{{ $counter++ }}</td>
+                                    <td>{{ $program['program_name'] ?? 'Service' }} (Program)</td>
+                                    <td>₹{{ number_format($program['price'], 2) }}</td>
+                                </tr>
+                            @endforeach
+                        @elseif($invoice->program)
                             <tr>
                                 <td>{{ $counter++ }}</td>
-                                <td>{{ $name }}</td>
-                                <td>₹{{ number_format($price, 2) }}</td>
+                                <td>{{ $invoice->program->program_name }} (Program)</td>
+                                <td>₹{{ number_format($invoice->program->program_price, 2) }}</td>
                             </tr>
-                        @endforeach
-                    @elseif(!$invoice->program)
-                        <tr>
-                            <td>{{ $counter++ }}</td>
-                                <td>
-                                    @php
-                                        $fLabel = $invoice->charge->charges_name ?? 'Consulting charges';
-                                        if ($invoice->branch_id === 'LB-0007') $fLabel = 'LHR Service';
-                                        elseif ($invoice->branch_id === 'BH-00023') $fLabel = 'Hydra Service';
-                                        elseif ($invoice->branch_id === 'SVC-0005') $fLabel = 'SVC Service';
-                                        else $fLabel = 'FNF Service';
-                                    @endphp
-                                    {{ $fLabel }}
-                                </td>
-                            <td>₹{{ number_format($invoice->price, 2) }}</td>
-                        </tr>
-                    @endif
+                        @endif
 
-                    @if ($invoice->pending_due > 0)
-                        <tr>
-                            <td>{{ $counter++ }}</td>
-                            <td>Follow up charges</td>
-                            <td>₹{{ number_format($invoice->pending_due, 2) }}</td>
-                        </tr>
-                    @endif
+                        <!-- CHARGES ROWS -->
+                        @php
+                            $chargesData = $invoice->charges_data;
+                             if (is_string($chargesData)) {
+                                $chargesData = json_decode($chargesData, true);
+                            }
+                        @endphp
 
-                    @if ($invoice->discount > 0)
-                        <tr>
-                            <td>{{ $counter++ }}</td>
-                            <td>Discount</td>
-                            <td>- ₹{{ number_format($invoice->discount, 2) }}</td>
-                        </tr>
+                        @if(!empty($chargesData) && is_array($chargesData))
+                            @php
+                                $consolidatedCharges = [];
+                                foreach($chargesData as $charge) {
+                                    $chargeModel = !empty($charge['charge_id']) ? \App\Models\Charges::find($charge['charge_id']) : null;
+                                    $displayChargeName = $charge['charge_name'] ?? ($chargeModel ? $chargeModel->charges_name : 'Charge');
+                                    
+                                    // Branch-specific naming override
+                                                                  if (in_array($displayChargeName, ['Registration Charges', 'Registration', 'SVC-Charge', 'Followup Charges', 'Follow up charges', 'Consulting charges', 'Registration & Consultation Charges'])) {
+                                        if ($invoice->branch_id === 'LB-0007') {
+                                            // $displayChargeName = 'LHR Service';
+                                            $displayChargeName = $displayChargeName . ' From LB-0007';
+                                        } elseif ($invoice->branch_id === 'BH-00023') {
+                                            // $displayChargeName = 'Hydra Service';
+                                            $displayChargeName = $displayChargeName . ' From BH-00023';
+                                        } elseif ($invoice->branch_id === 'SVC-0005') {
+                                            // $displayChargeName = 'SVC Service';
+                                            $displayChargeName = $displayChargeName . ' From SVC-0005';
+                                        } else {
+                                            $displayChargeName = 'FNF Service';
+                                        }
+                                    }
+                                    
+                                    if (isset($consolidatedCharges[$displayChargeName])) {
+                                        $consolidatedCharges[$displayChargeName] += (float)$charge['price'];
+                                    } else {
+                                        $consolidatedCharges[$displayChargeName] = (float)$charge['price'];
+                                    }
+                                }
+                            @endphp
+
+                            @foreach($consolidatedCharges as $name => $price)
+                                <tr>
+                                    <td>{{ $counter++ }}</td>
+                                    <td>{{ $name }}</td>
+                                    <td>₹{{ number_format($price, 2) }}</td>
+                                </tr>
+                            @endforeach
+                        @elseif(!$invoice->program)
+                            <tr>
+                                <td>{{ $counter++ }}</td>
+                                    <td>
+                                        @php
+                                            $fLabel = $invoice->charge->charges_name ?? 'Consulting charges';
+                                            if ($invoice->branch_id === 'LB-0007') $fLabel = 'LHR Service';
+                                            elseif ($invoice->branch_id === 'BH-00023') $fLabel = 'Hydra Service';
+                                            elseif ($invoice->branch_id === 'SVC-0005') $fLabel = 'SVC Service';
+                                            else $fLabel = 'FNF Service';
+                                        @endphp
+                                        {{ $fLabel }}
+                                    </td>
+                                <td>₹{{ number_format($invoice->price, 2) }}</td>
+                            </tr>
+                        @endif
+
+                        @if ($invoice->pending_due > 0)
+                            <tr>
+                                <td>{{ $counter++ }}</td>
+                                <td>Follow up charges</td>
+                                <td>₹{{ number_format($invoice->pending_due, 2) }}</td>
+                            </tr>
+                        @endif
+
+                        @if ($invoice->discount > 0)
+                            <tr>
+                                <td>{{ $counter++ }}</td>
+                                <td>Discount</td>
+                                <td>- ₹{{ number_format($invoice->discount, 2) }}</td>
+                            </tr>
+                        @endif
                     @endif
 
                     @for ($i = 0; $i < (5 - $counter); $i++)

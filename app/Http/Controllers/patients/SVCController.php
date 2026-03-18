@@ -36,11 +36,11 @@ class SVCController extends Controller
             dd("ACC user not found");
         }
         $branches = Branch::all();   // <-- missing
-
+ 
         $branchName = optional($accUser->branch)->branch_name;
-
+ 
         $branchId = auth()->user()->user_branch;
-
+ 
         // Get doctors (users with doctor role)
         $doctors = User::where('user_role', 6)
             ->orWhereHas('roles', function ($query) {
@@ -49,14 +49,17 @@ class SVCController extends Controller
             ->select('id', 'name', 'email')
             ->orderBy('name')
             ->get();
-
-        // Get active charges
-        $charges = Charges::where('delete_status', '0')
-            ->orderBy('charges_name')
-            ->get();
-
+ 
+        // Fetch charges for registration charges dropdown
+        $charges = \App\Models\Charges::where(function($query) {
+                $query->where('delete_status', '');
+            })
+            ->orderBy('charges_name', 'asc')
+            ->get(['id', 'charges_name', 'charges_price']);
+ 
         return view('branches.add_inquiry', compact('branchId', 'branchName', 'branches', 'doctors', 'charges'));
     }
+ 
 
 
 
@@ -226,10 +229,8 @@ class SVCController extends Controller
         }
     }
 
-    public function store(Request $request)
+   public function store(Request $request)
     {
-
-        // dd($request->all());
         return DB::transaction(function () use ($request) {
             try {
                 $user = auth()->user();
@@ -278,13 +279,9 @@ class SVCController extends Controller
                     'patient_name' => 'required|string|max:255',
                     'address' => 'required|string',
                     'age' => 'required|integer',
-                    'gender' => 'required|string',
                     'diagnosis' => 'required|string',
                     'inquiry_date' => 'nullable|date',
                     'next_follow_date' => 'nullable|date',
-                    'total_payment' => 'nullable|numeric',
-                    'given_payment' => 'nullable|numeric',
-                    'payment_method' => 'nullable|string',
                 ]);
 
                 if (!empty($validated['inquiry_date']) && $request->filled('inquiry_time')) {
@@ -313,13 +310,31 @@ class SVCController extends Controller
                     'all_patient_data' => $patient->toArray()
                 ]);
 
-                $metaFields = $request->except(array_merge(array_keys($validated), ['_token']));
+                $metaFields = $request->except(array_merge(array_keys($validated), [
+                    '_token', 
+                    // Payment-related fields to exclude from meta
+                    'total_payment',
+                    'given_payment', 
+                    'due_payment',
+                    'discount_payment',
+                    'payment_method',
+                    'inquiry_foc',
+                    // Other non-meta fields
+                    'inquiry_time'
+                ]));
 
                 // Debug: Log what meta fields are being processed
                 \Log::info('Meta fields being processed:', [
                     'meta_fields' => $metaFields,
                     'validated_keys' => array_keys($validated),
-                    'all_request_data' => $request->all()
+                    'all_request_data' => $request->all(),
+                    'payment_data' => [
+                        'total_payment' => $request->input('total_payment'),
+                        'given_payment' => $request->input('given_payment'),
+                        'due_payment' => $request->input('due_payment'),
+                        'payment_method' => $request->input('payment_method'),
+                        'inquiry_foc' => $request->input('inquiry_foc'),
+                    ]
                 ]);
 
                 foreach ($metaFields as $key => $value) {
@@ -499,7 +514,7 @@ class SVCController extends Controller
 
 
 
-    public function editSvcInquiry($id)
+  public function editSvcInquiry($id)
     {
         $patient = PatientInquiry::with(['metas'])->findOrFail($id);
 
@@ -529,9 +544,13 @@ class SVCController extends Controller
             ->orderBy('name')
             ->get();
 
-        $charges = Charges::where('delete_status', '0')
-            ->orderBy('charges_name')
-            ->get();
+        // Fetch charges for registration charges dropdown
+        $charges = \App\Models\Charges::where(function($query) {
+                $query->where('delete_status', '0')
+                      ->orWhere('delete_status', '');
+            })
+            ->orderBy('charges_name', 'asc')
+            ->get(['id', 'charges_name', 'charges_price']);
 
         return view('branches.edit_svc_inquiry', [
             'patient' => $patient,
@@ -541,6 +560,7 @@ class SVCController extends Controller
             'charges' => $charges,
         ]);
     }
+
 
     public function updateSvcInquiry(Request $request, $id)
     {
@@ -1999,64 +2019,162 @@ class SVCController extends Controller
         return $meta->meta_value ?: $default;
     }
 
-    public function updateCharges(Request $request, $id)
+     public function updateCharges(Request $request, $id)
     {
+        Log::info('updateCharges method called for patient ID: ' . $id);
+        Log::info('Request data: ' . json_encode($request->all()));
+        
         try {
+            DB::beginTransaction();
+            
             $patient = PatientInquiry::findOrFail($id);
+            Log::info('Patient found: ' . $patient->patient_id . ' with branch: ' . $patient->branch_id);
             
             // Validate input
             $validated = $request->validate([
                 'total_payment' => 'nullable|numeric|min:0',
                 'given_payment' => 'nullable|numeric|min:0',
                 'discount_payment' => 'nullable|numeric|min:0',
-                'payment_method' => 'nullable|string|in:Cash,GPay,Cheque',
+                'payment_method' => 'nullable|string|in:Cash,Online,Cheque',
                 'due_payment' => 'nullable|numeric|min:0',
             ]);
- 
-            // Clear existing payment method metas
-            $patient->metas()->whereIn('meta_key', ['cash_payment', 'gp_payment', 'cheque_payment'])->delete();
- 
-            // Update or create meta values
-            $metaUpdates = [
-                'total_payment' => $validated['total_payment'] ?? null,
-                'given_payment' => $validated['given_payment'] ?? null,
-                'discount_payment' => $validated['discount_payment'] ?? null,
-                'due_payment' => $validated['due_payment'] ?? null,
-            ];
- 
-            // Set payment method based on selection
-            if (!empty($validated['payment_method'])) {
-                switch ($validated['payment_method']) {
-                    case 'Cash':
-                        $metaUpdates['cash_payment'] = $validated['given_payment'] ?? 0;
-                        break;
-                    case 'GPay':
-                        $metaUpdates['gp_payment'] = $validated['given_payment'] ?? 0;
-                        break;
-                    case 'Cheque':
-                        $metaUpdates['cheque_payment'] = $validated['given_payment'] ?? 0;
-                        break;
-                }
+
+            // Calculate amounts
+            $totalAmount = $validated['total_payment'] ?? 0;
+            $paidAmount = $validated['given_payment'] ?? 0;
+            $discountAmount = $validated['discount_payment'] ?? 0;
+            $dueAmount = $totalAmount - $paidAmount - $discountAmount;
+
+            // Check if patient has existing invoice
+            $existingInvoice = Invoice::where('patient_id', $patient->id) // Use database ID for lookup
+                ->where('branch_id', $patient->branch_id)
+                ->orderBy('created_at', 'desc')
+                ->first();
+
+            if ($existingInvoice) {
+                // Update existing invoice
+                Log::info('Updating existing invoice: ' . $existingInvoice->id . ' for patient: ' . $patient->patient_id);
+                
+                $existingInvoice->total_payment = $totalAmount;
+                $existingInvoice->given_payment = $paidAmount;
+                $existingInvoice->discount = $discountAmount;
+                $existingInvoice->due_payment = $dueAmount;
+                $existingInvoice->save();
+                
+                $invoice = $existingInvoice;
+                Log::info('Invoice updated successfully: ' . $invoice->id);
+            } else {
+                // Create new invoice - use database ID for patient_id column
+                Log::info('Creating new invoice for patient: ' . $patient->patient_id . ' with total: ' . $totalAmount);
+                
+                // Generate invoice filename
+                $branch = Branch::where('branch_id', $patient->branch_id)->first();
+                $invoiceFile = $this->generateInvoiceFilename($patient, $branch, 'IPD-' . date('Y') . '-' . str_pad(Invoice::count() + 1, 6, '0', STR_PAD_LEFT));
+                
+                $invoice = Invoice::create([
+                    'branch_id' => $patient->branch_id,
+                    'patient_id' => $patient->id, // Use database ID for column
+                    'program_id' => 1, // Default program
+                    'invoice_no' => 'IPD-' . date('Y') . '-' . str_pad(Invoice::count() + 1, 6, '0', STR_PAD_LEFT),
+                    'invoice_date' => now(),
+                    'total_payment' => $totalAmount,
+                    'given_payment' => $paidAmount,
+                    'discount' => $discountAmount,
+                    'due_payment' => $dueAmount,
+                    'price' => $totalAmount,
+                    'invoice_file' => $invoiceFile, // Add invoice file
+                ]);
+                
+                Log::info('New invoice created: ' . $invoice->id . ' with invoice_no: ' . $invoice->invoice_no . ' and file: ' . $invoiceFile);
             }
- 
-            foreach ($metaUpdates as $key => $value) {
-                if ($value !== null && $value !== '') {
-                    $patient->metas()->updateOrCreate(
-                        ['meta_key' => $key],
-                        ['meta_value' => $value]
-                    );
-                }
+
+            // Create transaction if payment was made
+            if ($paidAmount > 0) {
+                Log::info('Creating transaction for payment: ' . $paidAmount);
+                
+                PatientTransaction::create([
+                    'patient_id' => $patient->id, // Use database ID for transaction
+                    'invoice_id' => $invoice->id,
+                    'program_id' => $invoice->program_id,
+                    'type' => 'credit',
+                    'amount' => $paidAmount,
+                    'description' => 'IPD Patient Payment - ' . ucfirst($validated['payment_method'] ?? 'Cash'),
+                    'created_at' => now(),
+                ]);
+                
+                Log::info('Transaction created successfully');
             }
- 
-            return redirect()->route('ipd.profile', $id)->with('success', 'Charges updated successfully!');
+
+            DB::commit();
+
+            return redirect()->route('ipd.profile', $id)->with('success', 'Charges updated and invoice synchronized successfully!');
             
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error updating charges: ' . $e->getMessage());
+            return redirect()->route('ipd.profile', $id)->with('error', 'Error updating charges');
+        }
+    }
+    
+    /**
+     * Generate invoice filename
+     */
+    private function generateInvoiceFilename($patient, $branch, $invoiceNo, $timestamp = '')
+    {
+        $patientName = preg_replace('/[^A-Za-z0-9]/', '', $patient->patient_name ?? 'Patient');
+        $branchName = preg_replace('/[^A-Za-z0-9]/', '', $branch->branch_name ?? 'Branch');
+        $currentDate = now()->format('d-m-Y');
+
+        // Add timestamp to make filename unique
+        $uniquePart = $timestamp ? '-' . $timestamp : '';
+
+        return $patientName . $branchName . '-' . $invoiceNo . $uniquePart . '-' . $currentDate . '.pdf';
+    }
+
+
+    public function viewIpdProfile($id)
+    {
+        try {
+            $patient = PatientInquiry::with(['metas', 'followups' => function($query) {
+                $query->with(['metas', 'doctor'])->orderBy('followup_date', 'desc');
+            }])->findOrFail($id);
+ 
+            // Build meta array like in editSvcInquiry - needed for Inquiry Details
+            $meta = [];
+            foreach ($patient->metas as $m) {
+                $decoded = json_decode($m->meta_value, true);
+                $meta[$m->meta_key] = json_last_error() === JSON_ERROR_NONE ? $decoded : $m->meta_value;
+            }
+ 
+            // Get invoice data for charges display
+            $invoice = Invoice::where('patient_id', $patient->id)
+                ->where('branch_id', $patient->branch_id)
+                ->orderBy('created_at', 'desc')
+                ->first();
+ 
+            // Only load Indoor Treatment data - other treatments removed
+            $treatments = [];
+            $treatments['indoor'] = PatientTreatment::where('patient_id', $patient->patient_id)
+                ->where('inquiry_id', $patient->id)
+                ->where('type', 'indoor')
+                ->whereNull('followup_id')
+                ->get()
+                ->toArray();
+ 
+            // Get doctors for display - needed for Follow Up section
+            $doctors = User::where('user_role', 6)
+                ->orWhereHas('roles', function ($query) {
+                    $query->where('name', 'Doctor');
+                })
+                ->select('id', 'name', 'email')
+                ->orderBy('name')
+                ->get();
+ 
+            return view('branches.profile.ipd_profile', compact('patient', 'meta', 'treatments', 'doctors', 'invoice'));
         } catch (ModelNotFoundException $e) {
             return redirect()->route('indoor.patients')->with('error', 'Patient not found.');
-        } catch (ValidationException $e) {
-            return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (Exception $e) {
-            Log::error('Error updating charges: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Error updating charges. Please try again.');
+            return redirect()->route('indoor.patients')->with('error', 'Error loading patient profile.');
         }
     }
 }

@@ -88,9 +88,9 @@ class ProgressController extends Controller
     // }
 
 
-    public function store(Request $request)
+  public function store(Request $request)
     {
-
+ 
         try {
             $request->validate([
                 'patient_id' => 'required|exists:acc_inquirys,id',
@@ -99,12 +99,16 @@ class ProgressController extends Controller
                 'date' => 'required|date',
                 'time' => 'required',
             ]);
-
+ 
             $branch = Branch::where('branch_id', $request->branch_id)->first();
             if (!$branch) {
                 return redirect()->back()->withErrors(['branch_id' => 'Invalid branch selected'])->withInput();
             }
-
+ 
+            // Convert arrays to comma-separated strings
+            $bodyPart = is_array($request->body_part) ? implode(', ', array_filter($request->body_part)) : ($request->body_part ?? null);
+            $programName = is_array($request->program_name) ? implode(', ', array_filter($request->program_name)) : ($request->program_name ?? null);
+ 
             Progress::create([
                 'patient_id' => $request->patient_id,
                 'branch_name' => $branch->branch_name,
@@ -112,32 +116,27 @@ class ProgressController extends Controller
                 'patient_name' => $request->patient_name,
                 'date' => $request->date,
                 'time' => $request->time,
-                'body_part' => is_array($request->body_part) ? implode(', ', array_filter($request->body_part)) : ($request->body_part ?? null),
+                'body_part' => $bodyPart,
                 'bp_p' => $request->bp_p ?? null,
                 'detox' => $request->detox ?? null,
-                'face_program' => is_array($request->program_name) ? implode(', ', array_filter($request->program_name)) : ($request->program_name ?? null),
+                'face_program' => $programName,
                 'lypolysis_treatment' => $request->lypolysis_treatment ?? null,
                 'weight' => $request->weight ?? null,
                 'height' => $request->height ?? null,
                 'bmi' => $request->bmi ?? null,
                 'councilor_doctor' => $request->councilor_doctor ?? null,
                 'exercise' => $request->exercise ?? null,
-                'diet' => $request->diet ?? null,
-                'sleep' => $request->sleep ?? null,
-                'water' => $request->water ?? null,
                 'delete_status' => '0',
                 'delete_by' => Auth::id() ?? null,
             ]);
-
+ 
             return redirect()->back()->with('success', 'Progress report saved successfully.');
         }
         catch (\Exception $e) {
-            dd($e->getMessage());
             \Log::error('Progress Store Error: ' . $e->getMessage());
-            return redirect()->back()->withErrors(['error' => 'Failed to save progress report.'])->withInput();
+            return redirect()->back()->withErrors(['error' => 'Failed to save progress report: ' . $e->getMessage()])->withInput();
         }
     }
-
     // public function getPatientsByBranch(Request $request)
 // {
 //     $branchId = $request->branch_id;

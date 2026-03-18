@@ -989,11 +989,11 @@ function formatValue($value) {
                                     <div class="col-sm-3"><p class="mb-0 profile_txt_color">Consultation Charge</p></div>
                                     <div class="col-sm-9">
                                         <p class="text-muted mb-0">
-                                            @php
-                                                $totalPayment = $patient->getMeta('total_payment');
-                                                $consultationCharge = $totalPayment ?: 'Not Set';
-                                            @endphp
-                                            {{ $consultationCharge }}
+                                            @if($invoice)
+                                                {{ number_format($invoice->total_payment, 2) }}
+                                            @else
+                                                Not Set
+                                            @endif
                                         </p>
                                     </div>
                                 </div>
@@ -1002,11 +1002,11 @@ function formatValue($value) {
                                     <div class="col-sm-3"><p class="mb-0 profile_txt_color">Paid Amount</p></div>
                                     <div class="col-sm-9">
                                         <p class="text-muted mb-0">
-                                            @php
-                                                $givenPayment = $patient->getMeta('given_payment');
-                                                $paidAmount = $givenPayment ?: '0';
-                                            @endphp
-                                            {{ $paidAmount }}
+                                            @if($invoice)
+                                                {{ number_format($invoice->given_payment, 2) }}
+                                            @else
+                                                0
+                                            @endif
                                         </p>
                                     </div>
                                 </div>
@@ -1015,10 +1015,28 @@ function formatValue($value) {
                                     <div class="col-sm-3"><p class="mb-0 profile_txt_color">Payment Method</p></div>
                                     <div class="col-sm-9">
                                         <p class="text-muted mb-0">
-                                            @php
-                                                $paymentMethod = $patient->getMeta('payment_method');  
-                                            @endphp
-                                            {{ $paymentMethod }}
+                                            @if($invoice && $invoice->given_payment > 0)
+                                                @php
+                                                    // Get payment method from patient transactions
+                                                    $transaction = \App\Models\PatientTransaction::where('patient_id', $patient->id)
+                                                        ->where('invoice_id', $invoice->id)
+                                                        ->where('type', 'credit')
+                                                        ->orderBy('created_at', 'desc')
+                                                        ->first();
+                                                    
+                                                    $paymentMethod = 'Not Set';
+                                                    if ($transaction && str_contains($transaction->description, 'Cash')) {
+                                                        $paymentMethod = 'Cash';
+                                                    } elseif ($transaction && str_contains($transaction->description, 'Online')) {
+                                                        $paymentMethod = 'Online';
+                                                    } elseif ($transaction && str_contains($transaction->description, 'Cheque')) {
+                                                        $paymentMethod = 'Cheque';
+                                                    }
+                                                @endphp
+                                                {{ $paymentMethod }}
+                                            @else
+                                                Not Set
+                                            @endif
                                         </p>
                                     </div>
                                 </div>
@@ -1027,13 +1045,13 @@ function formatValue($value) {
                                     <div class="col-sm-3"><p class="mb-0 profile_txt_color">Due Amount</p></div>
                                     <div class="col-sm-9">
                                         <p class="text-muted mb-0">
-                                            @php
-                                                $duePayment = $patient->getMeta('due_payment');
-                                                $dueAmount = $duePayment ?: '0';
-                                            @endphp
-                                            <span class="{{ $dueAmount > 0 ? 'text-danger' : 'text-success' }}">
-                                                {{ $dueAmount }}
-                                            </span>
+                                            @if($invoice)
+                                                <span class="{{ $invoice->due_payment > 0 ? 'text-danger' : 'text-success' }}">
+                                                    {{ number_format($invoice->due_payment, 2) }}
+                                                </span>
+                                            @else
+                                                <span class="text-success">0</span>
+                                            @endif
                                         </p>
                                     </div>
                                 </div>
@@ -1042,11 +1060,11 @@ function formatValue($value) {
                                     <div class="col-sm-3"><p class="mb-0 profile_txt_color">Discount</p></div>
                                     <div class="col-sm-9">
                                         <p class="text-muted mb-0">
-                                            @php
-                                                $discountPayment = $patient->getMeta('discount_payment');
-                                                $discountAmount = $discountPayment ?: '0';
-                                            @endphp
-                                            {{ $discountAmount }}
+                                            @if($invoice)
+                                                {{ number_format($invoice->discount, 2) }}
+                                            @else
+                                                0
+                                            @endif
                                         </p>
                                     </div>
                                 </div>
@@ -1495,42 +1513,88 @@ document.addEventListener('DOMContentLoaded', function () {
                 <h5 class="modal-title" id="updateChargesModalLabel">Update Patient Charges</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ route('svc.profile.update-charges', $patient->id) }}" method="POST">
+            <form action="{{ route('svc.profile.update-charges', $patient->id) }}" method="POST" id="updateChargesForm">
                 @csrf
-                <div class="modal-body">
+                <div class="modal-body">                    
                     <div class="mb-3">
-                        <label for="modal_total_payment" class="form-label">Consultation Charge</label>
+                        <label for="modal_total_payment" class="form-label">Total Amount (₹)</label>
                         <input type="number" class="form-control" id="modal_total_payment" name="total_payment" 
-                               value="{{ $patient->getMeta('total_payment') }}" step="0.01" placeholder="Enter consultation charge">
+                               value="{{ $invoice ? $invoice->total_payment : 0 }}" step="0.01" placeholder="Enter total charge" required>
                     </div>
+                    
                     <div class="mb-3">
-                        <label for="modal_given_payment" class="form-label">Paid Amount</label>
-                        <input type="number" class="form-control" id="modal_given_payment" name="given_payment" 
-                               value="{{ $patient->getMeta('given_payment') }}" step="0.01" placeholder="Enter paid amount">
-                    </div>
-                    <div class="mb-3">
-                        <label for="modal_discount_payment" class="form-label">Discount</label>
+                        <label for="modal_discount_payment" class="form-label">Discount (₹)</label>
                         <input type="number" class="form-control" id="modal_discount_payment" name="discount_payment" 
-                               value="{{ $patient->getMeta('discount_payment') }}" step="0.01" placeholder="Enter discount amount">
+                               value="{{ $invoice ? $invoice->discount : 0 }}" step="0.01" placeholder="Enter discount" min="0">
                     </div>
+                    
+                    <div class="mb-3">
+                        <label for="modal_given_payment" class="form-label">Paid Amount (₹)</label>
+                        <input type="number" class="form-control" id="modal_given_payment" name="given_payment" 
+                               value="{{ $invoice ? $invoice->given_payment : 0 }}" step="0.01" placeholder="Enter paid amount" min="0">
+                    </div>
+                    
                     <div class="mb-3">
                         <label for="modal_payment_method" class="form-label">Payment Method</label>
-                        <select class="form-select" id="modal_payment_method" name="payment_method">
+                        <select class="form-select" id="modal_payment_method" name="payment_method" required>
                             <option value="">Select Payment Method</option>
-                            <option value="Cash" {{ $patient->getMeta('cash_payment') ? 'selected' : '' }}>Cash</option>
-                            <option value="GPay" {{ $patient->getMeta('gp_payment') ? 'selected' : '' }}>GPay</option>
-                            <option value="Cheque" {{ $patient->getMeta('cheque_payment') ? 'selected' : '' }}>Cheque</option>
+                            <option value="Cash" @if($invoice && $invoice->given_payment > 0)
+                                @php
+                                    $transaction = \App\Models\PatientTransaction::where('patient_id', $patient->id)
+                                        ->where('invoice_id', $invoice->id)
+                                        ->where('type', 'credit')
+                                        ->orderBy('created_at', 'desc')
+                                        ->first();
+                                    if ($transaction && str_contains($transaction->description, 'Cash')) echo 'selected';
+                                @endphp
+                            @endif>Cash</option>
+                            <option value="Online" @if($invoice && $invoice->given_payment > 0)
+                                @php
+                                    $transaction = \App\Models\PatientTransaction::where('patient_id', $patient->id)
+                                        ->where('invoice_id', $invoice->id)
+                                        ->where('type', 'credit')
+                                        ->orderBy('created_at', 'desc')
+                                        ->first();
+                                    if ($transaction && str_contains($transaction->description, 'Online')) echo 'selected';
+                                @endphp
+                            @endif>Online (GPay/PhonePe/Paytm)</option>
+                            <option value="Cheque" @if($invoice && $invoice->given_payment > 0)
+                                @php
+                                    $transaction = \App\Models\PatientTransaction::where('patient_id', $patient->id)
+                                        ->where('invoice_id', $invoice->id)
+                                        ->where('type', 'credit')
+                                        ->orderBy('created_at', 'desc')
+                                        ->first();
+                                    if ($transaction && str_contains($transaction->description, 'Cheque')) echo 'selected';
+                                @endphp
+                            @endif>Cheque</option>
                         </select>
                     </div>
+                    
                     <div class="mb-3">
-                        <label for="modal_due_payment" class="form-label">Due Amount</label>
+                        <label for="modal_due_payment" class="form-label">Due Amount (₹)</label>
                         <input type="number" class="form-control" id="modal_due_payment" name="due_payment" 
-                               value="{{ $patient->getMeta('due_payment') }}" step="0.01" placeholder="Enter due amount" readonly>
+                               value="{{ $invoice ? $invoice->due_payment : 0 }}" step="0.01" readonly>
+                        <small class="text-muted">Auto-calculated: Total - Discount - Paid</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span><strong>Summary:</strong></span>
+                            <span id="chargeSummary">
+                                Total: ₹<span id="summaryTotal">{{ $invoice ? $invoice->total_payment : 0 }}</span> | 
+                                Discount: ₹<span id="summaryDiscount">{{ $invoice ? $invoice->discount : 0 }}</span> | 
+                                Paid: ₹<span id="summaryPaid">{{ $invoice ? $invoice->given_payment : 0 }}</span> | 
+                                Due: ₹<span id="summaryDue">{{ $invoice ? $invoice->due_payment : 0 }}</span>
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Update Charges</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Update Charges & Sync Invoice
+                    </button>
                 </div>
             </form>
         </div>
@@ -1538,6 +1602,43 @@ document.addEventListener('DOMContentLoaded', function () {
 </div>
 
 <script>
+// Auto-calculate due amount
+document.addEventListener('DOMContentLoaded', function() {
+    const totalInput = document.getElementById('modal_total_payment');
+    const discountInput = document.getElementById('modal_discount_payment');
+    const paidInput = document.getElementById('modal_given_payment');
+    const dueInput = document.getElementById('modal_due_payment');
+    
+    const summaryTotal = document.getElementById('summaryTotal');
+    const summaryDiscount = document.getElementById('summaryDiscount');
+    const summaryPaid = document.getElementById('summaryPaid');
+    const summaryDue = document.getElementById('summaryDue');
+    
+    function calculateDue() {
+        const total = parseFloat(totalInput.value) || 0;
+        const discount = parseFloat(discountInput.value) || 0;
+        const paid = parseFloat(paidInput.value) || 0;
+        
+        const due = Math.max(0, total - discount - paid);
+        
+        dueInput.value = due.toFixed(2);
+        
+        // Update summary
+        summaryTotal.textContent = total.toFixed(2);
+        summaryDiscount.textContent = discount.toFixed(2);
+        summaryPaid.textContent = paid.toFixed(2);
+        summaryDue.textContent = due.toFixed(2);
+    }
+    
+    // Add event listeners
+    totalInput.addEventListener('input', calculateDue);
+    discountInput.addEventListener('input', calculateDue);
+    paidInput.addEventListener('input', calculateDue);
+    
+    // Initial calculation
+    calculateDue();
+});
+
 // Auto-calculate due amount when total, given, or discount changes
 document.addEventListener('DOMContentLoaded', function() {
     const totalInput = document.getElementById('modal_total_payment');

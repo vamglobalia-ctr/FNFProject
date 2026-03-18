@@ -476,11 +476,31 @@ class InvoiceController extends Controller
         $invoice = Invoice::findOrFail($id);
         return view('invoices.receipt', compact('invoice'));
     }
-
-    public function downloadInvoice($id)
+public function downloadInvoice($id)
     {
         $invoice = Invoice::findOrFail($id);
-
+ 
+        // Generate filename if invoice_file is null
+        if (empty($invoice->invoice_file)) {
+            $patient = null;
+            
+            // Get patient based on patient_id
+            if ($invoice->patient_id) {
+                // Try to find patient from different tables
+                $patient = AccInquiry::find($invoice->patient_id);
+                if (!$patient) $patient = PatientInquiry::find($invoice->patient_id);
+                if (!$patient) $patient = LHRInquiry::find($invoice->patient_id);
+                if (!$patient) $patient = HydraInquiry::find($invoice->patient_id);
+            }
+            
+            // Get branch info
+            $branch = Branch::where('branch_id', $invoice->branch_id)->first();
+            
+            // Generate filename
+            $filename = $this->generateInvoiceFilename($patient, $branch, $invoice->invoice_no);
+        } else {
+            $filename = $invoice->invoice_file;
+        }
         $pdf = Pdf::loadView('invoices.receipt_pdf', compact('invoice'));
         $pdf->setPaper('A4', 'portrait');
         $pdf->setOptions([
@@ -488,8 +508,8 @@ class InvoiceController extends Controller
             'isRemoteEnabled' => true,
             'defaultFont' => 'Arial'
         ]);
-
-        return $pdf->download($invoice->invoice_file);
+ 
+        return $pdf->download($filename);
     }
 
     public function getPatientPrograms(Request $request, $patientId)

@@ -213,6 +213,233 @@
         [class^="fa-"], [class*=" fa-"], [class^="bi-"], [class*=" bi-"] {
             font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands", "bootstrap-icons", "FontAwesome" !important;
         }
+
+        /* Indoor Treatment Modal Styles */
+        .indoor-patient-info {
+            background: #f0f7f2;
+            border: 1px solid #c8e6d4;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 8px 24px;
+        }
+
+        .indoor-patient-info .info-item {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .indoor-patient-info .info-item strong {
+            color: #006637;
+            font-weight: 600;
+            margin-right: 6px;
+        }
+
+        /* Add New Date Slot Button */
+        .add-slot-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: white !important;
+            color: #006637 !important;
+            border: 1.5px solid #006637 !important;
+            border-radius: 8px !important;
+            padding: 10px 16px !important;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 18px;
+        }
+
+        .add-slot-btn:hover {
+            background: #f0f7f2 !important;
+        }
+
+        /* Date Slot Card */
+        .date-slot-card {
+            background: #fff;
+            border-radius: 12px;
+            overflow: visible;
+            margin-bottom: 16px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .date-slot-header {
+            background: linear-gradient(135deg, #006637 0%, #004d2a 100%);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .date-slot-header label {
+            font-weight: 500;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .date-slot-header input {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .date-slot-header input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .slot-at-separator {
+            color: rgba(255,255,255,0.8);
+            font-weight: bold;
+        }
+
+        .medicine-count-badge {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-left: auto;
+        }
+
+        .remove-slot-btn {
+            background: rgba(220,53,69,0.9);
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .remove-slot-btn:hover {
+            background: rgba(220,53,69,1);
+        }
+
+        .date-slot-body {
+            padding: 16px;
+        }
+
+        .medicines-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr 36px;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .medicine-rows-container {
+            margin-bottom: 12px;
+        }
+
+        .medicine-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 36px;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .medicine-row input {
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 7px 10px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .medicine-row input:focus {
+            outline: none;
+            border-color: #006637;
+            box-shadow: 0 0 0 3px rgba(0,102,55,0.1);
+        }
+
+        .medicine-row input::placeholder {
+            color: #adb5bd;
+        }
+
+        .delete-medicine-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 6px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .delete-medicine-btn:hover {
+            background: #c82333;
+        }
+
+        .add-medicine-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .add-medicine-btn:hover {
+            background: #218838;
+        }
+
+        /* Modal Footer Buttons */
+        .btn-cancel-indoor {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-cancel-indoor:hover {
+            background: #5a6268;
+        }
+
+        .btn-save-indoor {
+            background: #006637;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-save-indoor:hover {
+            background: #004d2a;
+        }
     </style>
 
     <div class="header-row">
@@ -256,6 +483,7 @@
         <table class="patient-table">
             <thead>
                 <tr>
+                    <th>Profile</th>
                     <th>Patient Id</th>
                     <th>Name</th>
                     <th>Address</th>
@@ -270,26 +498,45 @@
             <tbody>
                 @forelse ($patients as $patient)
                     <tr>
-                        <td style="font-weight: 600; color: #006637;">{{ $patient->patient_id }}</td>
+                        <td class="profile-icon">
+                            @php
+                                $profileImage = $patient->getMeta('profile_image');
+                            @endphp
+                            <a href="{{ route('ipd.profile', $patient->id) }}" title="View Profile">
+                                @if ($profileImage && file_exists(public_path($profileImage)))
+                                    <img src="{{ asset($profileImage) }}" alt="Profile"
+                                        style="width:32px;height:32px;border-radius:50%;object-fit:cover;">
+                                @else
+                                    <i class="far fa-address-card"></i>
+                                @endif
+                            </a>
+                        </td>
+                        {{-- <td style="font-weight: 600; color: #006637;">{{ $patient->patient_id }}</td> --}}
+                        <td class="patient_id">
+                            <a href="{{ route('ipd.profile', $patient->id) }}"
+                                style="color: #28a745; text-decoration: none;" title="View Profile">
+                                {{ $patient->patient_id }}
+                            </a>
+                        </td>
                         <td>{{ $patient->patient_name }}</td>
                         <td>{{ $patient->address }}</td>
                         <td>{{ $patient->age }}</td>
                         <td>
-    @if($patient->diagnosis)
-        @php
-            $diagnoses = explode(', ', $patient->diagnosis);
-            $diagnoses = array_filter($diagnoses);
-            if (!empty($diagnoses)) {
-                echo '<span class="badge bg-info me-1">' . implode('</span><span class="badge bg-info me-1">', array_slice($diagnoses, 0, 3)) . '</span>';
-                if (count($diagnoses) > 3) {
-                    echo '<span class="badge bg-secondary">+' . (count($diagnoses) - 3) . ' more</span>';
-                }
-            }
-        @endphp
-    @else
-        -
-    @endif
-</td>
+                            @if($patient->diagnosis)
+                                @php
+                                    $diagnoses = explode(', ', $patient->diagnosis);
+                                    $diagnoses = array_filter($diagnoses);
+                                    if (!empty($diagnoses)) {
+                                        echo '<span class="badge bg-info me-1">' . implode('</span><span class="badge bg-info me-1">', array_slice($diagnoses, 0, 3)) . '</span>';
+                                        if (count($diagnoses) > 3) {
+                                            echo '<span class="badge bg-secondary">+' . (count($diagnoses) - 3) . ' more</span>';
+                                        }
+                                    }
+                                @endphp
+                            @else
+                                -
+                            @endif
+                        </td>
                         <td>{{ $patient->inquiry_date ? \Carbon\Carbon::parse($patient->inquiry_date)->format('d/m/Y') : '-' }}</td>
                         <td>{{ $patient->created_at->format('d/m/Y') }}</td>
                         <td><span class="badge-ipd">Indoor (IPD)</span></td>
@@ -307,7 +554,7 @@
                                     title="Manage Treatment">
                                     <i class="bi bi-hospital"></i>
                                 </button>
-                                <a href="{{ route('svc.profile', $patient->id) }}" class="action-btn btn-profile-square" title="View Profile">
+                                <a href="{{ route('ipd.profile', $patient->id) }}" class="action-btn btn-profile-square" title="View Profile">
                                     <i class="fas fa-address-card"></i>
                                 </a>
                                 <a href="{{ route('edit.svc.inquiry', $patient->id) }}" class="action-btn btn-profile-square" title="Edit Inquiry" style="border-color: #007bff; color: #007bff !important;">
@@ -351,60 +598,88 @@
 
     {{-- Indoor Treatment Modal --}}
     <div class="modal fade" id="indoorTreatmentModal" tabindex="-1" aria-labelledby="indoorTreatmentModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content">
-                <form id="indoorTreatmentForm" method="POST">
+                <form action="" method="POST" id="indoorTreatmentForm">
                     @csrf
+
+                    {{-- Modal Header --}}
                     <div class="modal-header">
                         <h5 class="modal-title" id="indoorTreatmentModalLabel">
-                            <i class="bi bi-hospital"></i> Manage Indoor Treatment
+                            <i class="bi bi-hospital-fill"></i> Add Indoor Treatment Details
                         </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+
+                    {{-- Modal Body --}}
                     <div class="modal-body">
-                        <div class="modal-patient-info" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #dee2e6;">
-                            <div class="row">
-                                <div class="col-md-6"><strong>Name:</strong> <span id="modal-patient-name"></span></div>
-                                <div class="col-md-6"><strong>Age:</strong> <span id="modal-patient-age"></span></div>
-                                <div class="col-md-6"><strong>Diagnosis:</strong> <span id="modal-patient-diagnosis"></span></div>
-                                <div class="col-md-6"><strong>Complaints:</strong> <span id="modal-patient-complaints"></span></div>
+
+                        {{-- Patient Info --}}
+                        <div class="indoor-patient-info">
+                            <div class="info-item"><strong>Name:</strong> <span id="modal-patient-name"></span></div>
+                            <div class="info-item"><strong>Age:</strong> <span id="modal-patient-age"></span></div>
+                            <div class="info-item"><strong>Diagnosis:</strong> <span id="modal-patient-diagnosis"></span></div>
+                            <div class="info-item"><strong>Complaints:</strong> <span id="modal-patient-complaints"></span></div>
+                        </div>
+
+                        {{-- Add New Date Slot Button --}}
+                        <button type="button" class="add-slot-btn" onclick="addIndoorDateSlot()">
+                            <i class="bi bi-plus-lg"></i> Add New Date Slot
+                        </button>
+
+                        {{-- Slots Container --}}
+                        <div id="indoorSlotsContainer">
+                            <!-- Existing treatments will be loaded here dynamically -->
+                        </div>
+
+                        <!-- Initial empty slot -->
+                        <div class="date-slot-card" data-slot="0">
+                            <div class="date-slot-header">
+                                <label>Date &amp; Time</label>
+                                <input type="date" name="slot_date[0]" required>
+                                <span class="slot-at-separator">@</span>
+                                <input type="time" name="slot_time[0]">
+                                <span class="medicine-count-badge">0 medicines</span>
+                                <button type="button" class="remove-slot-btn" onclick="removeIndoorSlot(this)" style="display: none;">
+                                    <i class="bi bi-x-lg"></i> Remove Slot
+                                </button>
                             </div>
+                            <div class="date-slot-body">
+                                <div class="medicines-header">
+                                    <span>Medicine</span>
+                                    <span>Note</span>
+                                </div>
+                                <div class="medicine-rows-container">
+                                    <div class="medicine-row">
+                                        <input type="text" name="slot_medicine[0][]" placeholder="Medicine name" autocomplete="off">
+                                        <input type="text" name="slot_note[0][]" placeholder="Note">
+                                        <button type="button" class="delete-medicine-btn" onclick="deleteMedicineRow(this)" title="Remove">
+                                            <i class="bi bi-trash3-fill" style="font-size:12px;"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="add-medicine-btn" onclick="addMedicineRow(this, 0)">
+                                <i class="bi bi-plus-lg"></i> Add Medicine
+                            </button>
                         </div>
-                        <div class="table-responsive">
-                            <table class="table table-bordered modal-table">
-                                <thead style="background: #006637; color: white;">
-                                    <tr>
-                                        <th width="35%">Medicine</th>
-                                        <th width="25%">Dose</th>
-                                        <th width="15%">Days</th>
-                                        <th width="20%">Note</th>
-                                        <th width="5%">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="indoor-treatment-modal-body">
-                                </tbody>
-                            </table>
-                        </div>
-                        <button type="button" class="btn btn-success btn-sm mt-2" onclick="addIndoorRow()">
-                            <i class="bi bi-plus-lg"></i> Add Row
+                    </div>
+
+                    {{-- Modal Footer --}}
+                    <div class="modal-footer justify-content-end gap-2">
+                        <button type="button" class="btn-cancel-indoor" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn-save-indoor">
+                            <i class="bi bi-check-lg me-1"></i> Save Treatment
                         </button>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary" style="background-color: #006637; border-color: #006637;">Save Treatment</button>
-                    </div>
+
                 </form>
             </div>
         </div>
     </div>
 
     <script>
-        const doseSuggestions = [
-            "1 – 0 – 0", "0 – 0 – 1", "1 – 0 – 1", "1 – 1 – 1", 
-            "1 – 1 – 0", "0 – 1 – 0", "0 – 1 – 1", "1/2 – 0 – 1/2", 
-            "1/2 – 1/2 – 1/2", "2 – 0 – 0", "0 – 0 – 2", "2 – 0 – 2", 
-            "1 – 1 – 1 – 1"
-        ];
+        let indoorSlotCounter = 1;
 
         function openIndoorModal(data) {
             document.getElementById('modal-patient-name').textContent = data.name;
@@ -415,87 +690,150 @@
             const form = document.getElementById('indoorTreatmentForm');
             form.action = `/svc-profile/${data.id}/indoor-treatment`;
             
-            const tbody = document.getElementById('indoor-treatment-modal-body');
-            tbody.innerHTML = '';
+            // Clear existing slots and add initial empty slot
+            const container = document.getElementById('indoorSlotsContainer');
+            container.innerHTML = '';
             
+            // Load existing treatments if any
             if (data.treatments && data.treatments.length > 0) {
+                // Group treatments by date+time
+                const treatmentGroups = {};
                 data.treatments.forEach(t => {
-                    addRowToModal(t.medicine, t.dose, t.days, t.note);
+                    const key = (t.date || '') + '||' + (t.time || '');
+                    if (!treatmentGroups[key]) {
+                        treatmentGroups[key] = [];
+                    }
+                    treatmentGroups[key].push(t);
                 });
-            } else {
-                addRowToModal();
+                
+                // Create slots for each group
+                Object.keys(treatmentGroups).forEach((groupKey, index) => {
+                    const [date, time] = groupKey.split('||');
+                    const medicines = treatmentGroups[groupKey];
+                    createIndoorSlot(date, time, medicines, index);
+                });
             }
             
             const modal = new bootstrap.Modal(document.getElementById('indoorTreatmentModal'));
             modal.show();
         }
 
-        function addRowToModal(medicine = '', dose = '', days = '', note = '') {
-            const tbody = document.getElementById('indoor-treatment-modal-body');
-            const newRow = document.createElement('tr');
-            newRow.innerHTML = `
-                <td><input type="text" name="indoor_medicine[]" value="${medicine}" class="form-control form-control-sm" placeholder="Medicine name" autocomplete="off"></td>
-                <td>
-                    <div class="autocomplete-container" style="position: relative;">
-                        <input type="text" name="indoor_dose[]" value="${dose}" class="form-control form-control-sm dose-input" placeholder="Select or type dose" autocomplete="off">
-                        <div class="autocomplete-dropdown" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ccc; z-index: 1000; display: none; max-height: 200px; overflow-y: auto;"></div>
-                    </div>
-                </td>
-                <td><input type="text" name="indoor_days[]" value="${days}" class="form-control form-control-sm" placeholder="Days"></td>
-                <td><input type="text" name="indoor_note[]" value="${note}" class="form-control form-control-sm" placeholder="Note"></td>
-                <td>
-                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteIndoorRow(this)">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </td>
-            `;
-            tbody.appendChild(newRow);
+        function createIndoorSlot(date = '', time = '', medicines = [], slotIndex) {
+            const container = document.getElementById('indoorSlotsContainer');
             
-            const doseInput = newRow.querySelector('.dose-input');
-            const dropdown = newRow.querySelector('.autocomplete-dropdown');
-            setupDoseAutocomplete(doseInput, dropdown);
+            const slot = document.createElement('div');
+            slot.className = 'date-slot-card';
+            slot.setAttribute('data-slot', slotIndex || indoorSlotCounter++);
+            
+            slot.innerHTML = `
+                <div class="date-slot-header">
+                    <label>Date &amp; Time</label>
+                    <input type="date" name="slot_date[${slotIndex || 0}]" value="${date}" required>
+                    <span class="slot-at-separator">@</span>
+                    <input type="time" name="slot_time[${slotIndex || 0}]" value="${time}">
+                    <span class="medicine-count-badge">${medicines.length} ${medicines.length === 1 ? 'medicine' : 'medicines'}</span>
+                    <button type="button" class="remove-slot-btn" onclick="removeIndoorSlot(this)">
+                        <i class="bi bi-x-lg"></i> Remove Slot
+                    </button>
+                </div>
+                <div class="date-slot-body">
+                    <div class="medicines-header">
+                        <span>Medicine</span>
+                        <span>Note</span>
+                    </div>
+                    <div class="medicine-rows-container">
+                        ${medicines.map(med => `
+                            <div class="medicine-row">
+                                <input type="text" name="slot_medicine[${slotIndex || 0}][]" value="${med.medicine || ''}" placeholder="Medicine name" autocomplete="off">
+                                <input type="text" name="slot_note[${slotIndex || 0}][]" value="${med.note || ''}" placeholder="Note">
+                                <button type="button" class="delete-medicine-btn" onclick="deleteMedicineRow(this)" title="Remove">
+                                    <i class="bi bi-trash3-fill" style="font-size:12px;"></i>
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <button type="button" class="add-medicine-btn" onclick="addMedicineRow(this, ${slotIndex || 0})">
+                    <i class="bi bi-plus-lg"></i> Add Medicine
+                </button>
+            `;
+            
+            container.appendChild(slot);
+        }
+
+        function addIndoorDateSlot() {
+            const container = document.getElementById('indoorSlotsContainer');
+            const slotIndex = indoorSlotCounter++;
+            
+            createIndoorSlot('', '', [], slotIndex);
+        }
+
+        function addMedicineRow(btn, slotIndex) {
+            const card = btn.closest('.date-slot-card');
+            const rowsContainer = card.querySelector('.medicine-rows-container');
+            
+            const row = document.createElement('div');
+            row.className = 'medicine-row';
+            row.innerHTML = `
+                <input type="text" name="slot_medicine[${slotIndex}][]" placeholder="Medicine name" autocomplete="off">
+                <input type="text" name="slot_note[${slotIndex}][]" placeholder="Note">
+                <button type="button" class="delete-medicine-btn" onclick="deleteMedicineRow(this)" title="Remove">
+                    <i class="bi bi-trash3-fill" style="font-size:12px;"></i>
+                </button>
+            `;
+            
+            rowsContainer.appendChild(row);
+            updateMedicineCount(card);
+            row.querySelector('input').focus();
+        }
+
+        function deleteMedicineRow(btn) {
+            const card = btn.closest('.date-slot-card');
+            const rowsContainer = card.querySelector('.medicine-rows-container');
+            const rows = rowsContainer.querySelectorAll('.medicine-row');
+            
+            if (rows.length > 1) {
+                btn.closest('.medicine-row').remove();
+                updateMedicineCount(card);
+            } else {
+                // Last row: clear inputs instead of removing
+                btn.closest('.medicine-row').querySelectorAll('input').forEach(i => i.value = '');
+            }
+        }
+
+        function removeIndoorSlot(btn) {
+            const container = document.getElementById('indoorSlotsContainer');
+            const slots = container.querySelectorAll('.date-slot-card');
+            
+            if (slots.length > 1) {
+                if (confirm('Remove this date slot and all its medicines?')) {
+                    btn.closest('.date-slot-card').remove();
+                }
+            } else {
+                // Last slot: clear inputs instead of removing
+                const card = btn.closest('.date-slot-card');
+                card.querySelectorAll('input').forEach(i => i.value = '');
+                updateMedicineCount(card);
+            }
+        }
+
+        function updateMedicineCount(card) {
+            const rows = card.querySelectorAll('.medicine-rows-container .medicine-row');
+            const badge = card.querySelector('.medicine-count-badge');
+            if (!badge) return;
+            
+            const count = rows.length;
+            badge.textContent = count + (count === 1 ? ' medicine' : ' medicines');
         }
 
         function addIndoorRow() {
-            addRowToModal();
+            // This function kept for compatibility but addIndoorDateSlot should be used
+            addIndoorDateSlot();
         }
 
         function deleteIndoorRow(button) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "Do you want to delete this treatment row?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    button.closest('tr').remove();
-                    Swal.fire(
-                        'Deleted!',
-                        'Treatment row removed.',
-                        'success'
-                    );
-                }
-            });
-        }
-
-        function setupDoseAutocomplete(input, dropdown) {
-            input.addEventListener('focus', function() {
-                showDoseSuggestions(input, dropdown, input.value.toLowerCase());
-            });
-
-            input.addEventListener('input', function() {
-                showDoseSuggestions(input, dropdown, this.value.toLowerCase());
-            });
-
-            document.addEventListener('click', function(e) {
-                if (!input.contains(e.target) && !dropdown.contains(e.target)) {
-                    dropdown.style.display = 'none';
-                }
-            });
+            // Updated to work with new structure
+            deleteMedicineRow(button);
         }
 
         function showDoseSuggestions(input, dropdown, filter) {

@@ -192,20 +192,11 @@
 
                                 <!-- Fourth Row -->
                                 <!-- Patient Selected Program History & Diet H/O Assigned Programs -->
-                                <div class="row mb-3">
+                                <div class="row mb-3" id="invoice_history_container">
+                              
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label class="form-label fw-bold">Invoice History</label>
-                                            <textarea class="form-control" id="patient_program_list" rows="3" readonly
-                                                placeholder="Patient has no invoice history"
-                                                style="font-size: 13px;"></textarea>
-                                            <small class="text-muted">*List of programs/charges previously billed to this
-                                                patient</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label fw-bold">Selected Area & Session</label>
+                                            <label class="form-label fw-bold">Selected Programs & Session</label>
                                             <div class="border rounded p-2 bg-white shadow-sm" style="min-height: 80px; max-height: 120px; overflow-y: auto; font-size: 13px; border-left: 4px solid #086838 !important;">
                                                 <div id="lhr_details_content" style="display: none;">
                                                     <div class="row pt-1">
@@ -608,12 +599,28 @@
                 }
             });
 
+            // Initialize field visibility on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                updateBranchFields();
+                
+                // Also update patient program list visibility
+                const invoiceHistoryContainer = document.getElementById('invoice_history_container');
+                const branchId = branchSelect ? branchSelect.value : '{{ auth()->user()->user_branch }}';
+                
+                if (branchId === 'SVC-0005') {
+                    if (invoiceHistoryContainer) invoiceHistoryContainer.style.display = 'none';
+                } else {
+                    if (invoiceHistoryContainer) invoiceHistoryContainer.style.display = 'block';
+                }
+            });
+
             // Get elements
             const branchSelect = document.getElementById('branch_select');
             const patientSelect = document.getElementById('patient_select');
             const programSelect = document.getElementById('program_select');
             const chargesSelect = document.getElementById('charges_select');
-            const patientProgramList = document.getElementById('patient_program_list');
+            // const patientProgramList = document.getElementById('patient_program_list');
+            const invoiceHistoryContainer = document.getElementById('invoice_history_container');
 
             // Check if user is SVC
             const isSVC = '{{ auth()->user()->user_branch }}' === 'SVC-0005';
@@ -636,13 +643,17 @@
                 }
 
                 if (branchId === 'SVC-0005') {
+                    // SVC Branch: Hide all program-related fields, show only charges
                     if (chargesContainer) chargesContainer.style.display = 'block';
                     if (programContainer) programContainer.style.display = 'none';
+                    if (invoiceHistoryContainer) invoiceHistoryContainer.style.display = 'none';
                     // Reset program selection
                     if (programSelect) $(programSelect).val(null).trigger('change');
                 } else {
+                    // Other branches: Show program fields, hide charges
                     if (chargesContainer) chargesContainer.style.display = 'none';
                     if (programContainer) programContainer.style.display = 'block';
+                    if (invoiceHistoryContainer) invoiceHistoryContainer.style.display = 'block';
                     // Reset charges selection
                     if (chargesSelect) $(chargesSelect).val(null).trigger('change');
 
@@ -770,7 +781,7 @@
                     document.getElementById('patient_address').value = '';
                     document.getElementById('patient_phone').value = '';
                     document.getElementById('invoice_no').value = '';
-                    if (patientProgramList) patientProgramList.value = '';
+                    // if (patientProgramList) patientProgramList.value = '';
 
                     if (branchId) {
                         // Show loading state
@@ -853,7 +864,6 @@
                     }
 
                     const selectedOption = patientSelect.options[patientSelect.selectedIndex];
-
                     if (selectedOption && selectedOption.value) {
                         // Update address automatically
                         if (document.getElementById('patient_address')) document.getElementById('patient_address').value = selectedOption.getAttribute('data-address') || '';
@@ -866,10 +876,12 @@
                         if (document.getElementById('invoice_no')) document.getElementById('invoice_no').value = `${patientId}`;
 
                         // Set inquiry date as invoice date if available
-                        const inquiryDate = selectedOption.getAttribute('data-inquiry-date');
-                        if (inquiryDate && document.getElementById('invoice_date')) {
-                            document.getElementById('invoice_date').value = inquiryDate;
-                        }
+                        // const inquiryDate = selectedOption.getAttribute('data-inquiry-date');
+                        // if (inquiryDate && document.getElementById('invoice_date')) {
+                        //     // document.getElementById('invoice_date').value = inquiryDate;
+                        //     const formattedDate = inquiryDate.split('T')[0];
+                        //     document.getElementById('invoice_date').value = formattedDate;
+                        // }
 
                         // --- FETCH PATIENT PROGRAM/CHARGE HISTORY & DUE ---
                         const dbId = selectedOption.value; // Get the user ID
@@ -878,11 +890,11 @@
                             .then(response => response.json())
                             .then(data => {
                                 // 1. Update Invoice History
-                                if (data.program_history && data.program_history.length > 0) {
-                                    patientProgramList.value = data.program_history.join('\n');
-                                } else {
-                                    patientProgramList.value = "No previous history found.";
-                                }
+                                // if (data.program_history && data.program_history.length > 0) {
+                                //     patientProgramList.value = data.program_history.join('\n');
+                                // } else {
+                                //     patientProgramList.value = "No previous history found.";
+                                // }
 
                                 // 2. Update Assigned Programs from Diet H/O (Removed as requested)
                                 
@@ -935,7 +947,7 @@
                             })
                             .catch(error => {
                                 console.error('Error fetching programs:', error);
-                                patientProgramList.value = "Error fetching history.";
+                                // patientProgramList.value = "Error fetching history.";
                             });
 
                     } else {
@@ -944,7 +956,7 @@
                         if (document.getElementById('patient_phone')) document.getElementById('patient_phone').value = '';
                         if (document.getElementById('invoice_no')) document.getElementById('invoice_no').value = '';
                         if (document.getElementById('pending_due')) document.getElementById('pending_due').value = '0';
-                        if (patientProgramList) patientProgramList.value = '';
+                        // if (patientProgramList) patientProgramList.value = '';
                         const assignedContainer = document.getElementById('assigned_programs_container');
                         if (assignedContainer) assignedContainer.innerHTML = '<span class="text-muted">No assigned programs found in Diet H/O.</span>';
                         calculatePayments(false);

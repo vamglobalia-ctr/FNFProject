@@ -76,22 +76,54 @@
                     max-height: 250px;
                 }
 
-                .section-divider {
+                /* + / - button styles */
+                .btn-add-row {
+                    background-color: #197040;
+                    color: #fff;
+                    border: none;
+                    border-radius: 50%;
+                    width: 28px;
+                    height: 28px;
+                    font-size: 18px;
+                    line-height: 1;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    padding: 0;
+                    transition: background 0.2s;
+                    flex-shrink: 0;
+                }
+                .btn-add-row:hover {
+                    background-color: #145c33;
+                }
+                .btn-remove-row {
+                    background-color: #dc3545;
+                    color: #fff;
+                    border: none;
+                    border-radius: 50%;
+                    width: 28px;
+                    height: 28px;
+                    font-size: 20px;
+                    line-height: 1;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    padding: 0;
+                    transition: background 0.2s;
+                    flex-shrink: 0;
+                }
+                .btn-remove-row:hover {
+                    background-color: #a71d2a;
+                }
+                .program-body-row {
+                    margin-bottom: 0;
+                }
+                .body-part-input-wrap {
                     display: flex;
                     align-items: center;
-                    width: 100%;
-                    margin: 20px 0 15px;
-                    font-size: 14px;
-                    font-weight: 600;
-                    color: #197040;
-                }
-
-                .section-divider:after {
-                    content: "";
-                    flex-grow: 1;
-                    height: 1px;
-                    background: #dcdcdc;
-                    margin-left: 15px;
+                    gap: 8px;
                 }
             </style>
 
@@ -137,24 +169,48 @@
                             required>
                     </div>
 
-                    <!-- Program and Body Part -->
-                    <div class="form-group col-md-6" id="program_container" style="position: relative;">
-                        <label for="program_name">Select Program Name</label>
-                        <select class="form-control" name="program_name" id="program_name">
-                            <option value="">Select Program Name</option>
-                            @if(isset($programs))
-                            @foreach($programs as $program)
-                            <option value="{{ $program->program_name }}">{{ $program->program_name }}</option>
-                            @endforeach
-                            @endif
-                        </select>
+                    <!-- Program and Body Part - First (default) row -->
+                    <div class="col-12 program-body-row" id="program_body_row_0">
+                        <div class="row g-3">
+                            <!-- Program Name -->
+                            <div class="form-group col-md-6" id="program_container_0" style="position: relative;">
+                                <label>Select Program Name</label>
+                                <select class="form-control program-select" name="program_name[]" id="program_name_0">
+                                    <option value="">Select Program Name</option>
+                                    @if(isset($programs))
+                                    @foreach($programs as $program)
+                                    <option value="{{ $program->program_name }}">{{ $program->program_name }}</option>
+                                    @endforeach
+                                    @endif
+                                </select>
+                            </div>
+                            <!-- Body Part -->
+                            <div class="form-group col-md-6">
+                                <label>Body Part &amp; Functions</label>
+                                <div class="body-part-input-wrap">
+                                    <input type="text" class="form-control" name="body_part[]" id="body_part_0"
+                                        placeholder="Enter body part &amp; functions">
+                                    <button type="button" class="btn-add-row" id="addProgramRowBtn" title="Add row">
+                                        <span style="margin-top:-2px;">+</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="form-group col-md-6">
-                        <label for="body_part">Body Part & Functions</label>
-                        <input type="text" class="form-control" name="body_part" id="body_part"
-                            placeholder="Enter body part & functions">
-                    </div>
+                    <!-- Extra rows will be inserted here -->
+                    <div id="extra_rows_container"></div>
+
+                    <!-- Hidden JSON store for all-programs list (used by JS for new rows) -->
+                    <script id="all_programs_json" type="application/json">
+                        [
+                            @if(isset($programs))
+                            @foreach($programs as $i => $program)
+                            {"value": "{{ addslashes($program->program_name) }}"}{{ !$loop->last ? ',' : '' }}
+                            @endforeach
+                            @endif
+                        ]
+                    </script>
 
                     <!-- Divider to ensure metrics start on a new row -->
                     <div class="col-12 mt-0 mb-2">
@@ -191,28 +247,12 @@
                             placeholder="Councilor/Doctor Note">
                     </div>
 
-                    <!-- Health Metrics Section -->
-                    <div class="col-12">
-                        <div class="section-divider">Health Metrics</div>
-                    </div>
-
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-md-6">
                         <label for="exercise">Exercise</label>
                         <input type="text" class="form-control" name="exercise" id="exercise" placeholder="Exercise">
                     </div>
-                    <div class="form-group col-md-3">
-                        <label for="diet">Diet</label>
-                        <input type="text" class="form-control" name="diet" id="diet" placeholder="Diet">
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label for="sleep">Sleep</label>
-                        <input type="text" class="form-control" name="sleep" id="sleep" placeholder="Sleep">
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label for="water">Water</label>
-                        <input type="text" class="form-control" name="water" id="water" placeholder="Water">
-                    </div>
                 </div>
+
                 <div class="border-bottom mb-3"></div>
                 <div class="text-end">
                     <button type="submit" class="btn btn-success px-4">
@@ -317,11 +357,11 @@
                         if (payload.data.weight !== null && payload.data.weight !== undefined && payload.data.weight !== '') {
                             weightInput.value = payload.data.weight;
                         }
-
+                        
                         // Populate program dropdown with selected programs from diet H/O
-                        const programSelect = document.getElementById('program_name');
+                        const programSelect = document.getElementById('program_name_0');
                         programSelect.innerHTML = '<option value="">Select Program Name</option>';
-
+                        
                         if (payload.data.selected_programs && payload.data.selected_programs.length > 0) {
                             payload.data.selected_programs.forEach(function(program) {
                                 const option = document.createElement('option');
@@ -333,7 +373,7 @@
                                 programSelect.appendChild(option);
                             });
                         }
-
+                        
                         // Reinitialize select2 if it exists
                         if (typeof $ !== 'undefined' && $.fn.select2) {
                             $(programSelect).select2('destroy');
@@ -341,11 +381,11 @@
                                 placeholder: "Select Program Name",
                                 allowClear: true,
                                 width: '100%',
-                                dropdownParent: $('#program_container'),
+                                dropdownParent: $('#program_container_0'),
                                 dropdownCssClass: 'force-dropdown-below'
                             });
                         }
-
+                        
                         calculateBMI();
                     })
                     .catch(() => {
@@ -410,20 +450,104 @@
         }
     }
 
-    // Initialize Select2 for Program Name
+    // -----------------------------------------------
+    // All programs list (from embedded JSON)
+    // -----------------------------------------------
+    var allProgramsList = [];
+    try {
+        allProgramsList = JSON.parse(document.getElementById('all_programs_json').textContent);
+    } catch(e) { allProgramsList = []; }
+
+    // -----------------------------------------------
+    // Initialize Select2 for the FIRST program row
+    // -----------------------------------------------
     if (typeof $ !== 'undefined' && $.fn.select2) {
         $(document).ready(function () {
-            $('#program_name').select2({
+            $('#program_name_0').select2({
                 placeholder: "Select Program Name",
                 allowClear: true,
                 width: '100%',
-                dropdownParent: $('#program_container'),
+                dropdownParent: $('#program_container_0'),
                 dropdownCssClass: 'force-dropdown-below'
             });
         });
     }
+
+    // -----------------------------------------------
+    // + / - Row functionality
+    // -----------------------------------------------
+    var rowCounter = 1; // starts after the default row (index 0)
+
+    document.getElementById('addProgramRowBtn').addEventListener('click', function() {
+        addProgramRow();
+    });
+
+    function addProgramRow() {
+        var idx = rowCounter++;
+        var container = document.getElementById('extra_rows_container');
+
+        // Always use the full programs list so every new row shows ALL programs
+        var optionsHtml = '<option value="">Select Program Name</option>';
+        allProgramsList.forEach(function(p) {
+            optionsHtml += '<option value="' + escapeHtml(p.value) + '">' + escapeHtml(p.value) + '</option>';
+        });
+
+        var rowHtml =
+            '<div class="col-12 program-body-row" id="program_body_row_' + idx + '">' +
+                '<div class="row g-3">' +
+                    '<div class="form-group col-md-6" id="program_container_' + idx + '" style="position:relative;">' +
+                        '<label>Select Program Name</label>' +
+                        '<select class="form-control program-select" name="program_name[]" id="program_name_' + idx + '">' +
+                            optionsHtml +
+                        '</select>' +
+                    '</div>' +
+                    '<div class="form-group col-md-6">' +
+                        '<label>Body Part &amp; Functions</label>' +
+                        '<div class="body-part-input-wrap">' +
+                            '<input type="text" class="form-control" name="body_part[]" id="body_part_' + idx + '" placeholder="Enter body part &amp; functions">' +
+                            '<button type="button" class="btn-remove-row" data-row="' + idx + '" title="Remove row">' +
+                                '<span style="margin-top:-2px;">&#8722;</span>' +
+                            '</button>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+
+        container.insertAdjacentHTML('beforeend', rowHtml);
+
+        // Init Select2 on the new select
+        if (typeof $ !== 'undefined' && $.fn.select2) {
+            $('#program_name_' + idx).select2({
+                placeholder: "Select Program Name",
+                allowClear: true,
+                width: '100%',
+                dropdownParent: $('#program_container_' + idx),
+                dropdownCssClass: 'force-dropdown-below'
+            });
+        }
+
+        // Attach remove handler
+        document.querySelector('.btn-remove-row[data-row="' + idx + '"]').addEventListener('click', function() {
+            removeRow(idx);
+        });
+    }
+
+    function removeRow(idx) {
+        var row = document.getElementById('program_body_row_' + idx);
+        if (row) {
+            // Destroy Select2 before removing
+            if (typeof $ !== 'undefined' && $.fn.select2) {
+                try { $('#program_name_' + idx).select2('destroy'); } catch(e) {}
+            }
+            row.remove();
+        }
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
 </script>
 
-<!-- Add Select2 JS -->
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 @endsection
