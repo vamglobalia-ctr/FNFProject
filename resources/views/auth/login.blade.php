@@ -429,7 +429,7 @@
 
                     <p class="register-link">
                         Don't have an account? <a href="{{ route('show-register') }}">Register</a> <br>
-                        You can reset your password here <a href="#">Forgot Password?</a>
+                        You can reset your password here <a href="{{ route('password.forgot') }}">Forgot Password?</a>
                     </p>
                 </div>
             </div>

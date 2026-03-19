@@ -82,6 +82,14 @@
                                     <span>Followup Patients:</span>
                                     <span class="followup_patient_count fw-bold">0</span>
                                 </p>
+                                <p class="d-flex justify-content-between p-1 mb-1">
+                                    <span>IPD Patients:</span>
+                                    <span class="ipd_patient_count fw-bold">0</span>
+                                </p>
+                                <p class="d-flex justify-content-between p-1 mb-1">
+                                    <span>OPD Patients:</span>
+                                    <span class="opd_patient_count fw-bold">0</span>
+                                </p>
                             </div>
                             <p class="d-flex justify-content-between total p-1 mb-1">
                                 <span>Total Patients:</span>
@@ -307,6 +315,8 @@ $(document).ready(function() {
             const patientCountElement = card.find(".patient_count");
             const newPatientCountElement = card.find(".new_patient_count");
             const followupPatientCountElement = card.find(".followup_patient_count");
+            const ipdPatientCountElement = card.find(".ipd_patient_count");
+            const opdPatientCountElement = card.find(".opd_patient_count");
             const breakdownBlock = card.find(".patient_breakdown_counts");
 
             const branchPrefix = (branchId || '').toString().split('-')[0].toUpperCase();
@@ -323,6 +333,8 @@ $(document).ready(function() {
             patientCountElement.text('Loading...');
             newPatientCountElement.text('...');
             followupPatientCountElement.text('...');
+            ipdPatientCountElement.text('...');
+            opdPatientCountElement.text('...');
 
             // AJAX request to get total patient count
             $.ajax({
@@ -340,11 +352,15 @@ $(document).ready(function() {
                         if (isSvcLhrHydra) {
                             newPatientCountElement.text(response.new_patient_count ?? 0);
                             followupPatientCountElement.text(response.followup_patient_count ?? 0);
+                            ipdPatientCountElement.text(response.ipd_patient_count ?? 0);
+                            opdPatientCountElement.text(response.opd_patient_count ?? 0);
                         }
                     } else {
                         patientCountElement.text('0');
                         newPatientCountElement.text('0');
                         followupPatientCountElement.text('0');
+                        ipdPatientCountElement.text('0');
+                        opdPatientCountElement.text('0');
                         console.error('Error for ' + branchName + ':', response.error);
                     }
                 },
@@ -353,6 +369,8 @@ $(document).ready(function() {
                     patientCountElement.text('0');
                     newPatientCountElement.text('0');
                     followupPatientCountElement.text('0');
+                    ipdPatientCountElement.text('0');
+                    opdPatientCountElement.text('0');
                 }
             });
         });
@@ -365,6 +383,8 @@ $(document).ready(function() {
         const patientCountElement = card.find(".patient_count");
         const newPatientCountElement = card.find(".new_patient_count");
         const followupPatientCountElement = card.find(".followup_patient_count");
+        const ipdPatientCountElement = card.find(".ipd_patient_count");
+        const opdPatientCountElement = card.find(".opd_patient_count");
         const branchPrefix = (form.data("branch") || '').toString().split('-')[0].toUpperCase();
         const branchLabel = (card.find(".fnf-title").text() || '').toString().toUpperCase();
         const isSvcLhrHydra = branchPrefix === 'SVC' || branchPrefix === 'LHR' || branchPrefix === 'HYDRA' ||
@@ -381,6 +401,8 @@ $(document).ready(function() {
             patientCountElement.text('Loading...');
             newPatientCountElement.text('...');
             followupPatientCountElement.text('...');
+            ipdPatientCountElement.text('...');
+            opdPatientCountElement.text('...');
             submitBtn.prop('disabled', true).text('Loading...');
             
             const branchId = form.data("branch");
@@ -400,6 +422,8 @@ $(document).ready(function() {
                         if (isSvcLhrHydra) {
                             newPatientCountElement.text(response.new_patient_count ?? 0);
                             followupPatientCountElement.text(response.followup_patient_count ?? 0);
+                            ipdPatientCountElement.text(response.ipd_patient_count ?? 0);
+                            opdPatientCountElement.text(response.opd_patient_count ?? 0);
                         }
                         dateLabel.text('Total Patients Data');
                         
@@ -410,6 +434,8 @@ $(document).ready(function() {
                         patientCountElement.text('0');
                         newPatientCountElement.text('0');
                         followupPatientCountElement.text('0');
+                        ipdPatientCountElement.text('0');
+                        opdPatientCountElement.text('0');
                         dateLabel.text('Total Patients Data');
                     }
                 },
@@ -417,6 +443,8 @@ $(document).ready(function() {
                     patientCountElement.text('0');
                     newPatientCountElement.text('0');
                     followupPatientCountElement.text('0');
+                    ipdPatientCountElement.text('0');
+                    opdPatientCountElement.text('0');
                     dateLabel.text('Total Patients Data');
                 },
                 complete: function() {
@@ -436,6 +464,8 @@ $(document).ready(function() {
         patientCountElement.text('Loading...');
         newPatientCountElement.text('...');
         followupPatientCountElement.text('...');
+        ipdPatientCountElement.text('...');
+        opdPatientCountElement.text('...');
         submitBtn.prop('disabled', true).text('Loading...');
 
         // AJAX request to get filtered patient count
@@ -450,6 +480,8 @@ $(document).ready(function() {
                     if (isSvcLhrHydra) {
                         newPatientCountElement.text(response.new_patient_count ?? 0);
                         followupPatientCountElement.text(response.followup_patient_count ?? 0);
+                        ipdPatientCountElement.text(response.ipd_patient_count ?? 0);
+                        opdPatientCountElement.text(response.opd_patient_count ?? 0);
                     }
                     
                     // Update date range label
@@ -464,6 +496,8 @@ $(document).ready(function() {
                     patientCountElement.text('0');
                     newPatientCountElement.text('0');
                     followupPatientCountElement.text('0');
+                    ipdPatientCountElement.text('0');
+                    opdPatientCountElement.text('0');
                     dateLabel.text('Error loading data');
                     console.error('Filter API error:', response.error);
                 }
@@ -473,6 +507,8 @@ $(document).ready(function() {
                 patientCountElement.text('0');
                 newPatientCountElement.text('0');
                 followupPatientCountElement.text('0');
+                ipdPatientCountElement.text('0');
+                opdPatientCountElement.text('0');
                 dateLabel.text('Error loading data');
             },
             complete: function() {

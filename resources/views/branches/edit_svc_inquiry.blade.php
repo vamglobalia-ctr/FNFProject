@@ -861,6 +861,48 @@
                                     </div>
 
                                     <div class="section-divider mt-4">
+                                        <div class="title" style="color: #28a745;">Lipid Profile :</div>
+                                        <div class="line"></div>
+                                    </div>
+                                    <div class="row pt-3">
+                                        <div class="col-md-3 mb-3">
+                                            <label for="s_cholesterol">S.Cholesterol</label>
+                                            <input type="text" id="s_cholesterol" name="s_cholesterol"
+                                                placeholder="Enter S.Cholesterol" value="{{ $patient->getMeta('s_cholesterol') }}" class="form-control">
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label for="STriglyceride">S.Triglycerides</label>
+                                            <input type="text" id="STriglyceride" name="STriglyceride"
+                                                placeholder="Enter S.Triglycerides" value="{{ $patient->getMeta('STriglyceride') }}" class="form-control">
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label for="HDL">HDL</label>
+                                            <input type="text" id="HDL" name="HDL" placeholder="Enter HDL"
+                                                value="{{ $patient->getMeta('HDL') }}" class="form-control">
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label for="LDL">LDL</label>
+                                            <input type="text" id="LDL" name="LDL" placeholder="Enter LDL"
+                                                value="{{ $patient->getMeta('LDL') }}" class="form-control">
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label for="VLDL">VLDL</label>
+                                            <input type="text" id="VLDL" name="VLDL" placeholder="Enter VLDL"
+                                                value="{{ $patient->getMeta('VLDL') }}" class="form-control">
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label for="non_hdl_c">Non-HDL C</label>
+                                            <input type="text" id="non_hdl_c" name="non_hdl_c"
+                                                placeholder="Enter Non-HDL C" value="{{ $patient->getMeta('non_hdl_c') }}" class="form-control">
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label for="chol_hdl_ratio">Chol/HDL ratio</label>
+                                            <input type="text" id="chol_hdl_ratio" name="chol_hdl_ratio"
+                                                placeholder="Enter Chol/HDL ratio" value="{{ $patient->getMeta('chol_hdl_ratio') }}" class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <div class="section-divider mt-4">
                                         <div class="title">Laboratory Investigation</div>
                                         <div class="line"></div>
                                         <div class="icon-box" onclick="toggleSection(this, 'lab-investigation-section')">
@@ -977,86 +1019,47 @@
                                         <div class="pro_filed d-sm-block d-md-flex pt-3">
                                             <div class="form">
                                                 <div class="form-col">
-                                                    <label for="s_cholesterol">S. Cholesterol</label>
-                                                    <input type="text" id="s_cholesterol" name="s_cholesterol" placeholder="S.Cholesterol" value="{{ $patient->getMeta('s_cholesterol') }}">
-                                                </div>
-                                            </div>
-                                            <div class="form">
-                                                <div class="form-col">
-                                                    <label for="STriglyceride">S.Triglyceride</label>
-                                                    <input type="text" id="STriglyceride" name="STriglyceride" placeholder="S.Triglyceride" value="{{ $patient->getMeta('STriglyceride') }}">
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="pro_filed d-sm-block d-md-flex pt-3">
-                                            <div class="form">
-                                                <div class="form-col">
-                                                    <label for="HDL">HDL</label>
-                                                    <input type="text" id="HDL" name="HDL" placeholder="HDL" value="{{ $patient->getMeta('HDL') }}">
-                                                </div>
-                                            </div>
-                                            <div class="form">
-                                                <div class="form-col">
-                                                    <label for="LDL">LDL</label>
-                                                    <input type="text" id="LDL" name="LDL" placeholder="LDL" value="{{ $patient->getMeta('LDL') }}">
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="pro_filed d-sm-block d-md-flex pt-3">
-                                            <div class="form">
-                                                <div class="form-col">
-                                                    <label for="VLDL">VLDL</label>
-                                                    <input type="text" id="VLDL" name="VLDL" placeholder="VLDL" value="{{ $patient->getMeta('VLDL') }}">
-                                                </div>
-                                            </div>
-                                            <div class="form">
-                                                <div class="form-col">
-                                                    <label for="SB12">S.B12</label>
-                                                    <input type="text" id="SB12" name="SB12" placeholder="S.B12" value="{{ $patient->getMeta('SB12') }}">
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="pro_filed d-sm-block d-md-flex pt-3">
-                                            <div class="form">
-                                                <div class="form-col">
-                                                    <label for="SD3">S.D3</label>
-                                                    <input type="text" id="SD3" name="SD3" placeholder="S.D3" value="{{ $patient->getMeta('SD3') }}">
-                                                </div>
-                                            </div>
-                                            <div class="form">
-                                                <div class="form-col">
                                                     <label for="Urine">Urine</label>
                                                     <input type="text" id="Urine" name="Urine" placeholder="Urine" value="{{ $patient->getMeta('Urine') }}">
                                                 </div>
                                             </div>
-                                        </div>
-
-                                        <div class="pro_filed d-sm-block d-md-flex pt-3">
                                             <div class="form">
                                                 <div class="form-col">
                                                     <label for="CRP">CRP</label>
                                                     <input type="text" id="CRP" name="CRP" placeholder="CRP" value="{{ $patient->getMeta('CRP') }}">
                                                 </div>
                                             </div>
-                                            <div class="form">
-                                                <div class="form-col">
-                                                    <label for="St3">S.t3</label>
-                                                    <input type="text" id="St3" name="St3" placeholder="S.t3" value="{{ $patient->getMeta('St3') }}">
-                                                </div>
-                                            </div>
                                         </div>
 
                                         <div class="pro_filed d-sm-block d-md-flex pt-3">
                                             <div class="form">
                                                 <div class="form-col">
-                                                    <label for="St4">S.T4</label>
-                                                    <input type="text" id="St4" name="St4" placeholder="S.t4" value="{{ $patient->getMeta('St4') }}">
+                                                    <label for="SB12">S.B12</label>
+                                                    <input type="text" id="SB12" name="SB12" placeholder="S.B12" value="{{ $patient->getMeta('SB12') }}">
                                                 </div>
                                             </div>
                                             <div class="form">
+                                                <div class="form-col">
+                                                    <label for="SD3">S.D3</label>
+                                                    <input type="text" id="SD3" name="SD3" placeholder="S.D3" value="{{ $patient->getMeta('SD3') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="pro_filed d-sm-block d-md-flex pt-3">
+                                            <div class="form" style="flex: 1;">
+                                                <div class="form-col">
+                                                    <label for="St3">S.T3</label>
+                                                    <input type="text" id="St3" name="St3" placeholder="S.T3" value="{{ $patient->getMeta('St3') }}">
+                                                </div>
+                                            </div>
+                                            <div class="form" style="flex: 1;">
+                                                <div class="form-col">
+                                                    <label for="St4">S.T4</label>
+                                                    <input type="text" id="St4" name="St4" placeholder="S.T4" value="{{ $patient->getMeta('St4') }}">
+                                                </div>
+                                            </div>
+                                            <div class="form" style="flex: 1;">
                                                 <div class="form-col">
                                                     <label for="STSH">S.TSH</label>
                                                     <input type="text" id="STSH" name="STSH" placeholder="S.TSH" value="{{ $patient->getMeta('STSH') }}">

@@ -31,6 +31,7 @@ class Progress extends Model
         'diet',
         'sleep',
         'water',
+        'medication',
         'delete_status',
         'delete_by',
     ];

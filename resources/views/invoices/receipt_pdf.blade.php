@@ -361,7 +361,18 @@
                                 <td>
                                     @php
                                         $fLabel = $invoice->charge->charges_name ?? 'Consulting charges';
-                                        if ($invoice->branch_id === 'LB-0007') $fLabel = 'LHR Service';
+                                        if ($invoice->branch_id === 'LB-0007') {
+                                            // Check if this is an LHR inquiry registration
+                                            $programsData = $invoice->programs_data;
+                                            if (is_string($programsData)) {
+                                                $programsData = json_decode($programsData, true);
+                                            }
+                                            if (!empty($programsData) && is_array($programsData) && isset($programsData[0]['program_name'])) {
+                                                $fLabel = $programsData[0]['program_name'];
+                                            } else {
+                                                $fLabel = 'LHR Registration & Initial Consultation';
+                                            }
+                                        }
                                         elseif ($invoice->branch_id === 'BH-00023') $fLabel = 'Hydra Service';
                                         elseif ($invoice->branch_id === 'SVC-0005') $fLabel = 'SVC Service';
                                         else $fLabel = 'FNF Service';

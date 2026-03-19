@@ -1415,6 +1415,71 @@ function formatValue($value) {
                     </div>
                 </div>
 
+                <!-- Lipid Profile Section -->
+                <div class="row pt-5">
+                    <div class="col-lg-12 p-0">
+                        <div class="card-header mb-2">
+                            <div class="section-title"><h3 class="bold font-up fnf-title" style="color: #28a745;">Lipid Profile</h3></div>
+                        </div>
+                        <div class="lab-table-container">
+                            <table class="data-table compact-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th><th>S.Cholesterol</th><th>S.Triglyceride</th>
+                                        <th>HDL</th><th>LDL</th><th>VLDL</th><th>Non-HDL C</th><th>Chol/HDL ratio</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{{ $patient->inquiry_date ? \Carbon\Carbon::parse($patient->inquiry_date)->format('d/m/Y') : '-' }}</td>
+                                        <td>{{ formatValue($patient->getMeta('s_cholesterol')) }}</td>
+                                        <td>{{ formatValue($patient->getMeta('STriglyceride')) }}</td>
+                                        <td>{{ formatValue($patient->getMeta('HDL')) }}</td>
+                                        <td>{{ formatValue($patient->getMeta('LDL')) }}</td>
+                                        <td>{{ formatValue($patient->getMeta('VLDL')) }}</td>
+                                        <td>{{ formatValue($patient->getMeta('non_hdl_c')) }}</td>
+                                        <td>{{ formatValue($patient->getMeta('chol_hdl_ratio')) }}</td>
+                                    </tr>
+                                    @php
+                                        $followUpLipids = collect();
+                                        foreach($followUps as $followUp) {
+                                            $fMetas = $followUp->metas->pluck('meta_value', 'meta_key')->toArray();
+                                            $hasLipid = !empty($fMetas['s_cholesterol']) || !empty($fMetas['STriglyceride']) || 
+                                                        !empty($fMetas['HDL']) || !empty($fMetas['LDL']) || 
+                                                        !empty($fMetas['VLDL']) || !empty($fMetas['non_hdl_c']) || 
+                                                        !empty($fMetas['chol_hdl_ratio']);
+                                            if($hasLipid) {
+                                                $followUpLipids->push([
+                                                    'date' => $followUp->followup_date ? \Carbon\Carbon::parse($followUp->followup_date)->format('d/m/Y') : '-',
+                                                    's_cholesterol' => $fMetas['s_cholesterol'] ?? '',
+                                                    'STriglyceride' => $fMetas['STriglyceride'] ?? '',
+                                                    'HDL' => $fMetas['HDL'] ?? '',
+                                                    'LDL' => $fMetas['LDL'] ?? '',
+                                                    'VLDL' => $fMetas['VLDL'] ?? '',
+                                                    'non_hdl_c' => $fMetas['non_hdl_c'] ?? '',
+                                                    'chol_hdl_ratio' => $fMetas['chol_hdl_ratio'] ?? ''
+                                                ]);
+                                            }
+                                        }
+                                    @endphp
+                                    @foreach($followUpLipids as $lipid)
+                                    <tr>
+                                        <td>{{ $lipid['date'] }}</td>
+                                        <td>{{ formatValue($lipid['s_cholesterol']) }}</td>
+                                        <td>{{ formatValue($lipid['STriglyceride']) }}</td>
+                                        <td>{{ formatValue($lipid['HDL']) }}</td>
+                                        <td>{{ formatValue($lipid['LDL']) }}</td>
+                                        <td>{{ formatValue($lipid['VLDL']) }}</td>
+                                        <td>{{ formatValue($lipid['non_hdl_c']) }}</td>
+                                        <td>{{ formatValue($lipid['chol_hdl_ratio']) }}</td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Laboratory Investigation Section -->
                 <div class="row pt-5">
                     <div class="col-lg-12 p-0">
@@ -1432,9 +1497,7 @@ function formatValue($value) {
                                 'usg' => $patient->getMeta('USG') ?? '', 'x_ray' => $patient->getMeta('X_ray') ?? '',
                                 'sgpt' => $patient->getMeta('SGPT') ?? '', 's_creatinine' => $patient->getMeta('s_creatinine') ?? '',
                                 'ns1ag' => $patient->getMeta('NS1Ag') ?? '', 'dengue_igm' => $patient->getMeta('DengueIGM') ?? '',
-                                's_cholesterol' => $patient->getMeta('s_cholesterol') ?? '', 's_triglyceride' => $patient->getMeta('STriglyceride') ?? '',
-                                'hdl' => $patient->getMeta('HDL') ?? '', 'ldl' => $patient->getMeta('LDL') ?? '',
-                                'vldl' => $patient->getMeta('VLDL') ?? '', 's_b12' => $patient->getMeta('SB12') ?? '',
+                                's_b12' => $patient->getMeta('SB12') ?? '',
                                 's_d3' => $patient->getMeta('SD3') ?? '', 'urine' => $patient->getMeta('Urine') ?? '',
                                 'crp' => $patient->getMeta('CRP') ?? '', 's_t3' => $patient->getMeta('St3') ?? '',
                                 's_t4' => $patient->getMeta('St4') ?? '', 's_tsh' => $patient->getMeta('STSH') ?? '',
@@ -1458,9 +1521,7 @@ function formatValue($value) {
                                     'usg' => $followUpMetas['USG'] ?? '', 'x_ray' => $followUpMetas['X_ray'] ?? '',
                                     'sgpt' => $followUpMetas['SGPT'] ?? '', 's_creatinine' => $followUpMetas['s_creatinine'] ?? '',
                                     'ns1ag' => $followUpMetas['NS1Ag'] ?? '', 'dengue_igm' => $followUpMetas['DengueIGM'] ?? '',
-                                    's_cholesterol' => $followUpMetas['s_cholesterol'] ?? '', 's_triglyceride' => $followUpMetas['STriglyceride'] ?? '',
-                                    'hdl' => $followUpMetas['HDL'] ?? '', 'ldl' => $followUpMetas['LDL'] ?? '',
-                                    'vldl' => $followUpMetas['VLDL'] ?? '', 's_b12' => $followUpMetas['SB12'] ?? '',
+                                    's_b12' => $followUpMetas['SB12'] ?? '',
                                     's_d3' => $followUpMetas['SD3'] ?? '', 'urine' => $followUpMetas['Urine'] ?? '',
                                     'crp' => $followUpMetas['CRP'] ?? '', 's_t3' => $followUpMetas['St3'] ?? '',
                                     's_t4' => $followUpMetas['St4'] ?? '', 's_tsh' => $followUpMetas['STSH'] ?? '',
@@ -1488,8 +1549,8 @@ function formatValue($value) {
                                             <th>#</th><th>Date</th><th>HB</th><th>TC</th><th>PC</th><th>MP</th>
                                             <th>HB1Ac</th><th>FBS</th><th>PP2BS</th><th>S.widal</th><th>USG</th>
                                             <th>X-ray</th><th>SGPT</th><th>S.Creatinine</th><th>NS1Ag</th>
-                                            <th>Dengue IGM</th><th>S.Cholesterol</th><th>S.Triglyceride</th>
-                                            <th>HDL</th><th>LDL</th><th>VLDL</th><th>S.B12</th><th>S.D3</th>
+                                            <th>Dengue IGM</th>
+                                            <th>S.B12</th><th>S.D3</th>
                                             <th>Urine</th><th>CRP</th><th>S.T3</th><th>S.T4</th><th>S.TSH</th>
                                             <th>ESR</th><th>Any Specific Test</th>
                                         </tr>
@@ -1514,11 +1575,6 @@ function formatValue($value) {
                                                 <td>{{ formatValue($lab['s_creatinine']) }}</td>
                                                 <td>{{ formatValue($lab['ns1ag']) }}</td>
                                                 <td>{{ formatValue($lab['dengue_igm']) }}</td>
-                                                <td>{{ formatValue($lab['s_cholesterol']) }}</td>
-                                                <td>{{ formatValue($lab['s_triglyceride']) }}</td>
-                                                <td>{{ formatValue($lab['hdl']) }}</td>
-                                                <td>{{ formatValue($lab['ldl']) }}</td>
-                                                <td>{{ formatValue($lab['vldl']) }}</td>
                                                 <td>{{ formatValue($lab['s_b12']) }}</td>
                                                 <td>{{ formatValue($lab['s_d3']) }}</td>
                                                 <td>{{ formatValue($lab['urine']) }}</td>

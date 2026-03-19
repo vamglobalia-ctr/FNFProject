@@ -98,6 +98,10 @@ class ProgressController extends Controller
                 'patient_name' => 'required|string',
                 'date' => 'required|date',
                 'time' => 'required',
+                'diet' => 'nullable|string|max:500',
+                'sleep' => 'nullable|string|max:500',
+                'water' => 'nullable|string|max:500',
+                'medication' => 'nullable|string|max:500',
             ]);
  
             $branch = Branch::where('branch_id', $request->branch_id)->first();
@@ -126,10 +130,14 @@ class ProgressController extends Controller
                 'bmi' => $request->bmi ?? null,
                 'councilor_doctor' => $request->councilor_doctor ?? null,
                 'exercise' => $request->exercise ?? null,
+                'diet' => $request->diet ?? null,
+                'sleep' => $request->sleep ?? null,
+                'water' => $request->water ?? null,
+                'medication' => $request->medication ?? null,
                 'delete_status' => '0',
                 'delete_by' => Auth::id() ?? null,
             ]);
- 
+//  dd($request->all());
             return redirect()->back()->with('success', 'Progress report saved successfully.');
         }
         catch (\Exception $e) {

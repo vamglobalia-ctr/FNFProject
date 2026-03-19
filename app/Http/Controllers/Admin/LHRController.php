@@ -95,9 +95,9 @@ class LHRController extends Controller
             dd("ACC user not found");
         }
 
-        $branches = Branch::all();                                 // all branches
-        $branchName = optional($accUser->branch)->branch_name;       // logged-in branch name
-        $branchId = auth()->user()->user_branch;                   // logged-in branch id
+        $branches = Branch::all();                                 
+        $branchName = optional($accUser->branch)->branch_name;      
+        $branchId = auth()->user()->user_branch;                   
         $programs = ManageProgram::where('delete_status', 0)
             ->whereIn('branch', ['LHR', 'ALL'])
             ->get();
@@ -158,12 +158,12 @@ class LHRController extends Controller
             'notes' => 'nullable|string',
 
             // Payments
-            'foc' => 'nullable|boolean',
+            'inquiry_foc' => 'nullable|boolean',
             'total_payment' => 'nullable|numeric|min:0',
             'discount_payment' => 'nullable|numeric|min:0',
             'given_payment' => 'nullable|numeric|min:0',
             'due_payment' => 'nullable|numeric|min:0',
-            'payment_method' => 'nullable|in:cash_payment,google_pay,cheque_payment',
+            'payment_method' => 'nullable|in:Cash,Online,Cheque',
             'payment_amount' => 'nullable|numeric|min:0',
 
             // Files
@@ -241,12 +241,12 @@ class LHRController extends Controller
             }
 
             // PAYMENTS
-            $total = $request->total_payment ?? 0;
+            $total = $request->total_payment ? floatval($request->total_payment) : 200; // Use provided value or default to 200
             $discount = $request->discount_payment ?? 0;
-            $given = $request->given_payment ?? 0;
-            $due = max(0, ($total - $discount) - $given);
+            $given = $request->given_payment ? floatval($request->given_payment) : 0;
+            $due = $request->due_payment ? floatval($request->due_payment) : max(0, ($total - $discount) - $given); // Use calculated due from form or recalculate
 
-            $foc = $request->has('foc');
+            $foc = $request->has('inquiry_foc');
             $procedureJson = $request->has('procedure')
                 ? json_encode($request->procedure)
                 : null;
@@ -323,6 +323,11 @@ class LHRController extends Controller
                 'sleep' => $request->sleep,
                 'water' => $request->water,
             ]);
+
+            // Create Invoice if there's registration charge (not FOC)
+            if (!$foc && $total > 0) {
+                $this->createLHRInquiryInvoice($inquiry, $total, $given, $due, $request->payment_method);
+            }
 
             DB::commit();
 
@@ -474,7 +479,7 @@ class LHRController extends Controller
             'discount_payment' => 'nullable|numeric|min:0',
             'given_payment' => 'nullable|numeric|min:0',
             'due_payment' => 'nullable|numeric|min:0',
-            'payment_method' => 'nullable|in:cash_payment,google_pay,cheque_payment',
+            'payment_method' => 'nullable|in:Cash,Online,Cheque',
             'payment_amount' => 'nullable|numeric|min:0',
 
             // Files
@@ -972,6 +977,87 @@ class LHRController extends Controller
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'Something went wrong while saving follow up.');
+        }
+    }
+
+    /**
+     * Create invoice for LHR inquiry
+     */
+    private function createLHRInquiryInvoice($inquiry, $registrationCharges, $paidAmount, $dueAmount, $paymentMethod)
+    {
+        try {
+            // Generate unique invoice number
+            $lastInvoice = Invoice::where('branch_id', $inquiry->branch_id)
+                ->orderBy('id', 'desc')
+                ->first();
+
+            $invoiceNumber = 'LB-00001'; // Default
+            if ($lastInvoice && preg_match('/LB-(\d+)/', $lastInvoice->invoice_no, $matches)) {
+                $nextNumber = (int) $matches[1] + 1;
+                $invoiceNumber = 'LB-' . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+            }
+
+            // Create invoice
+            $invoice = Invoice::create([
+                'branch_id' => $inquiry->branch_id,
+                'patient_id' => $inquiry->id,
+                'program_id' => null, // LHR inquiry doesn't have program
+                'invoice_no' => $invoiceNumber,
+                'invoice_date' => now()->format('Y-m-d'),
+                'address' => $inquiry->address,
+                'phone' => '', // LHR inquiry doesn't have phone
+                'price' => $registrationCharges,
+                'pending_due' => $dueAmount,
+                'total_payment' => $registrationCharges,
+                'discount' => 0,
+                'given_payment' => $paidAmount,
+                'due_payment' => $dueAmount,
+                'invoice_file' => null,
+                'charges_data' => [
+                    [
+                        'charge_name' => 'Registration & Consultation Charges',
+                        'amount' => $registrationCharges,
+                        'price' => $registrationCharges
+                    ]
+                ],
+                'programs_data' => [
+                    [
+                        'program_name' => 'LHR Registration & Initial Consultation',
+                        'amount' => $registrationCharges,
+                        'price' => $registrationCharges,
+                        'inquiry_date' => $inquiry->inquiry_date,
+                        'payment_method' => $paymentMethod
+                    ]
+                ]
+            ]);
+
+            // Create transaction record
+            if ($paidAmount > 0) {
+                PatientTransaction::create([
+                    'branch_id' => $inquiry->branch_id,
+                    'patient_id' => $inquiry->id,
+                    'invoice_id' => $invoice->id,
+                    'transaction_type' => 'credit',
+                    'amount' => $paidAmount,
+                    'payment_method' => $paymentMethod,
+                    'description' => 'LHR Inquiry Payment - Invoice: ' . $invoiceNumber,
+                    'transaction_date' => now(),
+                    'created_by' => auth()->user()->name ?? 'system'
+                ]);
+            }
+
+            Log::info('LHR Inquiry Invoice Created', [
+                'invoice_id' => $invoice->id,
+                'invoice_no' => $invoiceNumber,
+                'patient_id' => $inquiry->id,
+                'amount' => $registrationCharges,
+                'paid' => $paidAmount,
+                'due' => $dueAmount
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error creating LHR inquiry invoice: ' . $e->getMessage());
+            // Don't throw exception here, just log it so inquiry creation doesn't fail
         }
     }
 

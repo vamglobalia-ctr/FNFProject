@@ -253,6 +253,29 @@
                     </div>
                 </div>
 
+                <!-- Additional Fields Row -->
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label for="diet">Diet</label>
+                        <input type="text" class="form-control" name="diet" id="diet" placeholder="Diet">
+                    </div>
+                    
+                    <div class="form-group col-md-3">
+                        <label for="sleep">Sleep</label>
+                        <input type="text" class="form-control" name="sleep" id="sleep" placeholder="Sleep">
+                    </div>
+                    
+                    <div class="form-group col-md-3">
+                        <label for="water">Water</label>
+                        <input type="text" class="form-control" name="water" id="water" placeholder="Water">
+                    </div>
+                    
+                    <div class="form-group col-md-3">
+                        <label for="medication">Medication</label>
+                        <input type="text" class="form-control" name="medication" id="medication" placeholder="Medication">
+                    </div>
+                </div>
+
                 <div class="border-bottom mb-3"></div>
                 <div class="text-end">
                     <button type="submit" class="btn btn-success px-4">

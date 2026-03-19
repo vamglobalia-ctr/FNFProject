@@ -313,15 +313,15 @@
         }
 
         /*
-                                .section-divider {
-                                    border-bottom: 2px solid #1f911f;
-                                    margin: 0 0;
-                                    padding-top: 15px;
-                                    font-weight: bold;
-                                    color: #0a3f0a;
-                                    font-size: 16px;
-                                    padding-bottom: 10px
-                                } */
+                                    .section-divider {
+                                        border-bottom: 2px solid #1f911f;
+                                        margin: 0 0;
+                                        padding-top: 15px;
+                                        font-weight: bold;
+                                        color: #0a3f0a;
+                                        font-size: 16px;
+                                        padding-bottom: 10px
+                                    } */
 
         .hidden-field {
             display: none;
@@ -347,9 +347,9 @@
             gap: 15px;
             margin-bottom: 15px;
             /* padding: 10px;
-                                    border: 1px dashed #ddd;
-                                    border-radius: 4px;
-                                    background: white; */
+                                        border: 1px dashed #ddd;
+                                        border-radius: 4px;
+                                        background: white; */
         }
 
         .medicine-actions {
@@ -1008,6 +1008,48 @@
                                         </div>
                                         {{-- <div class="section-divider"></div> --}}
                                         <div class="section-divider mt-4">
+                                            <div class="title" style="color: #28a745;">Lipid Profile :</div>
+                                            <div class="line"></div>
+                                        </div>
+                                        <div class="row pt-3">
+                                            <div class="col-md-3 mb-3">
+                                                <label for="s_cholesterol">S.Cholesterol</label>
+                                                <input type="text" id="s_cholesterol" name="s_cholesterol"
+                                                    placeholder="Enter S.Cholesterol" class="form-control">
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <label for="STriglyceride">S.Triglycerides</label>
+                                                <input type="text" id="STriglyceride" name="STriglyceride"
+                                                    placeholder="Enter S.Triglycerides" class="form-control">
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <label for="HDL">HDL</label>
+                                                <input type="text" id="HDL" name="HDL" placeholder="Enter HDL"
+                                                    class="form-control">
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <label for="LDL">LDL</label>
+                                                <input type="text" id="LDL" name="LDL" placeholder="Enter LDL"
+                                                    class="form-control">
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <label for="VLDL">VLDL</label>
+                                                <input type="text" id="VLDL" name="VLDL" placeholder="Enter VLDL"
+                                                    class="form-control">
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <label for="non_hdl_c">Non-HDL C</label>
+                                                <input type="text" id="non_hdl_c" name="non_hdl_c"
+                                                    placeholder="Enter Non-HDL C" class="form-control">
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <label for="chol_hdl_ratio">Chol/HDL ratio</label>
+                                                <input type="text" id="chol_hdl_ratio" name="chol_hdl_ratio"
+                                                    placeholder="Enter Chol/HDL ratio" class="form-control">
+                                            </div>
+                                        </div>
+
+                                        <div class="section-divider mt-4">
                                             <div class="title">Laboratory Investigation</div>
                                             <div class="line"></div>
 
@@ -1092,43 +1134,6 @@
                                                         placeholder="Dengue IGM" class="form-control">
                                                 </div>
                                                 <div class="col-md-3 mb-3">
-                                                    <label for="s_cholesterol">S. Cholesterol</label>
-                                                    <input type="text" id="s_cholesterol" name="s_cholesterol"
-                                                        placeholder="S.Cholesterol" class="form-control">
-                                                </div>
-                                                <div class="col-md-3 mb-3">
-                                                    <label for="STriglyceride">S.Triglyceride</label>
-                                                    <input type="text" id="STriglyceride" name="STriglyceride"
-                                                        placeholder="S.Triglyceride" class="form-control">
-                                                </div>
-
-                                                <div class="col-md-3 mb-3">
-                                                    <label for="HDL">HDL</label>
-                                                    <input type="text" id="HDL" name="HDL" placeholder="HDL"
-                                                        class="form-control">
-                                                </div>
-                                                <div class="col-md-3 mb-3">
-                                                    <label for="LDL">LDL</label>
-                                                    <input type="text" id="LDL" name="LDL" placeholder="LDL"
-                                                        class="form-control">
-                                                </div>
-                                                <div class="col-md-3 mb-3">
-                                                    <label for="VLDL">VLDL</label>
-                                                    <input type="text" id="VLDL" name="VLDL" placeholder="VLDL"
-                                                        class="form-control">
-                                                </div>
-                                                <div class="col-md-3 mb-3">
-                                                    <label for="SB12">S.B12</label>
-                                                    <input type="text" id="SB12" name="SB12" placeholder="S.B12"
-                                                        class="form-control">
-                                                </div>
-
-                                                <div class="col-md-3 mb-3">
-                                                    <label for="SD3">S.D3</label>
-                                                    <input type="text" id="SD3" name="SD3" placeholder="S.D3"
-                                                        class="form-control">
-                                                </div>
-                                                <div class="col-md-3 mb-3">
                                                     <label for="Urine">Urine</label>
                                                     <input type="text" id="Urine" name="Urine" placeholder="Urine"
                                                         class="form-control">
@@ -1138,12 +1143,24 @@
                                                     <input type="text" id="CRP" name="CRP" placeholder="CRP"
                                                         class="form-control">
                                                 </div>
+
                                                 <div class="col-md-3 mb-3">
-                                                    <label for="St3">S.t3</label>
-                                                    <input type="text" id="St3" name="St3" placeholder="S.t3"
+                                                    <label for="SB12">S.B12</label>
+                                                    <input type="text" id="SB12" name="SB12" placeholder="S.B12"
                                                         class="form-control">
                                                 </div>
+                                                <div class="col-md-3 mb-3">
+                                                    <label for="SD3">S.D3</label>
+                                                    <input type="text" id="SD3" name="SD3" placeholder="S.D3"
+                                                        class="form-control">
+                                                </div>
+                                                <div class="col-md-6 mb-3"></div>
 
+                                                <div class="col-md-3 mb-3">
+                                                    <label for="St3">S.T3</label>
+                                                    <input type="text" id="St3" name="St3" placeholder="S.T3"
+                                                        class="form-control">
+                                                </div>
                                                 <div class="col-md-3 mb-3">
                                                     <label for="St4">S.T4</label>
                                                     <input type="text" id="St4" name="St4" placeholder="S.T4"
@@ -1159,6 +1176,7 @@
                                                     <input type="text" id="ESR" name="ESR" placeholder="ESR"
                                                         class="form-control">
                                                 </div>
+
                                                 <div class="col-md-3 mb-3">
                                                     <label for="specific_test">Any specific Test</label>
                                                     <input type="text" id="specific_test" name="specific_test"
@@ -1301,7 +1319,7 @@
                                                         <tr class="text-muted small">
                                                             <th style="width: 30%">Medicine</th>
                                                             <!-- <th style="width: 20%">Dose</th>
-                                                            <th style="width: 15%">Days</th> -->
+                                                                <th style="width: 15%">Days</th> -->
                                                             <th style="width: 20%">Timing</th>
                                                             <th style="width: 15%"></th>
                                                         </tr>
@@ -1312,17 +1330,17 @@
                                                                     class="form-control form-control-sm"
                                                                     placeholder="Medicine name" autocomplete="off"></td>
                                                             <!-- <td>
-                                                                <div class="autocomplete-container">
-                                                                    <input type="text" name="homeo_dose[]"
-                                                                        class="form-control form-control-sm dose-input"
-                                                                        placeholder="Select or type dose"
-                                                                        autocomplete="off">
-                                                                    <div class="autocomplete-dropdown"></div>
-                                                                </div>
-                                                            </td>
-                                                            <td><input type="text" name="homeo_days[]"
-                                                                    class="form-control form-control-sm" placeholder="Days">
-                                                            </td> -->
+                                                                    <div class="autocomplete-container">
+                                                                        <input type="text" name="homeo_dose[]"
+                                                                            class="form-control form-control-sm dose-input"
+                                                                            placeholder="Select or type dose"
+                                                                            autocomplete="off">
+                                                                        <div class="autocomplete-dropdown"></div>
+                                                                    </div>
+                                                                </td>
+                                                                <td><input type="text" name="homeo_days[]"
+                                                                        class="form-control form-control-sm" placeholder="Days">
+                                                                </td> -->
                                                             <td>
                                                                 <select name="homeo_timing[]"
                                                                     class="form-select form-select-sm">
@@ -1360,7 +1378,7 @@
                                                         <tr class="text-muted small">
                                                             <th style="width: 18%">Medicine</th>
                                                             <!-- <th style="width: 15%">Dose</th>
-                                                            <th style="width: 10%">Days</th> -->
+                                                                <th style="width: 10%">Days</th> -->
                                                             <th style="width: 12%">Date</th>
                                                             <th style="width: 10%">Time</th>
                                                             <th style="width: 20%">Note</th>
@@ -1373,16 +1391,16 @@
                                                                     class="form-control form-control-sm"
                                                                     placeholder="Medicine name" autocomplete="off"></td>
                                                             <!-- <td>
-                                                                <div class="autocomplete-container">
-                                                                    <input type="text" name="indoor_dose[]"
-                                                                        class="form-control form-control-sm dose-input"
-                                                                        placeholder="Select or type dose"
-                                                                        autocomplete="off">
-                                                                    <div class="autocomplete-dropdown"></div>
-                                                                </div>
-                                                            </td>
-                                                            <td><input type="text" name="indoor_days[]"
-                                                                    class="form-control form-control-sm" placeholder="Days"> -->
+                                                                    <div class="autocomplete-container">
+                                                                        <input type="text" name="indoor_dose[]"
+                                                                            class="form-control form-control-sm dose-input"
+                                                                            placeholder="Select or type dose"
+                                                                            autocomplete="off">
+                                                                        <div class="autocomplete-dropdown"></div>
+                                                                    </div>
+                                                                </td>
+                                                                <td><input type="text" name="indoor_days[]"
+                                                                        class="form-control form-control-sm" placeholder="Days"> -->
                                                             </td>
                                                             <td><input type="date" name="indoor_date[]"
                                                                     class="form-control form-control-sm"></td>
@@ -1633,7 +1651,7 @@
                                             <div class="title">Payment Information</div>
                                             <div class="line"></div>
                                         </div>
-                                        
+
                                         <div class="d-flex align-items-center bg-light p-3 mb-3">
                                             <input type="checkbox" name="foc" id="foc" class="form-check-input me-3">
                                             <label for="foc" class="mb-0 fw-semibold">
@@ -1649,7 +1667,8 @@
                                                         <select id="charge_id" name="charge_id" class="form-control">
                                                             <option value="">Select Charge</option>
                                                             @foreach($charges as $charge)
-                                                                <option value="{{ $charge->id }}" data-price="{{ $charge->charges_price }}">
+                                                                <option value="{{ $charge->id }}"
+                                                                    data-price="{{ $charge->charges_price }}">
                                                                     {{ $charge->charges_name }} - ₹{{ $charge->charges_price }}
                                                                 </option>
                                                             @endforeach
@@ -1698,7 +1717,7 @@
 
                                             // FOC checkbox functionality
                                             if (focCheckbox && paymentSection) {
-                                                focCheckbox.addEventListener('change', function() {
+                                                focCheckbox.addEventListener('change', function () {
                                                     if (this.checked) {
                                                         // Hide payment section when FOC is checked
                                                         paymentSection.style.display = 'none';
@@ -1716,10 +1735,10 @@
 
                                             // Charge selection functionality
                                             if (chargeSelect) {
-                                                chargeSelect.addEventListener('change', function() {
+                                                chargeSelect.addEventListener('change', function () {
                                                     const selectedOption = this.options[this.selectedIndex];
                                                     const price = selectedOption.getAttribute('data-price');
-                                                    
+
                                                     if (price) {
                                                         totalPaymentInput.value = price;
                                                         givenPaymentInput.value = price;
@@ -1804,28 +1823,28 @@
             // INSIDE TREATMENT
             if (containerId === 'inside-treatment-body') {
                 newRow.innerHTML = `
-                        <td><input type="text" name="inside_medicine[]" class="form-control form-control-sm" placeholder="Medicine name" autocomplete="off"></td>
-                        <td>
-                            <div class="autocomplete-container">
-                                <input type="text" name="inside_dose[]" class="form-control form-control-sm dose-input" placeholder="Select or type dose" autocomplete="off">
-                                <div class="autocomplete-dropdown"></div>
-                            </div>
-                        </td>
-                        <td><input type="text" name="inside_days[]" class="form-control form-control-sm" placeholder="Days"></td>
-                        <td>
-                            <select name="inside_timing[]" class="form-select form-select-sm">
-                                <option value="">Select</option>
-                                <option>Before Food</option>
-                                <option>After Food</option>
-                                <option>With Food</option>
-                            </select>
-                        </td>
-                        <td>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
-                    `;
+                            <td><input type="text" name="inside_medicine[]" class="form-control form-control-sm" placeholder="Medicine name" autocomplete="off"></td>
+                            <td>
+                                <div class="autocomplete-container">
+                                    <input type="text" name="inside_dose[]" class="form-control form-control-sm dose-input" placeholder="Select or type dose" autocomplete="off">
+                                    <div class="autocomplete-dropdown"></div>
+                                </div>
+                            </td>
+                            <td><input type="text" name="inside_days[]" class="form-control form-control-sm" placeholder="Days"></td>
+                            <td>
+                                <select name="inside_timing[]" class="form-select form-select-sm">
+                                    <option value="">Select</option>
+                                    <option>Before Food</option>
+                                    <option>After Food</option>
+                                    <option>With Food</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        `;
                 container.appendChild(newRow);
                 setupDoseAutocomplete(newRow.querySelector('.dose-input'), newRow.querySelector('.autocomplete-dropdown'));
             }
@@ -1833,28 +1852,28 @@
             // PRESCRIPTION
             else if (containerId === 'prescription-treatment-body') {
                 newRow.innerHTML = `
-                        <td><input type="text" name="prescription_medicine[]" class="form-control form-control-sm" placeholder="Medicine name" autocomplete="off"></td>
-                        <td>
-                            <div class="autocomplete-container">
-                                <input type="text" name="prescription_dose[]" class="form-control form-control-sm dose-input" placeholder="Select or type dose" autocomplete="off">
-                                <div class="autocomplete-dropdown"></div>
-                            </div>
-                        </td>
-                        <td><input type="text" name="prescription_days[]" class="form-control form-control-sm" placeholder="Days"></td>
-                        <td>
-                            <select name="prescription_timing[]" class="form-select form-select-sm">
-                                <option value="">Select</option>
-                                <option>Before Food</option>
-                                <option>After Food</option>
-                                <option>With Food</option>
-                            </select>
-                        </td>
-                        <td>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
-                    `;
+                            <td><input type="text" name="prescription_medicine[]" class="form-control form-control-sm" placeholder="Medicine name" autocomplete="off"></td>
+                            <td>
+                                <div class="autocomplete-container">
+                                    <input type="text" name="prescription_dose[]" class="form-control form-control-sm dose-input" placeholder="Select or type dose" autocomplete="off">
+                                    <div class="autocomplete-dropdown"></div>
+                                </div>
+                            </td>
+                            <td><input type="text" name="prescription_days[]" class="form-control form-control-sm" placeholder="Days"></td>
+                            <td>
+                                <select name="prescription_timing[]" class="form-select form-select-sm">
+                                    <option value="">Select</option>
+                                    <option>Before Food</option>
+                                    <option>After Food</option>
+                                    <option>With Food</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        `;
                 container.appendChild(newRow);
                 setupDoseAutocomplete(newRow.querySelector('.dose-input'), newRow.querySelector('.autocomplete-dropdown'));
             }
@@ -1862,16 +1881,16 @@
             // INDOOR TREATMENT
             else if (containerId === 'indoor-treatment-body') {
                 newRow.innerHTML = `
-                        <td><input type="text" name="indoor_medicine[]" class="form-control form-control-sm" placeholder="Medicine name" autocomplete="off"></td>
-                        <td><input type="date" name="indoor_date[]" class="form-control form-control-sm"></td>
-                        <td><input type="time" name="indoor_time[]" class="form-control form-control-sm"></td>
-                        <td><input type="text" name="indoor_note[]" class="form-control form-control-sm" placeholder="Note"></td>
-                        <td>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
-                    `;
+                            <td><input type="text" name="indoor_medicine[]" class="form-control form-control-sm" placeholder="Medicine name" autocomplete="off"></td>
+                            <td><input type="date" name="indoor_date[]" class="form-control form-control-sm"></td>
+                            <td><input type="time" name="indoor_time[]" class="form-control form-control-sm"></td>
+                            <td><input type="text" name="indoor_note[]" class="form-control form-control-sm" placeholder="Note"></td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        `;
                 container.appendChild(newRow);
             }
         }
@@ -1959,45 +1978,45 @@
             newRow.className = 'pro_filed d-sm-block d-md-flex pt-3';
 
             newRow.innerHTML = `
-                <div class="form">
-                    <div class="form-col">
-                        <label>Medicine</label>
-                        <input type="text" name="homeo_medicine[]">
+                    <div class="form">
+                        <div class="form-col">
+                            <label>Medicine</label>
+                            <input type="text" name="homeo_medicine[]">
+                        </div>
                     </div>
-                </div>
 
-                <div class="form">
-                    <div class="form-col">
-                        <div class="timing-container">
-                            <label>When</label>
-                            <div class="select-with-button">
-                                    <select name="homeo_timing[]">
-                                        <option value="">Select Timing</option>
-                                        <option>Before Food</option>
-                                        <option>After Food</option>
-                                    </select>
-                                    <button type="button" class="btn btn-danger btn-sm" onclick="removeHomeoRow(this)">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
+                    <div class="form">
+                        <div class="form-col">
+                            <div class="timing-container">
+                                <label>When</label>
+                                <div class="select-with-button">
+                                        <select name="homeo_timing[]">
+                                            <option value="">Select Timing</option>
+                                            <option>Before Food</option>
+                                            <option>After Food</option>
+                                        </select>
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="removeHomeoRow(this)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form">
+                        <div class="form-col">
+                            <label>Note</label>
+                            <div class="input-with-button">
+                                   <input type="text" name="homeo_note[]">
+
+                    <button type="button" class="btn-circle danger small" onclick="removeHomeoRow(this)">-</button>
                             </div>
 
                         </div>
                     </div>
-                </div>
 
-                <div class="form">
-                    <div class="form-col">
-                        <label>Note</label>
-                        <div class="input-with-button">
-                               <input type="text" name="homeo_note[]">
-
-                <button type="button" class="btn-circle danger small" onclick="removeHomeoRow(this)">-</button>
-                        </div>
-
-                    </div>
-                </div>
-
-            `;
+                `;
 
             container.appendChild(newRow);
         }
@@ -2011,26 +2030,26 @@
             newRow.className = 'pro_filed d-sm-block d-md-flex pt-3';
 
             newRow.innerHTML = `
-                <div class="form">
-                    <div class="form-col">
-                        <label>Medicine</label>
-                        <input type="text" name="other_medicine[]">
-                    </div>
-                </div>
-
-                <div class="form">
-                    <div class="form-col">
-                        <label>Note</label>
-                        <div class="input-with-button">
-                               <input type="text" name="other_note[]">
-
-                <button type="button" class="btn-circle danger small" onclick="this.closest('.pro_filed').remove()">-</button>
+                    <div class="form">
+                        <div class="form-col">
+                            <label>Medicine</label>
+                            <input type="text" name="other_medicine[]">
                         </div>
-
                     </div>
-                </div>
 
-            `;
+                    <div class="form">
+                        <div class="form-col">
+                            <label>Note</label>
+                            <div class="input-with-button">
+                                   <input type="text" name="other_note[]">
+
+                    <button type="button" class="btn-circle danger small" onclick="this.closest('.pro_filed').remove()">-</button>
+                            </div>
+
+                        </div>
+                    </div>
+
+                `;
 
             container.appendChild(newRow);
         }
@@ -2140,28 +2159,28 @@
             let tbody = document.getElementById("inside-treatment-body");
             let newRow = document.createElement("tr");
             newRow.innerHTML = `
-                    <td><input type="text" name="inside_medicine[]" class="form-control form-control-sm" placeholder="Medicine name" autocomplete="off"></td>
-                    <td>
-                        <div class="autocomplete-container">
-                            <input type="text" name="inside_dose[]" class="form-control form-control-sm dose-input" placeholder="Select or type dose" autocomplete="off">
-                            <div class="autocomplete-dropdown"></div>
-                        </div>
-                    </td>
-                    <td><input type="text" name="inside_days[]" class="form-control form-control-sm" placeholder="Days"></td>
-                    <td>
-                        <select name="inside_timing[]" class="form-select form-select-sm">
-                            <option value="">Select</option>
-                            <option>Before Food</option>
-                            <option>After Food</option>
-                            <option>With Food</option>
-                        </select>
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">
-                            <i class="bi bi-trash"></i> Remove
-                        </button>
-                    </td>
-                `;
+                        <td><input type="text" name="inside_medicine[]" class="form-control form-control-sm" placeholder="Medicine name" autocomplete="off"></td>
+                        <td>
+                            <div class="autocomplete-container">
+                                <input type="text" name="inside_dose[]" class="form-control form-control-sm dose-input" placeholder="Select or type dose" autocomplete="off">
+                                <div class="autocomplete-dropdown"></div>
+                            </div>
+                        </td>
+                        <td><input type="text" name="inside_days[]" class="form-control form-control-sm" placeholder="Days"></td>
+                        <td>
+                            <select name="inside_timing[]" class="form-select form-select-sm">
+                                <option value="">Select</option>
+                                <option>Before Food</option>
+                                <option>After Food</option>
+                                <option>With Food</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">
+                                <i class="bi bi-trash"></i> Remove
+                            </button>
+                        </td>
+                    `;
             tbody.appendChild(newRow);
             setupDoseAutocomplete(newRow.querySelector('.dose-input'), newRow.querySelector('.autocomplete-dropdown'));
         }
@@ -2170,28 +2189,28 @@
             let tbody = document.getElementById("prescription-treatment-body");
             let newRow = document.createElement("tr");
             newRow.innerHTML = `
-                    <td><input type="text" name="prescription_medicine[]" class="form-control form-control-sm" placeholder="Medicine name" autocomplete="off"></td>
-                    <td>
-                        <div class="autocomplete-container">
-                            <input type="text" name="prescription_dose[]" class="form-control form-control-sm dose-input" placeholder="Select or type dose" autocomplete="off">
-                            <div class="autocomplete-dropdown"></div>
-                        </div>
-                    </td>
-                    <td><input type="text" name="prescription_days[]" class="form-control form-control-sm" placeholder="Days"></td>
-                    <td>
-                        <select name="prescription_timing[]" class="form-select form-select-sm">
-                            <option value="">Select</option>
-                            <option>Before Food</option>
-                            <option>After Food</option>
-                            <option>With Food</option>
-                        </select>
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">
-                            <i class="bi bi-trash"></i> Remove
-                        </button>
-                    </td>
-                `;
+                        <td><input type="text" name="prescription_medicine[]" class="form-control form-control-sm" placeholder="Medicine name" autocomplete="off"></td>
+                        <td>
+                            <div class="autocomplete-container">
+                                <input type="text" name="prescription_dose[]" class="form-control form-control-sm dose-input" placeholder="Select or type dose" autocomplete="off">
+                                <div class="autocomplete-dropdown"></div>
+                            </div>
+                        </td>
+                        <td><input type="text" name="prescription_days[]" class="form-control form-control-sm" placeholder="Days"></td>
+                        <td>
+                            <select name="prescription_timing[]" class="form-select form-select-sm">
+                                <option value="">Select</option>
+                                <option>Before Food</option>
+                                <option>After Food</option>
+                                <option>With Food</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">
+                                <i class="bi bi-trash"></i> Remove
+                            </button>
+                        </td>
+                    `;
             tbody.appendChild(newRow);
             setupDoseAutocomplete(newRow.querySelector('.dose-input'), newRow.querySelector('.autocomplete-dropdown'));
         }
@@ -2200,21 +2219,21 @@
             let tbody = document.getElementById("homeo-treatment-body");
             let newRow = document.createElement("tr");
             newRow.innerHTML = `
-                    <td><input type="text" name="homeo_medicine[]" class="form-control form-control-sm" placeholder="Medicine name" autocomplete="off"></td>
-                    <td>
-                        <select name="homeo_timing[]" class="form-select form-select-sm">
-                            <option value="">Select</option>
-                            <option>Before Food</option>
-                            <option>After Food</option>
-                            <option>With Food</option>
-                        </select>
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">
-                            <i class="bi bi-trash"></i> Remove
-                        </button>
-                    </td>
-                `;
+                        <td><input type="text" name="homeo_medicine[]" class="form-control form-control-sm" placeholder="Medicine name" autocomplete="off"></td>
+                        <td>
+                            <select name="homeo_timing[]" class="form-select form-select-sm">
+                                <option value="">Select</option>
+                                <option>Before Food</option>
+                                <option>After Food</option>
+                                <option>With Food</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">
+                                <i class="bi bi-trash"></i> Remove
+                            </button>
+                        </td>
+                    `;
             tbody.appendChild(newRow);
             setupDoseAutocomplete(newRow.querySelector('.dose-input'), newRow.querySelector('.autocomplete-dropdown'));
         }
@@ -2223,16 +2242,16 @@
             let tbody = document.getElementById("indoor-treatment-body");
             let newRow = document.createElement("tr");
             newRow.innerHTML = `
-                    <td><input type="text" name="indoor_medicine[]" class="form-control form-control-sm" placeholder="Medicine name" autocomplete="off"></td>
-                    <td><input type="date" name="indoor_date[]" class="form-control form-control-sm"></td>
-                    <td><input type="time" name="indoor_time[]" class="form-control form-control-sm"></td>
-                    <td><input type="text" name="indoor_note[]" class="form-control form-control-sm" placeholder="Note"></td>
-                    <td>
-                        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </td>
-            `;
+                        <td><input type="text" name="indoor_medicine[]" class="form-control form-control-sm" placeholder="Medicine name" autocomplete="off"></td>
+                        <td><input type="date" name="indoor_date[]" class="form-control form-control-sm"></td>
+                        <td><input type="time" name="indoor_time[]" class="form-control form-control-sm"></td>
+                        <td><input type="text" name="indoor_note[]" class="form-control form-control-sm" placeholder="Note"></td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                `;
             tbody.appendChild(newRow);
         }
 
@@ -2240,14 +2259,14 @@
             let tbody = document.getElementById("other-treatment-body");
             let newRow = document.createElement("tr");
             newRow.innerHTML = `
-                    <td><input type="text" name="other_medicine[]" class="form-control form-control-sm" placeholder="Medicine name" autocomplete="off"></td>
-                    <td><input type="text" name="other_note[]" class="form-control form-control-sm" placeholder="Note"></td>
-                    <td>
-                        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">
-                            <i class="bi bi-trash"></i> Remove
-                        </button>
-                    </td>
-                `;
+                        <td><input type="text" name="other_medicine[]" class="form-control form-control-sm" placeholder="Medicine name" autocomplete="off"></td>
+                        <td><input type="text" name="other_note[]" class="form-control form-control-sm" placeholder="Note"></td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">
+                                <i class="bi bi-trash"></i> Remove
+                            </button>
+                        </td>
+                    `;
             tbody.appendChild(newRow);
         }
 
@@ -2745,11 +2764,11 @@
                     const itemElement = document.createElement('div');
                     itemElement.className = 'selected-item';
                     itemElement.innerHTML = `
-                            ${item}
-                            <button type="button" class="remove-item" data-item="${item}">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        `;
+                                ${item}
+                                <button type="button" class="remove-item" data-item="${item}">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            `;
 
                     const removeBtn = itemElement.querySelector('.remove-item');
                     removeBtn.addEventListener('click', function (e) {
@@ -2888,9 +2907,9 @@
             notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
             notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
             notification.innerHTML = `
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                `;
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    `;
 
             document.body.appendChild(notification);
 

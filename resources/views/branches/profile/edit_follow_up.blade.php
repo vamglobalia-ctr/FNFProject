@@ -683,365 +683,19 @@
                                         </div>
 
                                         <div class="section-divider mt-4">
-                                            <div class="title">Laboratory Tests</div>
+                                            <div class="title">Lipid Profile</div>
                                             <div class="line"></div>
-                                            <div class="icon-box" onclick="toggleSection(this, 'lab-tests-section')">
-                                                <i class="bi bi-dash-lg" id="lab-tests-toggle-icon"></i>
+                                            <div class="icon-box" onclick="toggleSection(this, 'lipid-profile-section')">
+                                                <i class="bi bi-dash-lg" id="lipid-toggle-icon"></i>
                                             </div>
                                         </div>
-
-                                        <div class="lab-tests-section">
-                                            @php
-                                                $hbValues = $followupMetaValues['hb'] ?? [];
-                                                $tcValues = $followupMetaValues['tc'] ?? [];
-                                                $pcValues = $followupMetaValues['pc'] ?? [];
-                                                $mpValues = $followupMetaValues['mp'] ?? [];
-                                                $hb1acValues = $followupMetaValues['hb1ac'] ?? [];
-                                                $fbsValues = $followupMetaValues['fbs'] ?? [];
-                                                $pp2bsValues = $followupMetaValues['pp2bs'] ?? [];
-                                                $sWidalValues = $followupMetaValues['s_widal'] ?? [];
-                                                $usgValues = $followupMetaValues['usg'] ?? [];
-                                                $xrayValues = $followupMetaValues['x_ray'] ?? [];
-                                                $sgptValues = $followupMetaValues['sgpt'] ?? [];
-                                                $sCreatinineValues = $followupMetaValues['s_creatinine'] ?? [];
-                                                $ns1agValues = $followupMetaValues['ns1ag'] ?? [];
-                                                $dengueIgmValues = $followupMetaValues['dengue_igm'] ?? [];
-                                                $cholesterolValues = $followupMetaValues['s_cholesterol'] ?? [];
-                                                $triglycerideValues = $followupMetaValues['s_triglyceride'] ?? [];
-                                                $hdlValues = $followupMetaValues['hdl'] ?? [];
-                                                $ldlValues = $followupMetaValues['ldl'] ?? [];
-                                                $vldlValues = $followupMetaValues['vldl'] ?? [];
-                                                $sb12Values = $followupMetaValues['s_b12'] ?? [];
-                                                $sd3Values = $followupMetaValues['s_d3'] ?? [];
-                                                $urineValues = $followupMetaValues['urine'] ?? [];
-                                                $crpValues = $followupMetaValues['crp'] ?? [];
-                                                $st3Values = $followupMetaValues['s_t3'] ?? [];
-                                                $st4Values = $followupMetaValues['s_t4'] ?? [];
-                                                $stshValues = $followupMetaValues['s_tsh'] ?? [];
-                                                $esrValues = $followupMetaValues['esr'] ?? [];
-                                            @endphp
-
-                                            <div class="pro_filed d-sm-block d-md-flex pt-3">
-                                                <div class="form">
-                                                    <div class="form-col">
-                                                        <label for="hb">HB</label>
-                                                        <div class="dynamic-fields-container" id="hb-container">
-                                                            @forelse ($hbValues as $index => $val)
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="hb[]"
-                                                                        class="dynamic-field-input"
-                                                                        value="{{ $val === 'null' ? '' : $val }}"
-                                                                        placeholder="HB">
-                                                                </div>
-                                                            @empty
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="hb[]"
-                                                                        class="dynamic-field-input" value=""
-                                                                        placeholder="HB">
-                                                                </div>
-                                                            @endforelse
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="form">
-                                                    <div class="form-col">
-                                                        <label for="tc">TC</label>
-                                                        <div class="dynamic-fields-container" id="tc-container">
-                                                            @forelse ($tcValues as $index => $val)
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="tc[]"
-                                                                        class="dynamic-field-input"
-                                                                        value="{{ $val === 'null' ? '' : $val }}"
-                                                                        placeholder="TC">
-                                                                </div>
-                                                            @empty
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="tc[]"
-                                                                        class="dynamic-field-input" value=""
-                                                                        placeholder="TC">
-                                                                </div>
-                                                            @endforelse
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="pro_filed d-sm-block d-md-flex pt-3">
-                                                <div class="form">
-                                                    <div class="form-col">
-                                                        <label for="pc">PC</label>
-                                                        <div class="dynamic-fields-container" id="pc-container">
-                                                            @forelse ($pcValues as $index => $val)
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="pc[]"
-                                                                        class="dynamic-field-input"
-                                                                        value="{{ $val === 'null' ? '' : $val }}"
-                                                                        placeholder="PC">
-                                                                </div>
-                                                            @empty
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="pc[]"
-                                                                        class="dynamic-field-input" value=""
-                                                                        placeholder="PC">
-                                                                </div>
-                                                            @endforelse
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="form">
-                                                    <div class="form-col">
-                                                        <label for="mp">MP</label>
-                                                        <div class="dynamic-fields-container" id="mp-container">
-                                                            @forelse ($mpValues as $index => $val)
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="mp[]"
-                                                                        class="dynamic-field-input"
-                                                                        value="{{ $val === 'null' ? '' : $val }}"
-                                                                        placeholder="MP">
-                                                                </div>
-                                                            @empty
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="mp[]"
-                                                                        class="dynamic-field-input" value=""
-                                                                        placeholder="MP">
-                                                                </div>
-                                                            @endforelse
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="pro_filed d-sm-block d-md-flex pt-3">
-                                                <div class="form">
-                                                    <div class="form-col">
-                                                        <label for="hb1ac">HB1AC</label>
-                                                        <div class="dynamic-fields-container" id="hb1ac-container">
-                                                            @forelse ($hb1acValues as $index => $val)
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="hb1ac[]"
-                                                                        class="dynamic-field-input"
-                                                                        value="{{ $val === 'null' ? '' : $val }}"
-                                                                        placeholder="HB1AC">
-                                                                </div>
-                                                            @empty
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="hb1ac[]"
-                                                                        class="dynamic-field-input" value=""
-                                                                        placeholder="HB1AC">
-                                                                </div>
-                                                            @endforelse
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="form">
-                                                    <div class="form-col">
-                                                        <label for="fbs">FBS</label>
-                                                        <div class="dynamic-fields-container" id="fbs-container">
-                                                            @forelse ($fbsValues as $index => $val)
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="fbs[]"
-                                                                        class="dynamic-field-input"
-                                                                        value="{{ $val === 'null' ? '' : $val }}"
-                                                                        placeholder="FBS">
-                                                                </div>
-                                                            @empty
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="fbs[]"
-                                                                        class="dynamic-field-input" value=""
-                                                                        placeholder="FBS">
-                                                                </div>
-                                                            @endforelse
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="pro_filed d-sm-block d-md-flex pt-3">
-                                                <div class="form">
-                                                    <div class="form-col">
-                                                        <label for="pp2bs">PP2BS</label>
-                                                        <div class="dynamic-fields-container" id="pp2bs-container">
-                                                            @forelse ($pp2bsValues as $index => $val)
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="pp2bs[]"
-                                                                        class="dynamic-field-input"
-                                                                        value="{{ $val === 'null' ? '' : $val }}"
-                                                                        placeholder="PP2BS">
-                                                                </div>
-                                                            @empty
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="pp2bs[]"
-                                                                        class="dynamic-field-input" value=""
-                                                                        placeholder="PP2BS">
-                                                                </div>
-                                                            @endforelse
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="form">
-                                                    <div class="form-col">
-                                                        <label for="s_widal">S.widal</label>
-                                                        <div class="dynamic-fields-container" id="s-widal-container">
-                                                            @forelse ($sWidalValues as $index => $val)
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="s_widal[]"
-                                                                        class="dynamic-field-input"
-                                                                        value="{{ $val === 'null' ? '' : $val }}"
-                                                                        placeholder="S.widal">
-                                                                </div>
-                                                            @empty
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="s_widal[]"
-                                                                        class="dynamic-field-input" value=""
-                                                                        placeholder="S.widal">
-                                                                </div>
-                                                            @endforelse
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="pro_filed d-sm-block d-md-flex pt-3">
-                                                <div class="form">
-                                                    <div class="form-col">
-                                                        <label for="usg">USG</label>
-                                                        <div class="dynamic-fields-container" id="usg-container">
-                                                            @forelse ($usgValues as $index => $val)
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="usg[]"
-                                                                        class="dynamic-field-input"
-                                                                        value="{{ $val === 'null' ? '' : $val }}"
-                                                                        placeholder="USG">
-                                                                </div>
-                                                            @empty
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="usg[]"
-                                                                        class="dynamic-field-input" value=""
-                                                                        placeholder="USG">
-                                                                </div>
-                                                            @endforelse
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="form">
-                                                    <div class="form-col">
-                                                        <label for="x_ray">X-ray</label>
-                                                        <div class="dynamic-fields-container" id="x-ray-container">
-                                                            @forelse ($xrayValues as $index => $val)
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="x_ray[]"
-                                                                        class="dynamic-field-input"
-                                                                        value="{{ $val === 'null' ? '' : $val }}"
-                                                                        placeholder="X-ray">
-                                                                </div>
-                                                            @empty
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="x_ray[]"
-                                                                        class="dynamic-field-input" value=""
-                                                                        placeholder="X-ray">
-                                                                </div>
-                                                            @endforelse
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="pro_filed d-sm-block d-md-flex pt-3">
-                                                <div class="form">
-                                                    <div class="form-col">
-                                                        <label for="sgpt">SGPT</label>
-                                                        <div class="dynamic-fields-container" id="sgpt-container">
-                                                            @forelse ($sgptValues as $index => $val)
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="sgpt[]"
-                                                                        class="dynamic-field-input"
-                                                                        value="{{ $val === 'null' ? '' : $val }}"
-                                                                        placeholder="SGPT">
-                                                                </div>
-                                                            @empty
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="sgpt[]"
-                                                                        class="dynamic-field-input" value=""
-                                                                        placeholder="SGPT">
-                                                                </div>
-                                                            @endforelse
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="form">
-                                                    <div class="form-col">
-                                                        <label for="s_creatinine">S. Creatinine</label>
-                                                        <div class="dynamic-fields-container" id="s-creatinine-container">
-                                                            @forelse ($sCreatinineValues as $index => $val)
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="s_creatinine[]"
-                                                                        class="dynamic-field-input"
-                                                                        value="{{ $val === 'null' ? '' : $val }}"
-                                                                        placeholder="S. Creatinine">
-                                                                </div>
-                                                            @empty
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="s_creatinine[]"
-                                                                        class="dynamic-field-input" value=""
-                                                                        placeholder="S. Creatinine">
-                                                                </div>
-                                                            @endforelse
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="pro_filed d-sm-block d-md-flex pt-3">
-                                                <div class="form">
-                                                    <div class="form-col">
-                                                        <label for="ns1ag">NS1Ag</label>
-                                                        <div class="dynamic-fields-container" id="ns1ag-container">
-                                                            @forelse ($ns1agValues as $index => $val)
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="ns1ag[]"
-                                                                        class="dynamic-field-input"
-                                                                        value="{{ $val === 'null' ? '' : $val }}"
-                                                                        placeholder="NS1Ag">
-                                                                </div>
-                                                            @empty
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="ns1ag[]"
-                                                                        class="dynamic-field-input" value=""
-                                                                        placeholder="NS1Ag">
-                                                                </div>
-                                                            @endforelse
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="form">
-                                                    <div class="form-col">
-                                                        <label for="dengue_igm">Dengue IGM</label>
-                                                        <div class="dynamic-fields-container" id="dengue-igm-container">
-                                                            @forelse ($dengueIgmValues as $index => $val)
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="dengue_igm[]"
-                                                                        class="dynamic-field-input"
-                                                                        value="{{ $val === 'null' ? '' : $val }}"
-                                                                        placeholder="Dengue IGM">
-                                                                </div>
-                                                            @empty
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="dengue_igm[]"
-                                                                        class="dynamic-field-input" value=""
-                                                                        placeholder="Dengue IGM">
-                                                                </div>
-                                                            @endforelse
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
+                                        <div class="lipid-profile-section" id="lipid-profile-section">
+                                            <!-- Row 1: S. Cholesterol, S. Triglyceride -->
                                             <div class="pro_filed d-sm-block d-md-flex pt-3">
                                                 <div class="form">
                                                     <div class="form-col">
                                                         <label for="s_cholesterol">S. Cholesterol</label>
-                                                        <div class="dynamic-fields-container"
-                                                            id="s-cholesterol-container">
+                                                        <div class="dynamic-fields-container" id="cholesterol-container">
                                                             @forelse ($cholesterolValues as $index => $val)
                                                                 <div class="dynamic-field-group">
                                                                     <input type="text" name="s_cholesterol[]"
@@ -1062,8 +716,7 @@
                                                 <div class="form">
                                                     <div class="form-col">
                                                         <label for="s_triglyceride">S. Triglyceride</label>
-                                                        <div class="dynamic-fields-container"
-                                                            id="s-triglyceride-container">
+                                                        <div class="dynamic-fields-container" id="triglyceride-container">
                                                             @forelse ($triglycerideValues as $index => $val)
                                                                 <div class="dynamic-field-group">
                                                                     <input type="text" name="s_triglyceride[]"
@@ -1082,7 +735,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-
+                                            <!-- Row 2: HDL, LDL -->
                                             <div class="pro_filed d-sm-block d-md-flex pt-3">
                                                 <div class="form">
                                                     <div class="form-col">
@@ -1127,7 +780,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-
+                                            <!-- Row 3: VLDL, Non-HDL C -->
                                             <div class="pro_filed d-sm-block d-md-flex pt-3">
                                                 <div class="form">
                                                     <div class="form-col">
@@ -1152,49 +805,96 @@
                                                 </div>
                                                 <div class="form">
                                                     <div class="form-col">
-                                                        <label for="s_b12">S.B12</label>
-                                                        <div class="dynamic-fields-container" id="sb12-container">
-                                                            @forelse ($sb12Values as $index => $val)
+                                                        <label for="non_hdl_c">Non-HDL C</label>
+                                                        <div class="dynamic-fields-container" id="non-hdl-c-container">
+                                                            @forelse ($nonHdlCValues as $index => $val)
                                                                 <div class="dynamic-field-group">
-                                                                    <input type="text" name="s_b12[]"
+                                                                    <input type="text" name="non_hdl_c[]"
                                                                         class="dynamic-field-input"
                                                                         value="{{ $val === 'null' ? '' : $val }}"
-                                                                        placeholder="S.B12">
+                                                                        placeholder="Non-HDL C">
                                                                 </div>
                                                             @empty
                                                                 <div class="dynamic-field-group">
-                                                                    <input type="text" name="s_b12[]"
+                                                                    <input type="text" name="non_hdl_c[]"
                                                                         class="dynamic-field-input" value=""
-                                                                        placeholder="S.B12">
+                                                                        placeholder="Non-HDL C">
                                                                 </div>
                                                             @endforelse
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-
+                                            <!-- Row 4: Chol/HDL ratio -->
                                             <div class="pro_filed d-sm-block d-md-flex pt-3">
                                                 <div class="form">
-                                                    <div class="form-col">
-                                                        <label for="s_d3">S.D3</label>
-                                                        <div class="dynamic-fields-container" id="sd3-container">
-                                                            @forelse ($sd3Values as $index => $val)
+                                                    <div class="form-col-2">
+                                                        <label for="chol_hdl_ratio">Chol/HDL ratio</label>
+                                                        <div class="dynamic-fields-container" id="chol-hdl-ratio-container">
+                                                            @forelse ($cholHdlRatioValues as $index => $val)
                                                                 <div class="dynamic-field-group">
-                                                                    <input type="text" name="s_d3[]"
+                                                                    <input type="text" name="chol_hdl_ratio[]"
                                                                         class="dynamic-field-input"
                                                                         value="{{ $val === 'null' ? '' : $val }}"
-                                                                        placeholder="S.D3">
+                                                                        placeholder="Chol/HDL ratio">
                                                                 </div>
                                                             @empty
                                                                 <div class="dynamic-field-group">
-                                                                    <input type="text" name="s_d3[]"
+                                                                    <input type="text" name="chol_hdl_ratio[]"
                                                                         class="dynamic-field-input" value=""
-                                                                        placeholder="S.D3">
+                                                                        placeholder="Chol/HDL ratio">
                                                                 </div>
                                                             @endforelse
                                                         </div>
                                                     </div>
                                                 </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="section-divider mt-4">
+                                            <div class="title">Laboratory Tests</div>
+                                            <div class="line"></div>
+                                            <div class="icon-box" onclick="toggleSection(this, 'lab-tests-section')">
+                                                <i class="bi bi-dash-lg" id="lab-tests-toggle-icon"></i>
+                                            </div>
+                                        </div>
+
+                                        <div class="lab-tests-section">
+                                            @php
+                                                $hbValues = $followupMetaValues['hb'] ?? [];
+                                                $tcValues = $followupMetaValues['tc'] ?? [];
+                                                $pcValues = $followupMetaValues['pc'] ?? [];
+                                                $mpValues = $followupMetaValues['mp'] ?? [];
+                                                $hb1acValues = $followupMetaValues['hb1ac'] ?? [];
+                                                $fbsValues = $followupMetaValues['fbs'] ?? [];
+                                                $pp2bsValues = $followupMetaValues['pp2bs'] ?? [];
+                                                $sWidalValues = $followupMetaValues['s_widal'] ?? [];
+                                                $usgValues = $followupMetaValues['usg'] ?? [];
+                                                $xrayValues = $followupMetaValues['x_ray'] ?? [];
+                                                $sgptValues = $followupMetaValues['sgpt'] ?? [];
+                                                $sCreatinineValues = $followupMetaValues['s_creatinine'] ?? [];
+                                                $ns1agValues = $followupMetaValues['ns1ag'] ?? [];
+                                                $dengueIgmValues = $followupMetaValues['dengue_igm'] ?? [];
+                                                $cholesterolValues = $followupMetaValues['s_cholesterol'] ?? [];
+                                                $triglycerideValues = $followupMetaValues['s_triglyceride'] ?? [];
+                                                $hdlValues = $followupMetaValues['hdl'] ?? [];
+                                                $ldlValues = $followupMetaValues['ldl'] ?? [];
+                                                $vldlValues = $followupMetaValues['vldl'] ?? [];
+                                                $nonHdlCValues = $followupMetaValues['non_hdl_c'] ?? [];
+                                                $cholHdlRatioValues = $followupMetaValues['chol_hdl_ratio'] ?? [];
+                                                $sb12Values = $followupMetaValues['s_b12'] ?? [];
+                                                $sd3Values = $followupMetaValues['s_d3'] ?? [];
+                                                $urineValues = $followupMetaValues['urine'] ?? [];
+                                                $crpValues = $followupMetaValues['crp'] ?? [];
+                                                $st3Values = $followupMetaValues['s_t3'] ?? [];
+                                                $st4Values = $followupMetaValues['s_t4'] ?? [];
+                                                $stshValues = $followupMetaValues['s_tsh'] ?? [];
+                                                $esrValues = $followupMetaValues['esr'] ?? [];
+                                                $specificTestValues = $followupMetaValues['specific_test'] ?? [];
+                                            @endphp
+
+                                            <!-- Row 10: Urine, CRP -->
+                                            <div class="pro_filed d-sm-block d-md-flex pt-3">
                                                 <div class="form">
                                                     <div class="form-col">
                                                         <label for="urine">Urine</label>
@@ -1216,9 +916,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-
-                                            <div class="pro_filed d-sm-block d-md-flex pt-3">
                                                 <div class="form">
                                                     <div class="form-col">
                                                         <label for="crp">CRP</label>
@@ -1240,6 +937,9 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                            </div>
+
+                                            <div class="pro_filed d-sm-block d-md-flex pt-3">
                                                 <div class="form">
                                                     <div class="form-col">
                                                         <label for="s_t3">S.T3</label>
@@ -1261,9 +961,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-
-                                            <div class="pro_filed d-sm-block d-md-flex pt-3">
                                                 <div class="form">
                                                     <div class="form-col">
                                                         <label for="s_t4">S.T4</label>
@@ -1285,59 +982,121 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="form">
-                                                    <div class="form-col">
-                                                        <label for="s_tsh">S.TSH</label>
-                                                        <div class="dynamic-fields-container" id="stsh-container">
-                                                            @forelse ($stshValues as $index => $val)
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="s_tsh[]"
-                                                                        class="dynamic-field-input"
-                                                                        value="{{ $val === 'null' ? '' : $val }}"
-                                                                        placeholder="S.TSH">
-                                                                </div>
-                                                            @empty
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="s_tsh[]"
-                                                                        class="dynamic-field-input" value=""
-                                                                        placeholder="S.TSH">
-                                                                </div>
-                                                            @endforelse
-                                                        </div>
-                                                    </div>
-                                                </div>
                                             </div>
 
                                             <div class="pro_filed d-sm-block d-md-flex pt-3">
-                                                <div class="form">
-                                                    <div class="form-col">
-                                                        <label for="esr">ESR</label>
-                                                        <div class="dynamic-fields-container" id="esr-container">
-                                                            @forelse ($esrValues as $index => $val)
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="esr[]"
-                                                                        class="dynamic-field-input"
-                                                                        value="{{ $val === 'null' ? '' : $val }}"
-                                                                        placeholder="ESR">
-                                                                </div>
-                                                            @empty
-                                                                <div class="dynamic-field-group">
-                                                                    <input type="text" name="esr[]"
-                                                                        class="dynamic-field-input" value=""
-                                                                        placeholder="ESR">
-                                                                </div>
-                                                            @endforelse
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="form">
-                                                    <div class="form-col">
-                                                        <label for="specific_test">Any specific Test</label>
-                                                        <input type="text" id="specific_test" name="specific_test"
-                                                            value="{{ $followupMetaValues['specific_test'][0] ?? $patient->getMeta('specific_test') }}">
-                                                    </div>
-                                                </div>
-                                            </div>
+                                                 <div class="form">
+                                                     <div class="form-col">
+                                                         <label for="s_tsh">S.TSH</label>
+                                                         <div class="dynamic-fields-container" id="stsh-container">
+                                                             @forelse ($stshValues as $index => $val)
+                                                                 <div class="dynamic-field-group">
+                                                                     <input type="text" name="s_tsh[]"
+                                                                         class="dynamic-field-input"
+                                                                         value="{{ $val === 'null' ? '' : $val }}"
+                                                                         placeholder="S.TSH">
+                                                                 </div>
+                                                             @empty
+                                                                 <div class="dynamic-field-group">
+                                                                     <input type="text" name="s_tsh[]"
+                                                                         class="dynamic-field-input" value=""
+                                                                         placeholder="S.TSH">
+                                                                 </div>
+                                                             @endforelse
+                                                         </div>
+                                                     </div>
+                                                 </div>
+                                                 <div class="form">
+                                                     <div class="form-col">
+                                                         <label for="s_b12">S.B12</label>
+                                                         <div class="dynamic-fields-container" id="sb12-container">
+                                                             @forelse ($sb12Values as $index => $val)
+                                                                 <div class="dynamic-field-group">
+                                                                     <input type="text" name="s_b12[]"
+                                                                         class="dynamic-field-input"
+                                                                         value="{{ $val === 'null' ? '' : $val }}"
+                                                                         placeholder="S.B12">
+                                                                 </div>
+                                                             @empty
+                                                                 <div class="dynamic-field-group">
+                                                                     <input type="text" name="s_b12[]"
+                                                                         class="dynamic-field-input" value=""
+                                                                         placeholder="S.B12">
+                                                                 </div>
+                                                             @endforelse
+                                                         </div>
+                                                     </div>
+                                                 </div>
+                                             </div>
+
+                                             <div class="pro_filed d-sm-block d-md-flex pt-3">
+                                                 <div class="form">
+                                                     <div class="form-col">
+                                                         <label for="s_d3">S.D3</label>
+                                                         <div class="dynamic-fields-container" id="sd3-container">
+                                                             @forelse ($sd3Values as $index => $val)
+                                                                 <div class="dynamic-field-group">
+                                                                     <input type="text" name="s_d3[]"
+                                                                         class="dynamic-field-input"
+                                                                         value="{{ $val === 'null' ? '' : $val }}"
+                                                                         placeholder="S.D3">
+                                                                 </div>
+                                                             @empty
+                                                                 <div class="dynamic-field-group">
+                                                                     <input type="text" name="s_d3[]"
+                                                                         class="dynamic-field-input" value=""
+                                                                         placeholder="S.D3">
+                                                                 </div>
+                                                             @endforelse
+                                                         </div>
+                                                     </div>
+                                                 </div>
+                                                 <div class="form">
+                                                     <div class="form-col">
+                                                         <label for="esr">ESR</label>
+                                                         <div class="dynamic-fields-container" id="esr-container">
+                                                             @forelse ($esrValues as $index => $val)
+                                                                 <div class="dynamic-field-group">
+                                                                     <input type="text" name="esr[]"
+                                                                         class="dynamic-field-input"
+                                                                         value="{{ $val === 'null' ? '' : $val }}"
+                                                                         placeholder="ESR">
+                                                                 </div>
+                                                             @empty
+                                                                 <div class="dynamic-field-group">
+                                                                     <input type="text" name="esr[]"
+                                                                         class="dynamic-field-input" value=""
+                                                                         placeholder="ESR">
+                                                                 </div>
+                                                             @endforelse
+                                                         </div>
+                                                     </div>
+                                                 </div>
+                                             </div>
+
+                                             <div class="pro_filed d-sm-block d-md-flex pt-3">
+                                                 <div class="form">
+                                                     <div class="form-col-2">
+                                                         <label for="specific_test">Any specific Test</label>
+                                                         <div class="dynamic-fields-container" id="specific-test-container">
+                                                             @forelse ($specificTestValues as $index => $val)
+                                                                 <div class="dynamic-field-group">
+                                                                     <input type="text" name="specific_test[]"
+                                                                         class="dynamic-field-input"
+                                                                         value="{{ $val === 'null' ? '' : $val }}"
+                                                                         placeholder="Any specific Test">
+                                                                 </div>
+                                                             @empty
+                                                                 <div class="dynamic-field-group">
+                                                                     <input type="text" name="specific_test[]"
+                                                                         class="dynamic-field-input" value=""
+                                                                         placeholder="Any specific Test">
+                                                                 </div>
+                                                             @endforelse
+                                                         </div>
+                                                     </div>
+                                                 </div>
+                                             </div>
                                         </div>
 
                                         <!-- Inside Treatment Section -->
@@ -2006,40 +1765,88 @@
     </div>
 
 <script>
+    function toggleSection(element, sectionId) {
+        const section = document.getElementById(sectionId);
+        const icon = element.querySelector('i');
+        if (section.style.display === 'none' || section.style.display === '') {
+            section.style.display = 'block';
+            if (icon) icon.classList.replace('bi-plus-lg', 'bi-dash-lg');
+        } else {
+            section.style.display = 'none';
+            if (icon) icon.classList.replace('bi-dash-lg', 'bi-plus-lg');
+        }
+    }
+
+    function insideSection(element) {
+        const section = document.getElementById('inside-treatment-section');
+        const icon = element.querySelector('i');
+        if (section.style.display === 'none' || section.style.display === '') {
+            section.style.display = 'block';
+            if (icon) icon.classList.replace('bi-plus-lg', 'bi-dash-lg');
+        } else {
+            section.style.display = 'none';
+            if (icon) icon.classList.replace('bi-dash-lg', 'bi-plus-lg');
+        }
+    }
+
+    function toggleIndoorSection(element) {
+        const section = document.getElementById('indoor-treatment-section');
+        const icon = element.querySelector('i');
+        if (section.style.display === 'none' || section.style.display === '') {
+            section.style.display = 'block';
+            if (icon) icon.classList.replace('bi-plus-lg', 'bi-dash-lg');
+        } else {
+            section.style.display = 'none';
+            if (icon) icon.classList.replace('bi-dash-lg', 'bi-plus-lg');
+        }
+    }
+
+    function toggleOtherSection(element) {
+        const section = document.getElementById('other-treatment-section');
+        const icon = element.querySelector('i');
+        if (section.style.display === 'none' || section.style.display === '') {
+            section.style.display = 'block';
+            if (icon) icon.classList.replace('bi-plus-lg', 'bi-dash-lg');
+        } else {
+            section.style.display = 'none';
+            if (icon) icon.classList.replace('bi-dash-lg', 'bi-plus-lg');
+        }
+    }
+
+    const focCheckbox = document.getElementById('foc');
+    const paymentSection = document.getElementById('payment_section');
+    const totalPayment = document.getElementById('total_payment');
+    const discountPayment = document.getElementById('discount_payment');
+    const givenPayment = document.getElementById('given_payment');
+    const duePayment = document.getElementById('due_payment');
+
+    if (focCheckbox) {
+        focCheckbox.addEventListener('change', togglePaymentSection);
+    }
 
     function togglePaymentSection() {
-    const hasOldValues =
-        totalPayment.value ||
-        discountPayment.value ||
-        givenPayment.value ||
-        duePayment.value ||
-        document.getElementById('cash_payment').value ||
-        document.getElementById('gp_payment').value ||
-        document.getElementById('cheque_payment').value;
+        const hasOldValues =
+            (totalPayment ? totalPayment.value : false) ||
+            (discountPayment ? discountPayment.value : false) ||
+            (givenPayment ? givenPayment.value : false) ||
+            (duePayment ? duePayment.value : false) ||
+            (document.getElementById('cash_payment') ? document.getElementById('cash_payment').value : false) ||
+            (document.getElementById('gp_payment') ? document.getElementById('gp_payment').value : false) ||
+            (document.getElementById('cheque_payment') ? document.getElementById('cheque_payment').value : false);
 
-    if (focCheckbox.checked) {
-
-        if (!hasOldValues) {
-            // No old values → hide section
-            paymentSection.style.display = 'none';
-
-            totalPayment.value = '';
-            discountPayment.value = '';
-            givenPayment.value = '';
-            duePayment.value = '';
-            document.getElementById('cash_payment').value = '';
-            document.getElementById('gp_payment').value = '';
-            document.getElementById('cheque_payment').value = '';
+        if (focCheckbox.checked) {
+            if (!hasOldValues) {
+                if (paymentSection) paymentSection.style.display = 'none';
+            } else {
+                if (paymentSection) paymentSection.style.display = 'block';
+            }
         } else {
-            // Old values exist → show section
-            paymentSection.style.display = 'block';
+            if (paymentSection) paymentSection.style.display = 'block';
         }
-
-    } else {
-        // FOC unchecked → always show section
-        paymentSection.style.display = 'block';
     }
-}
 
+    window.onload = function() {
+        // any initial logic if needed
+    };
 </script>
 @endsection

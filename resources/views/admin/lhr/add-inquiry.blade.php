@@ -541,7 +541,8 @@
 
                         <div class="section-divider collapsed" onclick="toggleSection(this)">Medical Information</div>
                         <div class="accordion-content collapsed">
-                            <div class="mb-4">
+                            <div class="card_custom mb-4">
+                                <div class="mb-4">
                                 <label>Do you have any hormonal issues?</label>
                                 <div class="custom-radio-group">
                                     <label class="custom-radio-item">
@@ -675,38 +676,40 @@
                             </div>
                             </div>
                         </div>
-
                         <div class="section-divider active" onclick="toggleSection(this)">Health Metrics</div>
                         <div class="accordion-content">
-                            <div class="pro_filed">
-                                <div class="form">
-                                    <label for="diet">Diet</label>
-                                    <input type="text" id="diet" name="diet" placeholder="Diet"
-                                        value="{{ old('diet') }}">
+                            <div class="card_custom mb-4">
+                                <div class="pro_filed">
+                                    <div class="form">
+                                        <label for="diet">Diet</label>
+                                        <input type="text" id="diet" name="diet" placeholder="Diet"
+                                            value="{{ old('diet') }}">
+                                    </div>
+                                    <div class="form">
+                                        <label for="exercise">Exercise</label>
+                                        <input type="text" id="exercise" name="exercise" placeholder="Exercise"
+                                            value="{{ old('exercise') }}">
+                                    </div>
                                 </div>
-                                <div class="form">
-                                    <label for="exercise">Exercise</label>
-                                    <input type="text" id="exercise" name="exercise" placeholder="Exercise"
-                                        value="{{ old('exercise') }}">
-                                </div>
-                            </div>
-                            <div class="pro_filed">
-                                <div class="form">
-                                    <label for="sleep">Sleep</label>
-                                    <input type="text" id="sleep" name="sleep" placeholder="Sleep"
-                                        value="{{ old('sleep') }}">
-                                </div>
-                                <div class="form">
-                                    <label for="water">Water</label>
-                                    <input type="text" id="water" name="water" placeholder="Water"
-                                        value="{{ old('water') }}">
+                                <div class="pro_filed">
+                                    <div class="form">
+                                        <label for="sleep">Sleep</label>
+                                        <input type="text" id="sleep" name="sleep" placeholder="Sleep"
+                                            value="{{ old('sleep') }}">
+                                    </div>
+                                    <div class="form">
+                                        <label for="water">Water</label>
+                                        <input type="text" id="water" name="water" placeholder="Water"
+                                            value="{{ old('water') }}">
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="section-divider collapsed" onclick="toggleSection(this)">Follow Up & Notes</div>
                         <div class="accordion-content collapsed">
-                            <div class="pro_filed">
+                            <div class="card_custom mb-4">
+                                <div class="pro_filed">
                                 <div class="form">
                                     <label for="reference_by">Reference By</label>
                                     <input type="text" id="reference_by" name="reference_by" placeholder="Reference By"
@@ -719,6 +722,42 @@
                                     <label for="notes">Notes</label>
                                     <textarea id="notes" name="notes" rows="2"
                                         placeholder="Enter notes">{{ old('notes') }}</textarea>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+
+                        <!-- FOC Payment Section -->
+                        <div class="card_custom mb-4">
+                            <div class="mb-4">
+                                <label class="custom-checkbox-container">
+                                    <input type="checkbox" name="inquiry_foc" value="Yes" id="focCheck">
+                                    <span class="checkbox-checkmark"></span>
+                                    <span class="checkbox-label fw-bold">FOC (Free of Charge Inquiry)</span>
+                                </label>
+                            </div>
+
+                            <!-- Balanced Payment Row - Hidden when FOC is checked -->
+                            <div id="paymentRow" class="row align-items-end mb-3">
+                                <div class="col-md-3">
+                                    <label class="form-label">Registration Charges (₹)</label>
+                                    <input type="number" class="form-control" name="total_payment" id="total_payment" value="{{ old('total_payment', '200') }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Paid Amount (₹)</label>
+                                    <input type="number" step="0.01" class="form-control" name="given_payment" id="given_payment" placeholder="0.00" value="{{ old('given_payment') }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Payment Method</label>
+                                    <select class="form-select" name="payment_method" id="payment_method">
+                                        <option value="Cash" {{ old('payment_method', 'Cash') == 'Cash' ? 'selected' : '' }}>Cash</option>
+                                        <option value="Online" {{ old('payment_method') == 'Online' ? 'selected' : '' }}>Online</option>
+                                        <option value="Cheque" {{ old('payment_method') == 'Cheque' ? 'selected' : '' }}>Cheque</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Remaining Balance (₹)</label>
+                                    <input type="number" class="form-control" name="due_payment" id="due_payment" value="{{ old('due_payment') }}" readonly style="background-color: #f8f9fa;">
                                 </div>
                             </div>
                         </div>
@@ -767,6 +806,54 @@
                     }
                 });
             }
+
+            // FOC Checkbox and Payment Calculation Handler
+            const focCheck = document.getElementById('focCheck');
+            const givenPaymentInput = document.getElementById('given_payment');
+            const totalPaymentInput = document.getElementById('total_payment');
+            const duePaymentInput = document.getElementById('due_payment');
+
+            function calculateDue() {
+                const total = parseFloat(totalPaymentInput.value) || 0;
+                const given = parseFloat(givenPaymentInput.value) || 0;
+                duePaymentInput.value = (total - given).toFixed(2);
+            }
+
+            if (givenPaymentInput) {
+                givenPaymentInput.addEventListener('input', calculateDue);
+            }
+
+            if (totalPaymentInput) {
+                totalPaymentInput.addEventListener('input', calculateDue);
+            }
+
+            if (focCheck) {
+                const paymentRow = document.getElementById('paymentRow');
+                focCheck.addEventListener('change', function() {
+                    if (this.checked) {
+                        if (paymentRow) paymentRow.style.display = 'none';
+                        totalPaymentInput.value = '0';
+                        givenPaymentInput.value = '0';
+                    } else {
+                        if (paymentRow) paymentRow.style.display = 'flex';
+                        totalPaymentInput.value = '200';
+                        if (givenPaymentInput.value === '0') {
+                            givenPaymentInput.value = '';
+                        }
+                    }
+                    calculateDue();
+                });
+
+                // Initialize state
+                if (focCheck.checked) {
+                    if (paymentRow) paymentRow.style.display = 'none';
+                    totalPaymentInput.value = '0';
+                    givenPaymentInput.value = '0';
+                }
+            }
+
+            // Calculate due on page load
+            calculateDue();
 
             // Form submission confirmation
             const inquiryForm = document.getElementById('inquiryForm');

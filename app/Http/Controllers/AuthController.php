@@ -123,4 +123,53 @@ class AuthController extends Controller
 
         return back()->with('success', 'Profile updated successfully.');
     }
+
+    // Show forgot password form
+    public function showForgotPassword()
+    {
+        return view('auth.forgot-password');
+    }
+
+    // Verify email exists (AJAX)
+    public function verifyEmail(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if ($user) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Email verified successfully.'
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'This email is not registered in our system.'
+        ]);
+    }
+
+    // Handle password reset
+    public function updateForgotPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|min:6|confirmed',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return redirect()->route('password.forgot')->withErrors(['email' => 'User not found.']);
+        }
+
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        return redirect()->route('show-login')->with('success', 'Password reset successfully! Please login with your new password.');
+    }
 }

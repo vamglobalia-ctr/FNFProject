@@ -311,3 +311,7 @@ Route::get('/demoPage', [AdminController::class, 'demoPage'])->name('demo.page')
 // View invoice routes (accessible without auth for invoice sharing)
 Route::get('/view-invoice/{id}', [InvoiceController::class, 'viewInvoice'])->name('view.invoice');
 Route::get('/download-invoice/{id}', [InvoiceController::class, 'downloadInvoice'])->name('download.invoice');
+
+Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.forgot');
+Route::post('/forgot-password/verify-email', [AuthController::class, 'verifyEmail'])->name('password.verify-email');
+Route::post('/forgot-password/update', [AuthController::class, 'updateForgotPassword'])->name('password.update');

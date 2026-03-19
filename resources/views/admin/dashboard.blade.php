@@ -102,6 +102,19 @@
                                                 <span
                                                     class="followup_patient_count badge bg-amber-50 text-amber-700 dark:bg-amber-900/40 dark:text-amber-200 rounded-pill px-3">0</span>
                                             </div>
+                                            <!-- SVC Only: IPD & OPD -->
+                                            <div class="svc_only_counts" style="display: none;">
+                                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                                    <span class="text-sm text-secondary dark:text-slate-300">IPD Patients</span>
+                                                    <span
+                                                        class="ipd_patient_count badge bg-indigo-50 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-200 rounded-pill px-3">0</span>
+                                                </div>
+                                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                                    <span class="text-sm text-secondary dark:text-slate-300">OPD Patients</span>
+                                                    <span
+                                                        class="opd_patient_count badge bg-cyan-50 text-cyan-700 dark:bg-cyan-900/40 dark:text-cyan-200 rounded-pill px-3">0</span>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <!-- Other Branch Metrics -->
@@ -176,15 +189,21 @@
                 let breakdownBlock = card.find('.patient_breakdown_counts');
                 let otherBranchBlock = card.find('.other_branch_metrics');
 
+                let isSvc = branchPrefix === 'SVC' || branchLabel.includes('SVC');
+                let svcOnlyBlock = card.find('.svc_only_counts');
+
                 if (isSvcLhrHydra) {
                     breakdownBlock.show();
                     otherBranchBlock.hide();
+                    svcOnlyBlock.toggle(isSvc);
                 } else if (isOtherBranch) {
                     breakdownBlock.hide();
                     otherBranchBlock.show();
+                    svcOnlyBlock.hide();
                 } else {
                     breakdownBlock.hide();
                     otherBranchBlock.hide();
+                    svcOnlyBlock.hide();
                 }
 
                 $.post("{{ route('get.total.patients') }}", {
@@ -198,6 +217,10 @@
                         if (isSvcLhrHydra) {
                             card.find(".new_patient_count").text(res.new_patient_count ?? 0);
                             card.find(".followup_patient_count").text(res.followup_patient_count ?? 0);
+                            if (isSvc) {
+                                card.find(".ipd_patient_count").text(res.ipd_patient_count ?? 0);
+                                card.find(".opd_patient_count").text(res.opd_patient_count ?? 0);
+                            }
                         } else if (isOtherBranch) {
                             card.find(".diet_chart_count").text(res.diet_chart_count ?? 0);
                             card.find(".other_followup_count").text(res.followup_count ?? 0);
@@ -253,9 +276,14 @@
                     if (res.success) {
                         // Update total count
                         card.find(".patient_count").text(res.patient_count ?? 0);
+                        let isSvc = branchPrefix === 'SVC' || branchLabel.includes('SVC');
                         if (isSvcLhrHydra) {
                             card.find(".new_patient_count").text(res.new_patient_count ?? 0);
                             card.find(".followup_patient_count").text(res.followup_patient_count ?? 0);
+                            if (isSvc) {
+                                card.find(".ipd_patient_count").text(res.ipd_patient_count ?? 0);
+                                card.find(".opd_patient_count").text(res.opd_patient_count ?? 0);
+                            }
                         } else if (isOtherBranch) {
                             card.find(".diet_chart_count").text(res.diet_chart_count ?? 0);
                             card.find(".other_followup_count").text(res.followup_count ?? 0);
